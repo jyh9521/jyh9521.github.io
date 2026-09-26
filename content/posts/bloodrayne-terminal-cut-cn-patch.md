@@ -1,6 +1,6 @@
 ---
-date: '2026-09-27T03:00:00+09:00'
 title: ' 《吸血莱恩：终极剪辑版》简体中文汉化补丁'
+date: 2026-09-26T18:00:00.000Z
 description: |-
   BloodRayne: Terminal Cut Simplified Chinese Patch
   《吸血莱恩：终极剪辑版》简体中文汉化补丁
@@ -84,3 +84,5 @@ STextureEntry::loadOptimized - Out of memory
 ## 四、截图
 
 ![启动界面](/uploads/ChineseTranslationPatch/7396fb75ab77e2b38079ba03d3659a8b10119.png "启动界面")
+
+![开场动画的硬字幕](/uploads/ChineseTranslationPatch/cba97993fd89628566aaf75aa2552f9110119.png "开场动画的硬字幕")
