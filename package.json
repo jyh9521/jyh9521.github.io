@@ -2,16 +2,17 @@
   "name": "blfy-blog",
   "private": true,
   "scripts": {
-    "dev": "tinacms dev -c \"next dev\"",
-    "build": "tinacms build && next build",
+    "dev": "next dev",
+    "build": "next build",
     "check": "tsc --noEmit"
   },
   "dependencies": {
-    "@tinacms/cli": "^3.1.0",
+    "gray-matter": "^4.0.3",
     "next": "^15.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tinacms": "^3.14.1"
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

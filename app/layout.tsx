@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="zh-CN"><body><header className="masthead"><a className="brand" href="/">BLFY<span>.</span></a><nav><a href="/">首页</a><a href="/posts/">文章</a></nav></header>{children}<footer>© BLFY · <a href="/admin/index.html">管理</a></footer></body></html>;
+  return <html lang="zh-CN"><body><header className="masthead"><a className="brand" href="/">BLFY<span>.</span></a><nav><a href="/">首页</a><a href="/posts/">文章</a></nav></header>{children}<footer>© BLFY · <a href="/sveltia/">管理</a></footer></body></html>;
 }

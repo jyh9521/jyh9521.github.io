@@ -1,8 +1,6 @@
 node_modules/
 .next/
 out/
-public/admin/
 .env
 .env.local
-tina/__generated__/
 *.tsbuildinfo

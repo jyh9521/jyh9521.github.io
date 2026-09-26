@@ -1,25 +1,17 @@
-# BLFY 博客部署说明
+# 博客维护
 
-此分支将原来只有一个 Jekyll 首页的仓库迁移为 Next.js 静态导出 + TinaCMS。原站点在合并前保持运行。
+网站由 Next.js 静态导出，通过 GitHub Actions 部署到 GitHub Pages。
 
-## TinaCloud
+## 编辑文章
 
-1. 在 https://app.tina.io/ 创建项目，连接 `jyh9521/jyh9521.github.io`，选择 `main` 分支。
-2. 将站点 URL 设为 `https://blog.blfy.cc`，授权自己的编辑账号。
-3. 仓库 Settings → Secrets and variables → Actions：添加变量 `TINA_CLIENT_ID`（项目 Client ID），添加 Secret `TINA_TOKEN`（只读内容 Token）。不要把 Token 提交到仓库。
-4. 合并本 PR 后，在 Settings → Pages → Build and deployment 将 Source 设为 **GitHub Actions**。保留 Custom domain `blog.blfy.cc` 和 Cloudflare 的 DNS only CNAME。
-5. 在 Actions 中运行 `Deploy blog to GitHub Pages`，确认页面及 `https://blog.blfy.cc/admin/index.html`。编辑后保存，TinaCloud 提交到 main，再触发发布工作流。
+打开 https://blog.blfy.cc/sveltia/ ，使用 GitHub 访问令牌登录 Sveltia CMS。文章保存在 `content/posts/*.md`，图片和附件保存在 `public/uploads/`。保存后会提交到 `main`，Pages 工作流自动重新构建网站。文章网址为 `/posts/<文件名>/`。
 
-## 本地开发
+编辑器配置位于 `public/sveltia/config.yml`。访问令牌请只输入后台登录页面，勿写入仓库或文章。
 
-使用 Node.js 22，运行 `npm install`、`npm run dev`，浏览 `http://localhost:3000/admin/index.html`。内容在 `content/posts/*.md`，图片等媒体默认在 `public/uploads`。需要生产构建时先在环境中提供 `NEXT_PUBLIC_TINA_CLIENT_ID` 和 `TINA_TOKEN`，再运行 `npm run build`。
+## 本地预览
 
-## 媒体范围
+需要 Node.js 22。运行 `npm ci` 和 `npm run dev`；发布前可运行 `npm run check` 与 `npm run build`。静态网站输出在 `out/`。
 
-当前编辑器有图片、音频、视频、文档字段；它们使用 Tina 默认媒体库。大文件和长期大量媒体应在下一阶段接入独立对象存储及受保护的上传处理器。不要把对象存储密钥放在前端或仓库中。
+## 原 TinaCloud 连接清理
 
-## 发布前检查
-
-- Actions 构建与部署成功，`out/CNAME` 为 `blog.blfy.cc`。
-- `/admin/index.html` 能登录；修改测试文章时预览同步更新。
-- 保存后仓库出现内容提交，公开文章链接和媒体可以访问。
+网站构建和编辑已不使用 TinaCloud。确认 Sveltia 正常编辑和 Pages 部署后，可在 GitHub 仓库 Settings → Secrets and variables → Actions 删除旧的 `TINA_TOKEN` secret 和 `TINA_CLIENT_ID` variable，并在 GitHub Settings → Applications 中撤销 TinaCloud App 对本仓库的访问；TinaCloud 控制台中的旧项目也可以删除。
