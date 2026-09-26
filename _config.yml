@@ -1,3 +1,13 @@
-theme: jekyll-theme-minimal
 title: BLFY's Blog
-description: Bookmark this to keep an eye on my project updates!
+description: 个人博客
+url: "https://jyh9521.github.io"
+baseurl: ""
+
+theme: minima
+
+markdown: kramdown
+permalink: /:year/:month/:day/:title/
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
