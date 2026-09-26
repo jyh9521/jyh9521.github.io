@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+backend:
+  name: github
+  repo: jyh9521/jyh9521.github.io
+  branch: main
+  auth_methods: [token]
+
+media_folder: /public/uploads
+public_folder: /uploads
+output:
+  omit_empty_optional_fields: true
+
+collections:
+  - name: post
+    label: 文章
+    label_singular: 文章
+    folder: /content/posts
+    extension: md
+    format: yaml-frontmatter
+    preview_path: /posts/{{filename}}/
+    slug:
+      editable: true
+      hint: 请填写英文网址名，例如 bloodrayne-guide
+      pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', '只允许小写英文字母、数字和连字符']
+    fields:
+      - { name: title, label: 标题, widget: string, required: true }
+      - name: date
+        label: 发布日期
+        widget: datetime
+        required: true
+        default: '{{now}}'
+        input_timezone: Asia/Tokyo
+      - { name: description, label: 摘要, widget: text, required: false }
+      - { name: cover, label: 封面图片, widget: image, required: false }
+      - { name: tags, label: 标签, widget: list, required: false }
+      - { name: body, label: 正文, widget: richtext, required: true }
+      - { name: audio, label: 音频文件, widget: file, required: false }
+      - { name: video, label: 视频文件, widget: file, required: false }
+      - { name: attachment, label: 下载附件, widget: file, required: false }
