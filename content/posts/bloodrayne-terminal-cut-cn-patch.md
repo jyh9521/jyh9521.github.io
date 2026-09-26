@@ -1,4 +1,5 @@
 ---
+date: '2026-09-27T03:00:00+09:00'
 title: ' 《吸血莱恩：终极剪辑版》简体中文汉化补丁'
 description: |-
   BloodRayne: Terminal Cut Simplified Chinese Patch
