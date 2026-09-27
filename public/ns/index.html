@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地址发布页</title>
+
+    <!-- Google Fonts - Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- APlayer CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+
+    <style>
+        /* =============================================
+           CSS Custom Properties (Material Design 3)
+           ============================================= */
+        :root {
+            /* Primary palette */
+            --md-primary: #6750A4;
+            --md-on-primary: #FFFFFF;
+            --md-primary-container: #EADDFF;
+            --md-on-primary-container: #21005D;
+
+            /* Secondary palette */
+            --md-secondary: #625B71;
+            --md-on-secondary: #FFFFFF;
+            --md-secondary-container: #E8DEF8;
+            --md-on-secondary-container: #1D192B;
+
+            /* Tertiary palette */
+            --md-tertiary: #7D5260;
+            --md-on-tertiary: #FFFFFF;
+            --md-tertiary-container: #FFD8E4;
+            --md-on-tertiary-container: #31111D;
+
+            /* Surface & Background */
+            --md-surface: #FFFBFE;
+            --md-surface-variant: #E7E0EC;
+            --md-surface-container-low: #F7F2FA;
+            --md-surface-container: #F3EDF7;
+            --md-surface-container-high: #ECE6F0;
+            --md-on-surface: #1C1B1F;
+            --md-on-surface-variant: #49454F;
+            --md-outline: #79747E;
+            --md-outline-variant: #CAC4D0;
+
+            /* Elevation shadows */
+            --md-elevation-1: 0 1px 3px 1px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.3);
+            --md-elevation-2: 0 2px 6px 2px rgba(0,0,0,0.15), 0 1px 2px rgba(0,0,0,0.3);
+            --md-elevation-3: 0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.3);
+
+            /* Shape */
+            --md-shape-medium: 12px;
+            --md-shape-large: 16px;
+            --md-shape-extra-large: 28px;
+
+            /* Motion */
+            --md-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+            --md-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+            --md-motion-duration-medium: 400ms;
+            --md-motion-duration-short: 200ms;
+        }
+
+        /* =============================================
+           Reset & Base Styles
+           ============================================= */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+            background-color: var(--md-surface);
+            color: var(--md-on-surface);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* =============================================
+           Background Gradient
+           ============================================= */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 480px;
+            background: linear-gradient(
+                160deg,
+                var(--md-primary-container) 0%,
+                var(--md-tertiary-container) 50%,
+                var(--md-secondary-container) 100%
+            );
+            z-index: -1;
+            opacity: 0.7;
+        }
+
+        /* Decorative blob */
+        body::after {
+            content: '';
+            position: fixed;
+            top: -120px;
+            right: -120px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--md-primary-container) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.5;
+            animation: floatBlob 12s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatBlob {
+            0%   { transform: translate(0, 0) scale(1); }
+            50%  { transform: translate(-30px, 40px) scale(1.1); }
+            100% { transform: translate(20px, -20px) scale(0.95); }
+        }
+
+        /* =============================================
+           Animations
+           ============================================= */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(32px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.92);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.08); }
+        }
+
+        /* =============================================
+           Layout Container
+           ============================================= */
+        .page-wrapper {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
+        }
+
+        /* =============================================
+           Header / Hero
+           ============================================= */
+        .hero-header {
+            text-align: center;
+            padding: 48px 24px 40px;
+            animation: fadeInUp 0.8s var(--md-motion-easing-emphasized) both;
+        }
+
+        .hero-icon-wrapper {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--md-primary), var(--md-tertiary));
+            margin-bottom: 24px;
+            box-shadow: var(--md-elevation-2);
+            animation: fadeInScale 0.6s var(--md-motion-easing-emphasized) 0.2s both;
+            position: relative;
+        }
+
+        .hero-icon-wrapper::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid var(--md-primary-container);
+            opacity: 0.5;
+        }
+
+        .hero-icon-wrapper .material-icons {
+            font-size: 40px;
+            color: var(--md-on-primary);
+        }
+
+        .hero-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--md-on-surface);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--md-primary), var(--md-tertiary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--md-on-surface-variant);
+            letter-spacing: 0.15px;
+        }
+
+        /* =============================================
+           Material Card
+           ============================================= */
+        .md-card {
+            background: var(--md-surface);
+            border-radius: var(--md-shape-large);
+            padding: 0;
+            margin-bottom: 24px;
+            box-shadow: var(--md-elevation-1);
+            transition:
+                box-shadow var(--md-motion-duration-short) var(--md-motion-easing-standard),
+                transform var(--md-motion-duration-medium) var(--md-motion-easing-emphasized);
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeInUp 0.7s var(--md-motion-easing-emphasized) both;
+        }
+
+        .md-card:nth-child(1) { animation-delay: 0.15s; }
+        .md-card:nth-child(2) { animation-delay: 0.30s; }
+        .md-card:nth-child(3) { animation-delay: 0.45s; }
+
+        .md-card:hover {
+            box-shadow: var(--md-elevation-3);
+            transform: translateY(-4px);
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        /* Card header with icon */
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: var(--md-shape-medium);
+            flex-shrink: 0;
+        }
+
+        .card-icon .material-icons {
+            font-size: 24px;
+        }
+
+        .card-icon--primary {
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+        }
+
+        .card-icon--secondary {
+            background: var(--md-secondary-container);
+            color: var(--md-on-secondary-container);
+        }
+
+        .card-icon--tertiary {
+            background: var(--md-tertiary-container);
+            color: var(--md-on-tertiary-container);
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--md-on-surface);
+            letter-spacing: 0.15px;
+            line-height: 1.4;
+        }
+
+        /* =============================================
+           Description Text Section
+           ============================================= */
+        .description-text {
+            font-size: 0.9375rem;
+            font-weight: 400;
+            color: var(--md-on-surface-variant);
+            line-height: 1.75;
+            letter-spacing: 0.25px;
+            padding: 16px 20px;
+            background: var(--md-surface-container-low);
+            border-radius: var(--md-shape-medium);
+            border-left: 4px solid var(--md-primary);
+            position: relative;
+        }
+
+        /* =============================================
+           Image Section
+           ============================================= */
+        .image-container {
+            width: 100%;
+            min-height: 220px;
+            border-radius: var(--md-shape-medium);
+            background: var(--md-surface-container);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            transition: background-color var(--md-motion-duration-short) var(--md-motion-easing-standard);
+        }
+
+        .image-container:hover {
+            background: var(--md-surface-container-high);
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: var(--md-shape-medium);
+            transition: transform var(--md-motion-duration-medium) var(--md-motion-easing-emphasized);
+        }
+
+        .image-container:hover img {
+            transform: scale(1.02);
+        }
+
+        /* Image placeholder */
+        .image-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 48px 24px;
+            color: var(--md-on-surface-variant);
+        }
+
+        .image-placeholder .material-icons-outlined {
+            font-size: 56px;
+            color: var(--md-outline);
+            opacity: 0.7;
+        }
+
+        .image-placeholder-text {
+            font-size: 0.875rem;
+            font-weight: 400;
+            color: var(--md-outline);
+            letter-spacing: 0.25px;
+        }
+
+        /* =============================================
+           APlayer Style Adaptation
+           ============================================= */
+        #aplayer {
+            max-width: 760px;
+            margin: 0 auto 24px;
+            border-radius: var(--md-shape-large);
+            overflow: hidden;
+            box-shadow: var(--md-elevation-2);
+        }
+
+        /* =============================================
+           Links Section
+           ============================================= */
+        .links-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .link-item {
+            opacity: 0;
+            animation: fadeInUp 0.5s var(--md-motion-easing-emphasized) both;
+        }
+
+        .link-item:nth-child(1) { animation-delay: 0.55s; }
+        .link-item:nth-child(2) { animation-delay: 0.65s; }
+        .link-item:nth-child(3) { animation-delay: 0.75s; }
+        .link-item:nth-child(4) { animation-delay: 0.85s; }
+        .link-item:nth-child(5) { animation-delay: 0.95s; }
+        .link-item:nth-child(6) { animation-delay: 1.05s; }
+
+        .link-anchor {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            border-radius: var(--md-shape-medium);
+            text-decoration: none;
+            color: var(--md-on-surface);
+            background: var(--md-surface);
+            position: relative;
+            overflow: hidden;
+            transition:
+                background var(--md-motion-duration-short) var(--md-motion-easing-standard),
+                box-shadow var(--md-motion-duration-short) var(--md-motion-easing-standard),
+                transform var(--md-motion-duration-short) var(--md-motion-easing-standard);
+            border: 1px solid transparent;
+        }
+
+        .link-anchor:hover {
+            background: var(--md-surface-container-low);
+            border-color: var(--md-outline-variant);
+            box-shadow: var(--md-elevation-1);
+            transform: translateX(4px);
+        }
+
+        .link-anchor:active {
+            background: var(--md-surface-container);
+            transform: translateX(2px) scale(0.99);
+        }
+
+        /* Ripple on links */
+        .link-anchor::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), var(--md-primary-container) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .link-anchor:active::after {
+            opacity: 0.4;
+            transition: opacity 0s;
+        }
+
+        .link-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--md-primary-container);
+            flex-shrink: 0;
+            transition: background var(--md-motion-duration-short) var(--md-motion-easing-standard),
+                        transform var(--md-motion-duration-short) var(--md-motion-easing-standard);
+        }
+
+        .link-anchor:hover .link-icon {
+            background: var(--md-primary);
+            transform: scale(1.05);
+        }
+
+        .link-icon .material-icons {
+            font-size: 22px;
+            color: var(--md-on-primary-container);
+            transition: color var(--md-motion-duration-short) var(--md-motion-easing-standard);
+        }
+
+        .link-anchor:hover .link-icon .material-icons {
+            color: var(--md-on-primary);
+        }
+
+        .link-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .link-label {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            color: var(--md-on-surface);
+            letter-spacing: 0.15px;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .link-description {
+            font-size: 0.8125rem;
+            font-weight: 400;
+            color: var(--md-on-surface-variant);
+            letter-spacing: 0.25px;
+            display: block;
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .link-trailing {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .link-trailing .material-icons {
+            font-size: 20px;
+            color: var(--md-outline);
+            transition: color var(--md-motion-duration-short) var(--md-motion-easing-standard),
+                        transform var(--md-motion-duration-short) var(--md-motion-easing-standard);
+        }
+
+        .link-anchor:hover .link-trailing .material-icons {
+            color: var(--md-primary);
+            transform: translateX(3px);
+        }
+
+        /* =============================================
+           Divider inside cards
+           ============================================= */
+        .md-divider {
+            height: 1px;
+            background: var(--md-outline-variant);
+            margin: 0;
+            opacity: 0.6;
+        }
+
+        /* =============================================
+           Visitor Counter
+           ============================================= */
+        .visitor-counter {
+            text-align: center;
+            padding: 32px 20px;
+            margin-bottom: 0;
+            opacity: 0;
+            animation: fadeInUp 0.8s var(--md-motion-easing-emphasized) 1.0s both;
+        }
+
+        .visitor-counter-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 36px;
+            background: var(--md-surface-container);
+            border-radius: var(--md-shape-extra-large);
+            box-shadow: var(--md-elevation-1);
+            border: 1px solid var(--md-outline-variant);
+            transition:
+                box-shadow var(--md-motion-duration-short) var(--md-motion-easing-standard),
+                transform var(--md-motion-duration-short) var(--md-motion-easing-standard);
+        }
+
+        .visitor-counter-card:hover {
+            box-shadow: var(--md-elevation-2);
+            transform: translateY(-2px);
+        }
+
+        .visitor-counter-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--md-primary), var(--md-tertiary));
+            flex-shrink: 0;
+        }
+
+        .visitor-counter-icon .material-icons {
+            font-size: 24px;
+            color: var(--md-on-primary);
+        }
+
+        .visitor-counter-info {
+            text-align: left;
+        }
+
+        .visitor-counter-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--md-on-surface-variant);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .visitor-counter-number {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--md-primary);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            font-variant-numeric: tabular-nums;
+        }
+
+        @media (max-width: 600px) {
+            .visitor-counter {
+                padding: 24px 12px;
+            }
+
+            .visitor-counter-card {
+                padding: 16px 24px;
+                gap: 12px;
+            }
+
+            .visitor-counter-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .visitor-counter-icon .material-icons {
+                font-size: 20px;
+            }
+
+            .visitor-counter-number {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* =============================================
+           Footer
+           ============================================= */
+        .page-footer {
+            text-align: center;
+            padding: 20px 20px 20px;
+            opacity: 0;
+            animation: fadeInUp 0.8s var(--md-motion-easing-emphasized) 1.2s both;
+        }
+
+        .footer-text {
+            font-size: 0.8125rem;
+            font-weight: 400;
+            color: var(--md-outline);
+            letter-spacing: 0.25px;
+        }
+
+        .footer-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            background: var(--md-surface-container-high);
+            margin-top: 12px;
+        }
+
+        .footer-chip .material-icons {
+            font-size: 16px;
+            color: var(--md-primary);
+        }
+
+        .footer-chip span {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--md-on-surface-variant);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* =============================================
+           Responsive Design
+           ============================================= */
+        @media (max-width: 600px) {
+            .page-wrapper {
+                padding: 24px 12px 40px;
+            }
+
+            .hero-header {
+                padding: 32px 16px 28px;
+            }
+
+            .hero-icon-wrapper {
+                width: 72px;
+                height: 72px;
+            }
+
+            .hero-icon-wrapper .material-icons {
+                font-size: 32px;
+            }
+
+            .hero-title {
+                font-size: 1.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 0.875rem;
+            }
+
+            .card-content {
+                padding: 20px 16px;
+            }
+
+            .card-header {
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+
+            .card-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+            }
+
+            .card-icon .material-icons {
+                font-size: 20px;
+            }
+
+            .card-title {
+                font-size: 1rem;
+            }
+
+            .description-text {
+                font-size: 0.875rem;
+                padding: 14px 16px;
+            }
+
+            .image-container {
+                min-height: 160px;
+            }
+
+            .link-anchor {
+                padding: 14px 16px;
+                gap: 12px;
+            }
+
+            .link-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .link-label {
+                font-size: 0.875rem;
+            }
+
+            .link-description {
+                font-size: 0.75rem;
+            }
+
+            .md-card:hover {
+                transform: translateY(-2px);
+            }
+        }
+
+        @media (min-width: 601px) and (max-width: 960px) {
+            .page-wrapper {
+                max-width: 640px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* =============================================
+           Selection color
+           ============================================= */
+        ::selection {
+            background: var(--md-primary-container);
+            color: var(--md-on-primary-container);
+        }
+
+        /* =============================================
+           Scrollbar (Webkit)
+           ============================================= */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--md-surface);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--md-outline-variant);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--md-outline);
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page-wrapper">
+
+        <!-- ==========================================
+             Hero Header
+             ========================================== -->
+        <header class="hero-header">
+            <div class="hero-icon-wrapper">
+                <span class="material-icons">groups</span>
+            </div>
+            <h1 class="hero-title">你群最新群号</h1>
+            <p class="hero-subtitle">我操怎么群又炸了</p>
+        </header>
+
+        <!-- ==========================================
+             Card 1: Description Text
+             ========================================== -->
+        <article class="md-card">
+            <div class="card-content">
+                <div class="card-header">
+                    <span class="card-icon card-icon--primary">
+                        <span class="material-icons">campaign</span>
+                    </span>
+                    <h2 class="card-title">公告说明</h2>
+                </div>
+                <!-- ✏️ 修改下方文字即可更新描述内容 -->
+                <div class="description-text">
+                    常回家看看🎶回家看看🎵
+                </div>
+            </div>
+        </article>
+
+        <!-- ==========================================
+             Card 2: Image Area
+             ========================================== -->
+        <article class="md-card">
+            <div class="card-content">
+                <div class="card-header">
+                    <span class="card-icon card-icon--secondary">
+                        <span class="material-icons">image</span>
+                    </span>
+                    <h2 class="card-title">群二维码</h2>
+                </div>
+                <!-- 🖼️ 替换方式：删除下方 placeholder，改为 <img src="图片地址" alt="描述" /> -->
+                <div class="image-container">
+                    <img src="/ns/img/qun.jpg" alt="图片">
+                </div>
+            </div>
+        </article>
+
+        <!-- ==========================================
+             APlayer Music Player
+             ========================================== -->
+        <div id="aplayer"></div>
+
+        <!-- ==========================================
+             Visitor Counter
+             ========================================== -->
+        <section class="visitor-counter">
+            <div class="visitor-counter-card">
+                <div class="visitor-counter-icon">
+                    <span class="material-icons">visibility</span>
+                </div>
+                <div class="visitor-counter-info">
+                    <div class="visitor-counter-label">已到访人数</div>
+                    <div class="visitor-counter-number" id="visitorCount">0</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             Footer
+             ========================================== -->
+        <footer class="page-footer">
+            <p class="footer-text">加入收藏夹找到回家的路</p>
+        </footer>
+
+    </main>
+
+    <script>
+        /* =============================================
+           Material Ripple Effect on Link Items
+           ============================================= */
+        document.querySelectorAll('.link-anchor').forEach(function (el) {
+            el.addEventListener('pointermove', function (e) {
+                var rect = el.getBoundingClientRect();
+                var x = ((e.clientX - rect.left) / rect.width) * 100;
+                var y = ((e.clientY - rect.top) / rect.height) * 100;
+                el.style.setProperty('--ripple-x', x + '%');
+                el.style.setProperty('--ripple-y', y + '%');
+            });
+        });
+
+        /* =============================================
+           Visitor Counter Logic (Server-side via PHP)
+           ============================================= */
+        (function () {
+            var el = document.getElementById('visitorCount');
+            if (!el) return;
+
+            fetch('/ns/api/counter')
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    var target = data.count || 0;
+                    var duration = 1200;
+                    var startTime = null;
+                    function animateCount(timestamp) {
+                        if (!startTime) startTime = timestamp;
+                        var progress = Math.min((timestamp - startTime) / duration, 1);
+                        var eased = 1 - Math.pow(1 - progress, 3);
+                        el.textContent = Math.floor(eased * target).toLocaleString();
+                        if (progress < 1) {
+                            requestAnimationFrame(animateCount);
+                        } else {
+                            el.textContent = target.toLocaleString();
+                        }
+                    }
+                    requestAnimationFrame(animateCount);
+                })
+                .catch(function () {
+                    el.textContent = '-';
+                });
+        })();
+
+        /* =============================================
+           Intersection Observer for scroll animations
+           ============================================= */
+        if ('IntersectionObserver' in window) {
+            var cards = document.querySelectorAll('.md-card');
+            var observer = new IntersectionObserver(
+                function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.style.animationPlayState = 'running';
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                },
+                { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+            );
+
+            cards.forEach(function (card) {
+                card.style.animationPlayState = 'paused';
+                observer.observe(card);
+            });
+        }
+    </script>
+
+    <!-- APlayer JS -->
+    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    <script>
+        const ap = new APlayer({
+            container: document.getElementById('aplayer'),
+            mini: false,
+            autoplay: true,
+            lrcType: 0,
+            mutex: true,
+            preload: 'auto',
+            volume: 0.7,
+            audio: [{
+                name: '常回家看看',
+                artist: '陈红',
+                url: '/ns/audio/changhuijiakankan.mp3',
+                cover: '/ns/img/qun.jpg'
+            }]
+        });
+    </script>
+</body>
+</html>
+
