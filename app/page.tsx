@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import { getAllPosts, hasLocalAsset } from '../lib/posts';
 import { DailyPick } from './site-enhancements';
+import Achievements from './achievements';
+import GameShelf from './games/game-shelf';
+import { getGames } from '../lib/games';
 
 export default function Home() {
   const posts = getAllPosts();
@@ -43,5 +46,7 @@ export default function Home() {
         </article>
       )}</div> : <p className="empty-posts">文章即将发布。</p>}
     </section>
+    <section className="container home-games"><div className="section-title"><div><span className="section-kicker">NOW PLAYING</span><h2>Steam 游戏档案</h2></div><Link className="read-more" href="/games/">查看全部 →</Link></div><GameShelf games={getGames()} /></section>
+    <Achievements />
   </main>;
 }

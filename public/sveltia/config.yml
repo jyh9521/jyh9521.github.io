@@ -34,10 +34,36 @@ collections:
       - { name: cover, label: 封面图片, widget: image, required: false }
       - { name: tags, label: 标签, widget: list, required: false }
       - { name: pinned, label: 置顶文章, widget: boolean, required: false, default: false }
-      - { name: body, label: 正文, widget: richtext, required: true, editor_components: [code-block, image, steam-card], hint: "图片描述优先读取 Markdown 图片引号标题（![替代文本](图片地址 \"图片描述\")），没有标题时读取替代文本。Steam 卡片按钮支持 AppID、可选中文标题覆盖和游玩状态（已通关、正在玩、想玩、已评测）。代码块前台支持一键复制。" }
+      - { name: updatedAt, label: 最近更新日期, widget: datetime, required: false, input_timezone: Asia/Tokyo }
+      - { name: updateNote, label: 更新说明, widget: text, required: false }
+      - { name: gameSlug, label: 关联游戏档案, widget: string, required: false, hint: "填入游戏档案文件名（不含 .md），例如 bloodrayne-terminal-cut。" }
+      - { name: body, label: 正文, widget: richtext, required: true, editor_components: [code-block, image, steam-card, image-compare], hint: "图片描述优先读取 Markdown 图片引号标题。Steam 卡片按钮支持 AppID、可选中文标题和状态；截图前后对比按钮可插入两张图并拖动滑块查看差异。代码块支持一键复制。" }
       - { name: audio, label: 音频文件, widget: file, required: false }
       - { name: video, label: 视频文件, widget: file, required: false }
       - { name: attachment, label: 下载附件, widget: file, required: false }
+
+  - name: games
+    label: Steam 游戏档案
+    folder: /content/games
+    extension: md
+    format: yaml-frontmatter
+    create: true
+    slug:
+      editable: true
+      pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', '只允许小写英文字母、数字和连字符']
+    fields:
+      - { name: title, label: 游戏名称, widget: string, required: true }
+      - { name: appid, label: Steam AppID, widget: string, required: true }
+      - { name: status, label: 当前状态, widget: string, required: true, hint: "例如：正在玩、已通关、想玩、已弃坑。" }
+      - { name: summary, label: 简介, widget: text, required: false }
+      - name: events
+        label: 时间线事件
+        widget: list
+        required: false
+        fields:
+          - { name: date, label: 日期, widget: datetime, required: false, input_timezone: Asia/Tokyo }
+          - { name: title, label: 事件, widget: string, required: true }
+          - { name: note, label: 说明, widget: text, required: false }
 
   - name: pages
     label: 页面
