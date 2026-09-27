@@ -15,8 +15,8 @@ export default function Home() {
         <div className="hero-art" aria-hidden="true">
           <div className="hero-orbit orbit-one" />
           <div className="hero-orbit orbit-two" />
-          <div className="hero-tile tile-one">PLAY<span>01</span></div>
-          <div className="hero-tile tile-two">CREATE<span>02</span></div>
+          <div className="hero-tile tile-one">PLAY</div>
+          <div className="hero-tile tile-two">CREATE</div>
           <div className="hero-spark spark-one">✦</div>
           <div className="hero-spark spark-two">✳</div>
         </div>
