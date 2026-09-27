@@ -1,10 +1,14 @@
 ---
-title: ' 《吸血莱恩：终极剪辑版》简体中文汉化补丁'
-date: 2026-09-26T18:00:00.000Z
+title: 《吸血莱恩：终极剪辑版》简体中文汉化补丁
+date: 2026-07-30T12:51:00+09:00
 description: |-
   BloodRayne: Terminal Cut Simplified Chinese Patch
   《吸血莱恩：终极剪辑版》简体中文汉化补丁
-cover: /uploads/ChineseTranslationPatch/56bd1a00a52a14a5087f65afb3ca9ba210119.png@1192w.avif
+cover: /uploads/chinesetranslationpatch/bloodrayne/cover.avif
+tags:
+  - 游戏
+  - 汉化补丁
+pinned: false
 ---
 
 ## 一、项目背景
@@ -83,6 +87,167 @@ STextureEntry::loadOptimized - Out of memory
 
 ## 四、截图
 
-![启动界面](/uploads/ChineseTranslationPatch/7396fb75ab77e2b38079ba03d3659a8b10119.png "启动界面")
+![启动界面](/uploads/chinesetranslationpatch/bloodrayne/%E5%90%AF%E5%8A%A8%E7%95%8C%E9%9D%A2.png "启动界面")
 
-![开场动画的硬字幕](/uploads/ChineseTranslationPatch/cba97993fd89628566aaf75aa2552f9110119.png "开场动画的硬字幕")
+![主菜单](/uploads/chinesetranslationpatch/bloodrayne/%E4%B8%BB%E8%8F%9C%E5%8D%95.png "主菜单")
+
+![开场动画的硬字幕](/uploads/chinesetranslationpatch/bloodrayne/%E5%BC%80%E5%9C%BA%E5%8A%A8%E7%94%BB%E7%9A%84%E7%A1%AC%E5%AD%97%E5%B9%95.png "开场动画的硬字幕")
+
+![按键说明](/uploads/chinesetranslationpatch/bloodrayne/%E6%8C%89%E9%94%AE%E8%AF%B4%E6%98%8E.png "按键说明")
+
+![剧情动画1](/uploads/chinesetranslationpatch/bloodrayne/%E5%89%A7%E6%83%85%E5%8A%A8%E7%94%BB1.png "剧情动画1")
+
+![剧情动画2](/uploads/chinesetranslationpatch/bloodrayne/%E5%89%A7%E6%83%85%E5%8A%A8%E7%94%BB2.png "剧情动画2")
+
+![残留的英文 / 德文](/uploads/chinesetranslationpatch/bloodrayne/%E6%AE%8B%E7%95%99%E7%9A%84%E8%8B%B1%E6%96%87%20%E5%BE%B7%E6%96%87.png "残留的英文 / 德文")
+
+***
+
+## 四、安装和运行
+
+### 1. 准备游戏
+
+需要 Steam 版：
+
+[BloodRayne: Terminal Cut](https://store.steampowered.com/app/1373510/)
+
+建议安装补丁前先在 Steam 里验证一次游戏文件完整性，确保游戏目录是干净的。
+
+### 2. 覆盖汉化包
+
+把汉化包内所有文件复制到游戏根目录，出现同名文件时选择覆盖。
+
+游戏目录一般是：
+
+`C:\Program Files (x86)\Steam\steamapps\common\BloodRayne Terminal Cut`
+
+### 3. 启动游戏
+
+直接启动游戏，选择Japanese即可。 默认就是基于英文文本的简体中文版本。
+
+***
+
+## 五、小工具说明
+
+为了汉化方便，依旧是做了个小工具，随着补丁一起放出。
+
+附带的工具叫：
+
+`BloodRayneCNTool.exe`
+
+功能比较多，简单说一下。
+
+### 1. 切换
+
+![切换](/uploads/chinesetranslationpatch/bloodrayne/%E5%88%87%E6%8D%A2.avif "切换")
+
+毕竟汉化占用了日语的槽位，避免有些玩家想听日语语音，所以干脆做了个切换的功能。
+
+可以分别选择：
+
+文本：
+
+- 基于英文
+- 基于日文
+
+语音：
+
+- 英文语音
+- 日文语音
+
+视频字幕：
+
+- 基于英文
+- 基于日文
+
+点“应用切换”后生效。
+
+根目录默认是基于英文文本。 如果你不知道怎么选，保持默认即可。
+
+### 2. 文本编辑
+
+![文本编辑](/uploads/chinesetranslationpatch/bloodrayne/%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91.avif "文本编辑")
+
+如果你觉得某句翻译不顺眼，或者发现漏翻、换行不舒服、闪退的文本之类的，可以直接在工具里改。
+
+功能包括：
+
+- 下拉框选择英文文本 / 日文文本；
+- 搜索框支持按 ID、原文、中文译文搜索；
+- 表格里可以直接改中文列；
+- 也可以选中一行，在下面的大编辑框里修改；
+- 大编辑框里显示真正的换行，不用手动对着 \n 改；
+- 改过的行会高亮；
+- 可以勾选“只看改过的”复查；
+- 点击“保存译文”写回 TSV；
+- 点击“导入游戏”重新生成并写入游戏。
+
+#### **注意：**
+
+- 不要删除或修改 %1!s!、%2!d! 这类占位符；
+- @@xxx@@ 这类是游戏按钮名通配符，也不要乱动；
+- 工具会检测占位符和字幕单行长度，明显危险的文本会阻止保存；
+- 导入前会自动备份当前 JAPANESE.POD；
+- 导入后会重新打开产物，逐条反读校验，失败则不覆盖游戏目录。
+
+### 3. 游戏字体
+
+![游戏字体](/uploads/chinesetranslationpatch/bloodrayne/%E6%B8%B8%E6%88%8F%E5%AD%97%E4%BD%93.avif "游戏字体")
+
+可以更换游戏的字体。
+
+工具支持：
+
+- 扫描系统已安装字体；
+- 手动选择字体文件；
+- 支持 .ttf / .otf / .ttc；
+- 自动检查当前游戏用到的全部汉字；
+- 缺字会用红字提示，并显示缺字示例；
+- 不缺字才允许应用；
+- 可以恢复默认字体。
+
+#### 注意： 
+
+如果使用微软雅黑之类系统字体生成产物，请只自己使用，不要拿去公开分发。
+
+正式补丁默认字体使用可再分发的开源字体路线。
+
+### 4. 游戏修复
+
+![游戏修复](/uploads/chinesetranslationpatch/bloodrayne/%E6%B8%B8%E6%88%8F%E4%BF%AE%E5%A4%8D.avif "游戏修复")
+
+这里有两个功能：
+
+#### 高 DPI 鼠标修复： 
+
+解决高 DPI 缩放下鼠标左右键不工作的问题。
+
+#### 4GB / LAA 补丁：
+
+ 给 rayne1.exe 开启 Large Address Aware。 首次启用前会备份原版 exe，可以一键恢复。
+
+***
+
+## 六、卸载方法
+
+最简单的方法：
+
+在 Steam 里对游戏执行“验证游戏文件完整性”。
+
+这样会恢复被覆盖的游戏文件。
+
+如果只想撤销工具里的修复：
+
+- 高 DPI 鼠标修复：工具里点恢复；
+- 4GB / LAA 补丁：工具里点恢复原版 exe；
+- 字体：工具里点恢复默认字体。
+
+***
+
+## 七、下载地址
+
+[Google Drive](https://drive.google.com/drive/folders/1FpmyZvV-k7htEoqOBngdFk05sHvxpyRA?usp=sharing)
+
+[百度网盘](https://pan.baidu.com/s/1y_qW8251118PmGrfHLCmZw?pwd=vncg) 提取码: vncg
+
+[GitHub](https://github.com/jyh9521/BloodRayne_CN/releases/)
