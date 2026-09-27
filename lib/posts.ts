@@ -4,6 +4,14 @@ import matter from 'gray-matter';
 
 const postsDir = path.join(process.cwd(), 'content/posts');
 
+export function hasLocalAsset(url: string): boolean {
+  if (/^https?:\/\//.test(url)) return true;
+  if (!url || !url.startsWith('/') || url.startsWith('//')) return false;
+  const relative = url.slice(1);
+  if (relative.split('/').includes('..')) return false;
+  return fs.existsSync(path.join(process.cwd(), 'public', relative));
+}
+
 export type Post = {
   slug: string;
   title: string;

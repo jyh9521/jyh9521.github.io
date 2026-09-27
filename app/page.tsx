@@ -1,7 +1,44 @@
 import Link from 'next/link';
-import { getAllPosts } from '../lib/posts';
+import { getAllPosts, hasLocalAsset } from '../lib/posts';
 
 export default function Home() {
   const posts = getAllPosts();
-  return <main className="container"><section className="hero"><span className="eyebrow">PERSONAL JOURNAL</span><h1>记录所见，<br/>分享所想。</h1><p>欢迎来到 BLFY 的个人博客！</p></section><section><div className="section-title"><h2>最近文章</h2><span>{posts.length} 篇</span></div>{posts.length ? <div className="post-list">{posts.map(post => <article key={post.slug} className="post-card"><time>{post.date.slice(0, 10)}</time><h3><Link href={`/posts/${post.slug}/`}>{post.title}</Link></h3><p>{post.description}</p><span>{post.tags.join(' · ')}</span></article>)}</div> : <p>文章即将发布。</p>}</section></main>;
+  return <main>
+    <section className="hero-shell">
+      <div className="hero container">
+        <div className="hero-copy">
+          <span className="eyebrow"><span className="eyebrow-dot" /> BLFY'S BLOG · 游戏 / 技术 / 日常</span>
+          <h1>好奇心，<br />一直在线<span className="hero-stop">。</span></h1>
+          <p>记录玩过的游戏、做过的项目，还有生活中值得分享的发现。</p>
+          <Link className="hero-button" href="#latest">浏览文章 <span aria-hidden="true">↗</span></Link>
+        </div>
+        <div className="hero-art" aria-hidden="true">
+          <div className="hero-orbit orbit-one" />
+          <div className="hero-orbit orbit-two" />
+          <div className="hero-tile tile-one">PLAY<span>01</span></div>
+          <div className="hero-tile tile-two">CREATE<span>02</span></div>
+          <div className="hero-spark spark-one">✦</div>
+          <div className="hero-spark spark-two">✳</div>
+        </div>
+      </div>
+    </section>
+    <section className="container latest" id="latest">
+      <div className="section-title">
+        <div><span className="section-kicker">DISCOVER</span><h2>最新文章</h2></div>
+        <span className="article-count">共 {posts.length} 篇</span>
+      </div>
+      {posts.length ? <div className="post-grid">{posts.map((post, index) =>
+        <article key={post.slug} className="post-card">
+          <Link className={`post-visual visual-${index % 3}`} href={`/posts/${post.slug}/`} aria-label={`阅读：${post.title}`}>
+            {hasLocalAsset(post.cover) ? <img src={post.cover} alt="" /> : <span className="visual-mark" aria-hidden="true">{index % 2 ? '✦' : '●'}</span>}
+            <span className="visual-arrow" aria-hidden="true">↗</span>
+          </Link>
+          <div className="post-meta"><time>{post.date.slice(0, 10)}</time><span className="meta-line" />{post.tags?.[0] || '博客'}</div>
+          <h3><Link href={`/posts/${post.slug}/`}>{post.title}</Link></h3>
+          {post.description && <p>{post.description}</p>}
+          <Link className="read-more" href={`/posts/${post.slug}/`}>阅读全文 <span aria-hidden="true">→</span></Link>
+        </article>
+      )}</div> : <p className="empty-posts">文章即将发布。</p>}
+    </section>
+  </main>;
 }
