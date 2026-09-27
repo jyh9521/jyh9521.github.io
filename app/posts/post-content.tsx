@@ -4,12 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
-import { remarkSteamCards } from './steam-markdown';
+import { remarkGameCards, remarkSteamCards } from './steam-markdown';
 import { remarkImageCompare } from './compare-markdown';
 import { SteamHoverLink, SteamProductCard } from './steam-product';
 import { remarkHeadingIds, type ArticleImage, type HeadingItem } from './markdown-utils';
 import { ReadingProgress, ShareButton } from '../site-enhancements';
 import ImageCompare from './image-compare';
+import GamePlatformCard from '../games/game-platform-card';
+import type { GamePlatform, GameStore } from '../../lib/game-types';
 
 type Props = { body: string; title: string; headings: HeadingItem[]; images: ArticleImage[]; cover?: ArticleImage; audio?: string; video?: string; attachment?: string };
 
@@ -70,6 +72,15 @@ export default function PostContent({ body, title, headings, images, cover, audi
     },
     h1: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => <h1 {...props}>{children}</h1>,
     a: ({ href = '', children }: { href?: string; children?: React.ReactNode }) => {
+      const game = href.match(/game-card\.invalid\/platform\?([^#]*)/);
+      if (game) {
+        const params = new URLSearchParams(game[1]);
+        const store = params.get('store') as GameStore;
+        if (['steam', 'playstation', 'xbox', 'nintendo'].includes(store)) {
+          const platform: GamePlatform = { store, storeId: params.get('storeId') || '', platform: params.get('platform') || '', region: params.get('region') || '', storeUrl: params.get('storeUrl') || '', cover: params.get('cover') || '', description: params.get('description') || '', releaseDate: params.get('releaseDate') || '', developer: params.get('developer') || '', publisher: params.get('publisher') || '', genres: (params.get('genres') || '').split('/').filter(Boolean), catalogSource: '', catalogId: '' };
+          return <GamePlatformCard gameTitle={params.get('title') || '游戏商品'} platform={platform} />;
+        }
+      }
       const card = href.match(/steam-card\.invalid\/app\/(\d{1,12})(?:\?([^#]*))?/);
       if (card) { const params = new URLSearchParams(card[2] || ''); return <SteamProductCard appid={card[1]} name={params.get('name') || ''} status={params.get('status') || ''} />; }
       const compare = href.match(/image-compare\.invalid\/compare\?([^#]*)/);
@@ -95,7 +106,7 @@ export default function PostContent({ body, title, headings, images, cover, audi
           <a href={`#${encodeURIComponent(heading.id)}`} onClick={() => setTocOpen(false)}>{heading.text}</a>
         </li>)}</ol>
       </nav>}
-      <div className="body"><ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks, remarkHeadingIds, remarkSteamCards, remarkImageCompare]} components={markdownComponents}>{body}</ReactMarkdown></div>
+      <div className="body"><ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks, remarkHeadingIds, remarkSteamCards, remarkGameCards, remarkImageCompare]} components={markdownComponents}>{body}</ReactMarkdown></div>
       {audio && <section className="media"><h2>音频</h2><audio controls src={audio} /></section>}
       {video && <section className="media"><h2>视频</h2><video controls src={video} /></section>}
       {attachment && <p className="media"><a href={attachment} download>下载附件 ↗</a></p>}

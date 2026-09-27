@@ -37,13 +37,13 @@ collections:
       - { name: updatedAt, label: 最近更新日期, widget: datetime, required: false, input_timezone: Asia/Tokyo }
       - { name: updateNote, label: 更新说明, widget: text, required: false }
       - { name: gameSlug, label: 关联游戏档案, widget: string, required: false, hint: "填入游戏档案文件名（不含 .md），例如 bloodrayne-terminal-cut。" }
-      - { name: body, label: 正文, widget: richtext, required: true, editor_components: [code-block, image, steam-card, image-compare], hint: "图片描述优先读取 Markdown 图片引号标题。Steam 卡片按钮支持 AppID、可选中文标题和状态；截图前后对比按钮可插入两张图并拖动滑块查看差异。代码块支持一键复制。" }
+      - { name: body, label: 正文, widget: richtext, required: true, editor_components: [code-block, image, game-card, image-compare], hint: "图片描述优先读取 Markdown 图片引号标题。游戏卡片按钮可插入 Steam、索尼、微软或任天堂商店/平台版本；截图前后对比按钮可插入两张图并拖动滑块查看差异。代码块支持一键复制。" }
       - { name: audio, label: 音频文件, widget: file, required: false }
       - { name: video, label: 视频文件, widget: file, required: false }
       - { name: attachment, label: 下载附件, widget: file, required: false }
 
   - name: games
-    label: Steam 游戏档案
+    label: 游戏档案
     folder: /content/games
     extension: md
     format: yaml-frontmatter
@@ -53,9 +53,27 @@ collections:
       pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', '只允许小写英文字母、数字和连字符']
     fields:
       - { name: title, label: 游戏名称, widget: string, required: true }
-      - { name: appid, label: Steam AppID, widget: string, required: true }
       - { name: status, label: 当前状态, widget: string, required: true, hint: "例如：正在玩、已通关、想玩、已弃坑。" }
       - { name: summary, label: 简介, widget: text, required: false }
+      - name: platforms
+        label: 平台与商店版本
+        widget: list
+        required: false
+        summary: '{{fields.store}} · {{fields.platform}} · {{fields.region}}'
+        fields:
+          - { name: store, label: 商店/平台家族, widget: select, required: true, options: [{ label: Steam, value: steam }, { label: 索尼 PlayStation, value: playstation }, { label: 微软 Xbox, value: xbox }, { label: 任天堂, value: nintendo }] }
+          - { name: platform, label: 具体平台, widget: string, required: true, hint: "例如 PC、PS5、PS Vita、Xbox 360、3DS、Wii U、Switch 2。" }
+          - { name: region, label: 商店地区, widget: string, required: false, hint: "例如全球、香港、台湾、日本；旧平台可填实体版/数字版。" }
+          - { name: storeId, label: 商店商品 ID, widget: string, required: false, hint: "Steam AppID、任天堂商品 ID 等；老平台没有商品页时留空。" }
+          - { name: storeUrl, label: 商店链接, widget: string, required: false, hint: "PS/Xbox 请粘贴具体商品链接；无在线页面时留空。" }
+          - { name: cover, label: 封面图片, widget: image, required: false }
+          - { name: description, label: 版本说明, widget: text, required: false }
+          - { name: releaseDate, label: 发售日期, widget: datetime, required: false, input_timezone: Asia/Tokyo }
+          - { name: developer, label: 开发商, widget: string, required: false }
+          - { name: publisher, label: 发行商, widget: string, required: false }
+          - { name: genres, label: 类型标签, widget: list, required: false }
+          - { name: catalogSource, label: 元数据来源, widget: string, required: false, hint: "可填 IGDB、官方商店、手动录入等。" }
+          - { name: catalogId, label: 来源数据 ID, widget: string, required: false }
       - name: events
         label: 时间线事件
         widget: list
