@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import PostContent from '../post-content';
 import { extractHeadings, extractImages } from '../markdown-utils';
 import { getAllPosts, getPost, hasLocalAsset } from '../../../lib/posts';
+import GiscusComments from '../../comments/giscus-comments';
 
 export function generateStaticParams() {
   return getAllPosts().map(post => ({ slug: post.slug }));
@@ -39,6 +40,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
       {related.length > 0 && <section className="related-posts"><div className="section-title"><div><span className="section-kicker">KEEP READING</span><h2>相关文章</h2></div></div>
         <div className="related-grid">{related.map(item => <Link key={item.slug} className="related-card" href={`/posts/${item.slug}/`}><span>{item.tags.find(tag => post.tags.includes(tag)) || '文章'}</span><strong>{item.title}</strong><small>{item.date.slice(0, 10)} · 阅读文章 →</small></Link>)}</div>
       </section>}
+      <GiscusComments />
       <Link className="article-end" href="/">← 查看更多文章</Link>
     </div>
   </main>;

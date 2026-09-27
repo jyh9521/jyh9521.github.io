@@ -3,6 +3,8 @@ import path from 'node:path';
 import matter from 'gray-matter';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import GitHubContributionCalendar from './github-calendar';
+import GiscusComments from '../comments/giscus-comments';
 
 export const metadata = { title: '关于我' };
 
@@ -16,6 +18,8 @@ export default function About() {
         <div><span className="section-kicker">ABOUT ME</span><h1>{String(data.title || '关于我')}</h1><p>{String(data.intro || '')}</p></div>
       </div>
       <div className="article-content"><div className="body"><ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown></div></div>
+      <GitHubContributionCalendar />
+      <GiscusComments />
     </div>
   </main>;
 }
