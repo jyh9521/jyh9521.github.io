@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 type Product = {
   appid: number; name: string; shortDescription: string; headerImage: string;
@@ -42,9 +42,16 @@ export function SteamProductCard({ appid }: { appid: string }) {
 
 export function SteamHoverLink({ appid, href, children }: { appid: string; href: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const wrap = useRef<HTMLSpanElement>(null);
   const { product, failed } = useProduct(appid, open);
-  return <span className="steam-hover-wrap" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)} onFocus={() => setOpen(true)} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setOpen(false); }}>
-    <a href={href} target="_blank" rel="noreferrer">{children}</a>
+  useEffect(() => {
+    if (!open || window.matchMedia('(hover: hover)').matches) return;
+    const closeOutside = (event: PointerEvent) => { if (!wrap.current?.contains(event.target as Node)) setOpen(false); };
+    document.addEventListener('pointerdown', closeOutside);
+    return () => document.removeEventListener('pointerdown', closeOutside);
+  }, [open]);
+  return <span ref={wrap} className="steam-hover-wrap" onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setOpen(true); }} onMouseLeave={() => { if (window.matchMedia('(hover: hover)').matches) setOpen(false); }} onFocus={() => { if (window.matchMedia('(hover: hover)').matches) setOpen(true); }} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node)) setOpen(false); }}>
+    <a href={href} target="_blank" rel="noreferrer" aria-expanded={open} aria-haspopup="true" onClick={event => { if (window.matchMedia('(hover: none)').matches) { event.preventDefault(); setOpen(value => !value); } }}>{children}</a>
     {open && <span className="steam-hover-popup" role="status">{product ? <ProductDetails product={product} appid={appid} compact /> : failed ? 'Steam 商品信息暂不可用' : '正在加载 Steam 商品信息…'}</span>}
   </span>;
 }
