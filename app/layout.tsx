@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import BackToTop from './back-to-top';
 import './style.css';
 
 export const metadata: Metadata = {
@@ -13,6 +14,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <nav aria-label="主导航"><a href="/">首页</a><a href="/posts/">文章</a><a href="/about/">关于我</a><a href="/ns/" aria-label="NS群群号发布页"><span className="nav-label-full">NS群群号发布页</span><span className="nav-label-short" aria-hidden="true">NS群号</span></a></nav>
     </div></header>
     {children}
+    <BackToTop />
     <footer className="site-footer"><div className="footer-inner"><div><a className="footer-brand" href="/">伯翎飞云<span>.</span></a><p>关于游戏、技术和生活的个人记录。</p></div><div className="footer-links"><a href="/">首页</a><a href="/posts/">文章</a><a href="/about/">关于我</a><a href="/ns/">NS群群号发布页</a><a href="/sveltia/">管理</a></div></div><div className="footer-bottom">© 伯翎飞云 · 保持好奇</div></footer>
   </body></html>;
 }
