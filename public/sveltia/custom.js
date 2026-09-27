@@ -2,6 +2,33 @@
   const register = () => {
     if (!window.CMS?.registerEditorComponent) return false;
     window.CMS.registerEditorComponent({
+      id: 'game-card', label: '游戏卡片', icon: 'sports_esports', trigger: 'button',
+      fields: [
+        { name: 'store', label: '商店/平台家族', widget: 'select', options: [{ label: 'Steam', value: 'steam' }, { label: '索尼 PlayStation', value: 'playstation' }, { label: '微软 Xbox', value: 'xbox' }, { label: '任天堂', value: 'nintendo' }], required: true },
+        { name: 'storeId', label: '商店商品 ID（可选）', widget: 'string', required: false },
+        { name: 'title', label: '游戏标题', widget: 'string', required: true },
+        { name: 'platform', label: '具体平台', widget: 'string', required: true, hint: '例如 PS Vita、Xbox 360、3DS、Wii U。' },
+        { name: 'region', label: '地区', widget: 'string', required: false },
+        { name: 'storeUrl', label: '商店链接（可选）', widget: 'string', required: false },
+        { name: 'cover', label: '封面图片（可选）', widget: 'image', required: false },
+        { name: 'description', label: '简介（可选）', widget: 'text', required: false },
+        { name: 'releaseDate', label: '发售日期（可选）', widget: 'string', required: false },
+        { name: 'developer', label: '开发商（可选）', widget: 'string', required: false },
+        { name: 'publisher', label: '发行商（可选）', widget: 'string', required: false },
+        { name: 'genres', label: '类型（用 / 分隔）', widget: 'string', required: false },
+      ],
+      pattern: /^\[gframe\]([^\]]*)\[\/gframe\]$/,
+      fromBlock: match => {
+        const [store = '', storeId = '', title = '', platform = '', region = '', storeUrl = '', cover = '', description = '', releaseDate = '', developer = '', publisher = '', genres = ''] = match[1].split('|');
+        return { store, storeId, title, platform, region, storeUrl, cover, description, releaseDate, developer, publisher, genres };
+      },
+      toBlock: fields => {
+        const values = ['store', 'storeId', 'title', 'platform', 'region', 'storeUrl', 'cover', 'description', 'releaseDate', 'developer', 'publisher', 'genres'].map(key => String(fields[key] || '').replace(/[|\]]/g, ' ').replace(/\s+/g, ' ').trim());
+        return ['steam', 'playstation', 'xbox', 'nintendo'].includes(values[0]) && values[2] && values[3] ? `[gframe]${values.join('|')}[/gframe]` : '';
+      },
+      toPreview: ({ store = '', title = '', platform = '' }) => `游戏卡片：${title || '待填写'} · ${platform || store}`,
+    });
+    window.CMS.registerEditorComponent({
       id: 'steam-card',
       label: 'Steam 商品卡片',
       icon: 'sports_esports',
