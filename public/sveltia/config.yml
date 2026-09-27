@@ -33,7 +33,19 @@ collections:
       - { name: description, label: 摘要, widget: text, required: false }
       - { name: cover, label: 封面图片, widget: image, required: false }
       - { name: tags, label: 标签, widget: list, required: false }
+      - { name: pinned, label: 置顶文章, widget: boolean, required: false, default: false }
       - { name: body, label: 正文, widget: richtext, required: true }
       - { name: audio, label: 音频文件, widget: file, required: false }
       - { name: video, label: 视频文件, widget: file, required: false }
       - { name: attachment, label: 下载附件, widget: file, required: false }
+
+  - name: pages
+    label: 页面
+    files:
+      - name: about
+        label: 关于我
+        file: /content/about.md
+        fields:
+          - { name: title, label: 标题, widget: string }
+          - { name: intro, label: 简介, widget: text, required: false }
+          - { name: body, label: 正文, widget: richtext }

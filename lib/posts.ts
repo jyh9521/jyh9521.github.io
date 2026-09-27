@@ -19,6 +19,7 @@ export type Post = {
   description: string;
   cover: string;
   tags: string[];
+  pinned: boolean;
   body: string;
   audio: string;
   video: string;
@@ -38,6 +39,7 @@ export function getPost(slug: string): Post | null {
     description: String(data.description || ''),
     cover: String(data.cover || ''),
     tags: Array.isArray(data.tags) ? data.tags.filter(Boolean).map(String) : [],
+    pinned: data.pinned === true,
     body: content,
     audio: String(data.audio || ''),
     video: String(data.video || ''),
@@ -53,5 +55,5 @@ export function getAllPosts(): Post[] {
       const post = getPost(name.slice(0, -3));
       return post ? [post] : [];
     })
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort((a, b) => Number(b.pinned) - Number(a.pinned) || b.date.localeCompare(a.date));
 }
