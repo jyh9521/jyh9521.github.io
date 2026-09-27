@@ -16,8 +16,10 @@ export default {
       });
       if (!upstream.ok) return Response.json({ error: "Steam 商品信息暂不可用" }, { status: 502, headers: { "Cache-Control": "no-store" } });
       const payload = await upstream.json();
-      const data = payload?.[appid]?.data;
-      if (!payload?.[appid]?.success || !data) return Response.json({ error: "未找到该 Steam 商品" }, { status: 404, headers: { "Cache-Control": "no-store" } });
+      // Steam may return redirected app details under a different response key.
+      const entry = Object.values(payload || {}).find(item => item?.success && Number(item.data?.steam_appid) === Number(appid));
+      const data = entry?.data;
+      if (!data) return Response.json({ error: "未找到该 Steam 商品" }, { status: 404, headers: { "Cache-Control": "no-store" } });
       const result = {
         appid: Number(appid),
         name: String(data.name || ""),
