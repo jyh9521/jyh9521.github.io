@@ -48,7 +48,7 @@ export function extractImages(markdown: string): ArticleImage[] {
   const images: ArticleImage[] = [];
   const pattern = /!\[([^\]]*)\]\((\S+?)(?:\s+"([^"]*)")?\)/g;
   for (const match of markdown.matchAll(pattern)) {
-    images.push({ src: match[2], alt: match[1], caption: match[3] || match[1] });
+    images.push({ src: match[2], alt: match[1], caption: match[3] || match[1] || '文章配图' });
   }
   return images;
 }
