@@ -4,9 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { remarkSteamCards } from './steam-markdown';
+import { remarkImageCompare } from './compare-markdown';
 import { SteamHoverLink, SteamProductCard } from './steam-product';
 import { remarkHeadingIds, type ArticleImage, type HeadingItem } from './markdown-utils';
 import { ReadingProgress, ShareButton } from '../site-enhancements';
+import ImageCompare from './image-compare';
 
 type Props = { body: string; title: string; headings: HeadingItem[]; images: ArticleImage[]; cover?: ArticleImage; audio?: string; video?: string; attachment?: string };
 
@@ -15,8 +17,10 @@ export default function PostContent({ body, title, headings, images, cover, audi
   const [activeImage, setActiveImage] = useState<number | null>(null);
   const [activeHeading, setActiveHeading] = useState('');
   const touchStart = useRef<number | null>(null);
+  const coverRef = useRef<HTMLImageElement>(null);
   const galleryImages = cover ? [cover, ...images] : images;
   const galleryOffset = cover ? 1 : 0;
+  const imageGroups = [...new Set(galleryImages.map(image => image.group || '未分类'))].map(group => ({ group, firstIndex: galleryImages.findIndex(image => (image.group || '未分类') === group) }));
   let imageCursor = 0;
 
   useEffect(() => {
@@ -42,6 +46,15 @@ export default function PostContent({ body, title, headings, images, cover, audi
     return () => observer.disconnect();
   }, [headings]);
 
+  useEffect(() => {
+    const image = coverRef.current;
+    if (!image || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let frame = 0;
+    const update = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(() => { if (image.isConnected) image.style.transform = `translateY(${Math.min(18, scrollY * 0.025)}px) scale(1.035)`; }); };
+    update(); addEventListener('scroll', update, { passive: true });
+    return () => { removeEventListener('scroll', update); cancelAnimationFrame(frame); image.style.transform = ''; };
+  }, [cover?.src]);
+
   const currentImage = activeImage === null ? null : galleryImages[activeImage];
   const markdownComponents = {
     pre: ({ children, ...props }: React.HTMLAttributes<HTMLPreElement>) => <CodeBlock {...props}>{children}</CodeBlock>,
@@ -58,6 +71,8 @@ export default function PostContent({ body, title, headings, images, cover, audi
     a: ({ href = '', children }: { href?: string; children?: React.ReactNode }) => {
       const card = href.match(/steam-card\.invalid\/app\/(\d{1,12})(?:\?([^#]*))?/);
       if (card) { const params = new URLSearchParams(card[2] || ''); return <SteamProductCard appid={card[1]} name={params.get('name') || ''} status={params.get('status') || ''} />; }
+      const compare = href.match(/image-compare\.invalid\/compare\?([^#]*)/);
+      if (compare) { const params = new URLSearchParams(compare[1]); return <ImageCompare before={params.get('before') || ''} after={params.get('after') || ''} beforeLabel={params.get('beforeLabel') || '之前'} afterLabel={params.get('afterLabel') || '之后'} />; }
       let steamApp = '';
       try { const url = new URL(href); if (/(^|\.)store\.steampowered\.com$/i.test(url.hostname)) steamApp = url.pathname.match(/^\/app\/(\d+)/)?.[1] || ''; } catch { /* Ignore malformed external links. */ }
       return steamApp ? <SteamHoverLink appid={steamApp} href={href}>{children}</SteamHoverLink> : <a href={href}>{children}</a>;
@@ -67,7 +82,7 @@ export default function PostContent({ body, title, headings, images, cover, audi
   return <>
     <ReadingProgress />
     {cover && <button type="button" className="article-cover-button" onClick={() => setActiveImage(0)} aria-label={`放大封面图片：${cover.caption}`}>
-      <img className="cover" src={cover.src} alt={cover.alt} /><span className="article-image-caption">{cover.caption}</span>
+      <img ref={coverRef} className="cover cover-parallax" src={cover.src} alt={cover.alt} /><span className="article-image-caption">{cover.caption}</span>
     </button>}
     <div className="article-content">
       <div className="article-actions"><span>阅读文章</span><ShareButton title={title} /></div>
@@ -79,7 +94,7 @@ export default function PostContent({ body, title, headings, images, cover, audi
           <a href={`#${encodeURIComponent(heading.id)}`} onClick={() => setTocOpen(false)}>{heading.text}</a>
         </li>)}</ol>
       </nav>}
-      <div className="body"><ReactMarkdown remarkPlugins={[remarkGfm, remarkHeadingIds, remarkSteamCards]} components={markdownComponents}>{body}</ReactMarkdown></div>
+      <div className="body"><ReactMarkdown remarkPlugins={[remarkGfm, remarkHeadingIds, remarkSteamCards, remarkImageCompare]} components={markdownComponents}>{body}</ReactMarkdown></div>
       {audio && <section className="media"><h2>音频</h2><audio controls src={audio} /></section>}
       {video && <section className="media"><h2>视频</h2><video controls src={video} /></section>}
       {attachment && <p className="media"><a href={attachment} download>下载附件 ↗</a></p>}
@@ -91,6 +106,7 @@ export default function PostContent({ body, title, headings, images, cover, audi
       touchStart.current = null;
     }}>
       <button className="lightbox-close" type="button" aria-label="关闭图片浏览器" onClick={() => setActiveImage(null)}><span aria-hidden="true">×</span></button>
+      {imageGroups.length > 1 && <nav className="image-group-nav" aria-label="图片分组">{imageGroups.map(item => <button type="button" key={item.group} className={currentImage.group === item.group ? 'active' : ''} onClick={event => { event.stopPropagation(); setActiveImage(item.firstIndex); }}>{item.group}</button>)}</nav>}
       {galleryImages.length > 1 && <button className="lightbox-arrow lightbox-prev" type="button" aria-label="上一张图片" onClick={event => { event.stopPropagation(); setActiveImage(index => index === null ? null : (index - 1 + galleryImages.length) % galleryImages.length); }}>‹</button>}
       <div className="lightbox-content" onClick={event => event.stopPropagation()}>
         <img src={currentImage.src} alt={currentImage.alt} />

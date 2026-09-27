@@ -16,6 +16,9 @@ export type Post = {
   slug: string;
   title: string;
   date: string;
+  updatedAt: string;
+  updateNote: string;
+  gameSlug: string;
   description: string;
   cover: string;
   tags: string[];
@@ -32,10 +35,14 @@ export function getPost(slug: string): Post | null {
   if (!fs.existsSync(file)) return null;
   const { data, content } = matter(fs.readFileSync(file, 'utf8'));
   const date = data.date instanceof Date ? data.date.toISOString() : String(data.date || '');
+  const updatedAt = data.updatedAt instanceof Date ? data.updatedAt.toISOString() : String(data.updatedAt || '');
   return {
     slug,
     title: String(data.title || slug),
     date,
+    updatedAt,
+    updateNote: String(data.updateNote || ''),
+    gameSlug: String(data.gameSlug || ''),
     description: String(data.description || ''),
     cover: String(data.cover || ''),
     tags: Array.isArray(data.tags) ? data.tags.filter(Boolean).map(String) : [],

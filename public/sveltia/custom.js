@@ -15,6 +15,19 @@
       },
       toPreview: ({ appid = '', name = '', status = '' }) => `Steam 商品卡片（${String(name) || String(appid).replace(/[^0-9]/g, '') || '待填写'}${status ? ` · ${status}` : ''}）`,
     });
+    window.CMS.registerEditorComponent({
+      id: 'image-compare', label: '截图前后对比', icon: 'compare', trigger: 'button',
+      fields: [
+        { name: 'before', label: '之前的图片', widget: 'image', required: true },
+        { name: 'after', label: '之后的图片', widget: 'image', required: true },
+        { name: 'beforeLabel', label: '左侧说明', widget: 'string', required: false },
+        { name: 'afterLabel', label: '右侧说明', widget: 'string', required: false },
+      ],
+      pattern: /^\[compare\]\s*([^|\]]+)\|([^|\]]+)(?:\|([^|\]]*))?(?:\|([^|\]]*))?\s*\[\/compare\]$/,
+      fromBlock: match => ({ before: match[1], after: match[2], beforeLabel: match[3] || '之前', afterLabel: match[4] || '之后' }),
+      toBlock: ({ before = '', after = '', beforeLabel = '之前', afterLabel = '之后' }) => before && after ? `[compare]${String(before).replace(/[|\]]/g, '')}|${String(after).replace(/[|\]]/g, '')}|${String(beforeLabel).replace(/[|\]]/g, '')}|${String(afterLabel).replace(/[|\]]/g, '')}[/compare]` : '',
+      toPreview: ({ beforeLabel = '之前', afterLabel = '之后' }) => `截图对比：${beforeLabel} ↔ ${afterLabel}`,
+    });
     return true;
   };
   if (!register()) {

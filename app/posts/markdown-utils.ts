@@ -1,7 +1,7 @@
 import type { Plugin } from 'unified';
 
 export type HeadingItem = { id: string; text: string; level: number };
-export type ArticleImage = { src: string; alt: string; caption: string };
+export type ArticleImage = { src: string; alt: string; caption: string; group?: string };
 
 function plainHeading(value: string) {
   return value.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/`([^`]*)`/g, '$1')
@@ -47,8 +47,15 @@ export function extractHeadings(markdown: string): HeadingItem[] {
 export function extractImages(markdown: string): ArticleImage[] {
   const images: ArticleImage[] = [];
   const pattern = /!\[([^\]]*)\]\((\S+?)(?:\s+"([^"]*)")?\)/g;
-  for (const match of markdown.matchAll(pattern)) {
-    images.push({ src: match[2], alt: match[1], caption: match[3] || match[1] || '文章配图' });
+  let group = '未分类';
+  let fence = '';
+  for (const line of markdown.split(/\r?\n/)) {
+    const fenceMatch = line.match(/^\s*(```+|~~~+)/);
+    if (fenceMatch) { if (!fence) fence = fenceMatch[1].slice(0, 3); else if (fenceMatch[1].startsWith(fence)) fence = ''; continue; }
+    if (fence) continue;
+    const heading = line.match(/^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$/);
+    if (heading) group = plainHeading(heading[1]);
+    for (const match of line.matchAll(pattern)) images.push({ src: match[2], alt: match[1], caption: match[3] || match[1] || '文章配图', group });
   }
   return images;
 }
