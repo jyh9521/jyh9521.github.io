@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { getAllPosts, hasLocalAsset } from '../lib/posts';
+import { DailyPick } from './site-enhancements';
 
 export default function Home() {
   const posts = getAllPosts();
+  const dated = [...posts].sort((a, b) => a.date.localeCompare(b.date));
   return <main>
     <section className="hero-shell">
       <div className="hero container">
@@ -23,6 +25,7 @@ export default function Home() {
       </div>
     </section>
     <section className="container latest" id="latest">
+      {!!dated.length && <DailyPick items={dated.map(post => ({ href: `/posts/${post.slug}/`, title: post.title }))} />}
       <div className="section-title">
         <div><span className="section-kicker">DISCOVER</span><h2>最新文章</h2></div>
         <span className="article-count">共 {posts.length} 篇</span>

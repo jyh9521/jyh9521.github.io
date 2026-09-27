@@ -22,11 +22,12 @@ function useProduct(appid: string, enabled = true) {
   return { product, failed };
 }
 
-function ProductDetails({ product, appid, compact = false }: { product: Product; appid: string; compact?: boolean }) {
+function ProductDetails({ product, appid, compact = false, overrideName = '', status = '' }: { product: Product; appid: string; compact?: boolean; overrideName?: string; status?: string }) {
   return <span className={`steam-product${compact ? ' steam-product-compact' : ''}`}>
     {product.headerImage && <img className="steam-product-image" src={product.headerImage} alt={`${product.name} 商品图片`} loading="lazy" />}
     <span className="steam-product-info">
-      <strong className="steam-product-name">{product.name}</strong>
+      <strong className="steam-product-name">{overrideName || product.name}</strong>
+      {status && <span className="steam-status">{status}</span>}
       {product.shortDescription && <span className="steam-product-description">{product.shortDescription}</span>}
       <span className="steam-product-meta">{[product.genres.slice(0, 2).join(' / '), product.releaseDate, product.developers.slice(0, 1).join('')].filter(Boolean).join(' · ')}</span>
       <a className="steam-product-cta" href={`https://store.steampowered.com/app/${appid}/`} target="_blank" rel="noreferrer">在Steam查看</a>
@@ -34,10 +35,13 @@ function ProductDetails({ product, appid, compact = false }: { product: Product;
   </span>;
 }
 
-export function SteamProductCard({ appid }: { appid: string }) {
+export function SteamProductCard({ appid, name = '', status = '' }: { appid: string; name?: string; status?: string }) {
   const { product, failed } = useProduct(appid);
-  if (!product) return <span className="steam-card-placeholder">{failed ? `Steam 商品信息暂不可用（${appid}）` : `正在加载 Steam 商品（${appid}）…`}</span>;
-  return <ProductDetails product={product} appid={appid} />;
+  if (!product) return <span className={`steam-card-placeholder${failed ? ' is-error' : ''}`}>
+    <span className="steam-placeholder-copy"><strong>{name || (failed ? `Steam 商品信息暂不可用（${appid}）` : `正在加载 Steam 商品（${appid}）…`)}</strong>{status && <small className="steam-status">{status}</small>}</span>
+    <a className="steam-product-cta" href={`https://store.steampowered.com/app/${appid}/`} target="_blank" rel="noreferrer">在Steam查看</a>
+  </span>;
+  return <ProductDetails product={product} appid={appid} overrideName={name} status={status} />;
 }
 
 export function SteamHoverLink({ appid, href, children }: { appid: string; href: string; children: ReactNode }) {

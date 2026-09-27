@@ -34,7 +34,7 @@ collections:
       - { name: cover, label: 封面图片, widget: image, required: false }
       - { name: tags, label: 标签, widget: list, required: false }
       - { name: pinned, label: 置顶文章, widget: boolean, required: false, default: false }
-      - { name: body, label: 正文, widget: richtext, required: true, editor_components: [code-block, image, steam-card], hint: "图片描述优先读取图片标题（Markdown 图片的引号标题），没有标题时读取替代文本。点击工具栏的 Steam 商品卡片按钮并输入 AppID，即可插入卡片。" }
+      - { name: body, label: 正文, widget: richtext, required: true, editor_components: [code-block, image, steam-card], hint: "图片描述优先读取 Markdown 图片引号标题（![替代文本](图片地址 \"图片描述\")），没有标题时读取替代文本。Steam 卡片按钮支持 AppID、可选中文标题覆盖和游玩状态（已通关、正在玩、想玩、已评测）。代码块前台支持一键复制。" }
       - { name: audio, label: 音频文件, widget: file, required: false }
       - { name: video, label: 视频文件, widget: file, required: false }
       - { name: attachment, label: 下载附件, widget: file, required: false }
