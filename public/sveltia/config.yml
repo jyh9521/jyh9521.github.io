@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
 backend:
   name: github
-  repo: jyh9521/jyh9521.github.io
+  repo: jyh9521/myblog
   branch: main
   auth_methods: [token]
 
