@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 import { remarkSteamCards } from './steam-markdown';
 import { remarkImageCompare } from './compare-markdown';
 import { SteamHoverLink, SteamProductCard } from './steam-product';
@@ -94,7 +95,7 @@ export default function PostContent({ body, title, headings, images, cover, audi
           <a href={`#${encodeURIComponent(heading.id)}`} onClick={() => setTocOpen(false)}>{heading.text}</a>
         </li>)}</ol>
       </nav>}
-      <div className="body"><ReactMarkdown remarkPlugins={[remarkGfm, remarkHeadingIds, remarkSteamCards, remarkImageCompare]} components={markdownComponents}>{body}</ReactMarkdown></div>
+      <div className="body"><ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks, remarkHeadingIds, remarkSteamCards, remarkImageCompare]} components={markdownComponents}>{body}</ReactMarkdown></div>
       {audio && <section className="media"><h2>音频</h2><audio controls src={audio} /></section>}
       {video && <section className="media"><h2>视频</h2><video controls src={video} /></section>}
       {attachment && <p className="media"><a href={attachment} download>下载附件 ↗</a></p>}
