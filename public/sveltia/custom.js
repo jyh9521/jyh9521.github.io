@@ -1,8 +1,9 @@
 (() => {
   const register = () => {
     if (!window.CMS?.registerEditorComponent) return false;
-    if (!window.React?.createElement || !window.CMS.getFieldType?.('select')?.control) return false;
-    const h = window.React.createElement;
+    if (!window.h || !window.createClass || !window.CMS.getFieldType?.('select')?.control) return false;
+    const h = window.h;
+    const createClass = window.createClass;
     const SelectControl = window.CMS.getFieldType('select').control;
     const platformOptions = {
       pc: ['Steam', 'Epic Games Store', 'GOG', 'Ubisoft Connect', 'EA app', 'Battle.net', 'itch.io', 'Microsoft Store', '其他 PC 商店'],
@@ -10,8 +11,8 @@
       xbox: ['Xbox Series X|S', 'Xbox One X', 'Xbox One', 'Xbox 360', '初代 Xbox'],
       nintendo: ['Switch 2', 'Switch', '3DS', 'DS', 'Wii U', 'Wii', 'GameCube', 'Game Boy Advance', 'Game Boy'],
     };
-    class PlatformChoice extends window.React.Component {
-      render() {
+    const PlatformChoice = createClass({
+      render: function () {
         const value = this.props.value || {};
         const family = ['pc', 'playstation', 'xbox', 'nintendo'].includes(value.family) ? value.family : 'pc';
         const options = platformOptions[family].map(platform => ({ label: platform, value: platform }));
@@ -29,14 +30,14 @@
             onChange: next => this.props.onChange(key === 'family' ? { family: next, platform: platformOptions[next][0] } : { ...value, family, platform: next }),
           }),
         )));
-      }
-    }
+      },
+    });
     window.CMS.registerFieldType('game-platform-choice', PlatformChoice);
 
-    class GameStoreMetadata extends window.React.Component {
-      constructor(props) { super(props); this.state = { loading: false, message: '' }; }
-      update(key, value) { this.props.onChange({ ...(this.props.value || {}), [key]: value }); }
-      async fetchMetadata() {
+    const GameStoreMetadata = createClass({
+      getInitialState: function () { return { loading: false, message: '' }; },
+      update: function (key, value) { this.props.onChange({ ...(this.props.value || {}), [key]: value }); },
+      fetchMetadata: async function () {
         const url = String((this.props.value || {}).storeUrl || '').trim();
         if (!url) { this.setState({ message: '先粘贴商店商品链接。' }); return; }
         this.setState({ loading: true, message: '正在读取官方商店资料…' });
@@ -50,8 +51,8 @@
         } catch (error) {
           this.setState({ message: error instanceof Error ? error.message : '抓取失败，请检查链接后重试。' });
         } finally { this.setState({ loading: false }); }
-      }
-      render() {
+      },
+      render: function () {
         const value = this.props.value || {};
         const input = (key, label, type = 'text') => h('label', { key, style: { display: 'grid', gap: '5px' } }, h('span', null, label), h('input', { type, value: value[key] || '', onChange: event => this.update(key, event.target.value), style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }));
         const text = (key, label) => h('label', { key, style: { display: 'grid', gap: '5px' } }, h('span', null, label), h('textarea', { value: value[key] || '', onChange: event => this.update(key, event.target.value), rows: 3, style: { width: '100%', padding: '8px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }));
@@ -66,8 +67,8 @@
           h('label', { style: { display: 'grid', gap: '5px' } }, h('span', null, '游戏类型（可用逗号分隔）'), h('input', { type: 'text', value: Array.isArray(value.genres) ? value.genres.join(', ') : '', onChange: event => this.update('genres', event.target.value.split(/[,，/]/).map(item => item.trim()).filter(Boolean)), style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } })),
           this.state.message && h('small', { role: 'status' }, this.state.message),
         );
-      }
-    }
+      },
+    });
     window.CMS.registerFieldType('game-store-metadata', GameStoreMetadata);
     window.CMS.registerEditorComponent({
       id: 'game-card', label: '游戏卡片', icon: 'sports_esports', trigger: 'button',
