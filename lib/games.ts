@@ -57,7 +57,7 @@ export function getGames(): GameRecord[] {
     const events = Array.isArray(data.events) ? data.events.filter((event: any) => event?.title).map((event: any) => ({
       date: asDate(event.date), title: asText(event.title), note: asText(event.note),
     })).sort((a: GameEvent, b: GameEvent) => b.date.localeCompare(a.date)) : [];
-    return [{ slug, title: asText(data.title || igdbGame.title), status: asText(data.status) || '想玩', summary: asText(data.summary || igdbGame.description), platforms, events }];
+    return [{ slug, igdbId: asText(igdbGame.igdbId), title: asText(data.title || igdbGame.title), status: asText(data.status) || '想玩', summary: asText(data.summary || igdbGame.description), platforms, events }];
   }).sort((a, b) => a.title.localeCompare(b.title, 'zh-CN'));
 }
 
