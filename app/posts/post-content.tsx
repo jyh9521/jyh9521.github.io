@@ -4,14 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
-import { remarkGameCards, remarkSteamCards } from './steam-markdown';
+import { remarkGameFrames } from './game-frames';
 import { remarkImageCompare } from './compare-markdown';
-import { SteamHoverLink, SteamProductCard } from './steam-product';
 import { remarkHeadingIds, type ArticleImage, type HeadingItem } from './markdown-utils';
 import { ReadingProgress, ShareButton } from '../site-enhancements';
 import ImageCompare from './image-compare';
-import GamePlatformCard from '../games/game-platform-card';
-import type { GamePlatform, GameStore } from '../../lib/game-types';
+import IgdbFrameCard from '../games/igdb-frame-card';
 
 type Props = { body: string; title: string; headings: HeadingItem[]; images: ArticleImage[]; cover?: ArticleImage; audio?: string; video?: string; attachment?: string };
 
@@ -72,22 +70,11 @@ export default function PostContent({ body, title, headings, images, cover, audi
     },
     h1: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => <h1 {...props}>{children}</h1>,
     a: ({ href = '', children }: { href?: string; children?: React.ReactNode }) => {
-      const game = href.match(/game-card\.invalid\/platform\?([^#]*)/);
-      if (game) {
-        const params = new URLSearchParams(game[1]);
-        const store = params.get('store') as GameStore;
-        if (['pc', 'steam', 'playstation', 'xbox', 'nintendo'].includes(store)) {
-          const platform: GamePlatform = { store: store === 'steam' ? 'pc' : store, storeId: params.get('storeId') || '', platform: params.get('platform') || (store === 'steam' ? 'Steam' : ''), region: params.get('region') || '', storeUrl: params.get('storeUrl') || '', catalogUrl: '', cover: params.get('cover') || '', description: params.get('description') || '', releaseDate: params.get('releaseDate') || '', developer: params.get('developer') || '', publisher: params.get('publisher') || '', genres: (params.get('genres') || '').split('/').filter(Boolean), catalogSource: '', catalogId: '' };
-          return <GamePlatformCard gameTitle={params.get('title') || '游戏商品'} platform={platform} />;
-        }
-      }
-      const card = href.match(/steam-card\.invalid\/app\/(\d{1,12})(?:\?([^#]*))?/);
-      if (card) { const params = new URLSearchParams(card[2] || ''); return <SteamProductCard appid={card[1]} name={params.get('name') || ''} status={params.get('status') || ''} />; }
+      const game = href.match(/igdb-frame\.invalid\/(p|n|x|s)\?([^#]*)/);
+      if (game) { const params = new URLSearchParams(game[2]); return <IgdbFrameCard frame={game[1]} id={params.get('id') || ''} title={params.get('title') || ''} status={params.get('status') || ''} />; }
       const compare = href.match(/image-compare\.invalid\/compare\?([^#]*)/);
       if (compare) { const params = new URLSearchParams(compare[1]); return <ImageCompare before={params.get('before') || ''} after={params.get('after') || ''} beforeLabel={params.get('beforeLabel') || '之前'} afterLabel={params.get('afterLabel') || '之后'} />; }
-      let steamApp = '';
-      try { const url = new URL(href); if (/(^|\.)store\.steampowered\.com$/i.test(url.hostname)) steamApp = url.pathname.match(/^\/app\/(\d+)/)?.[1] || ''; } catch { /* Ignore malformed external links. */ }
-      return steamApp ? <SteamHoverLink appid={steamApp} href={href}>{children}</SteamHoverLink> : <a href={href}>{children}</a>;
+      return <a href={href}>{children}</a>;
     },
   };
 
@@ -106,7 +93,7 @@ export default function PostContent({ body, title, headings, images, cover, audi
           <a href={`#${encodeURIComponent(heading.id)}`} onClick={() => setTocOpen(false)}>{heading.text}</a>
         </li>)}</ol>
       </nav>}
-      <div className="body"><ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks, remarkHeadingIds, remarkSteamCards, remarkGameCards, remarkImageCompare]} components={markdownComponents}>{body}</ReactMarkdown></div>
+      <div className="body"><ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks, remarkHeadingIds, remarkGameFrames, remarkImageCompare]} components={markdownComponents}>{body}</ReactMarkdown></div>
       {audio && <section className="media"><h2>音频</h2><audio controls src={audio} /></section>}
       {video && <section className="media"><h2>视频</h2><video controls src={video} /></section>}
       {attachment && <p className="media"><a href={attachment} download>下载附件 ↗</a></p>}

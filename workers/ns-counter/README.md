@@ -1,13 +1,25 @@
-# Blog Worker setup
+# Blog API Worker
 
-The Nintendo metadata lookup uses the Nintendo NSUID in the product URL and the NTPrices catalog. The API key stays in a Worker secret; do not put it in `wrangler.toml`, source files, or blog content.
+This Worker serves the visit counter and the IGDB proxy used by the static blog and Sveltia CMS. IGDB/Twitch credentials stay in Cloudflare Worker Secrets; the browser only calls the blog's Worker endpoints.
 
-## Configure the catalog key
+## IGDB credentials
 
-1. Request an NTPrices API key from [the developer page](https://ntprices.com/developers). Their current legacy v1 response includes product name, cover art, description, release date, developer, publisher, and genres by NSUID. The provider documents v1 retirement for 2026-12-01; migrate this adapter to an equivalent v2 dataset before that date.
-2. From this directory, run `wrangler secret put NTPRICES_API_KEY` and enter the key at the prompt.
-3. Deploy this Worker with `wrangler deploy`.
+1. Create a Twitch Developer application with **Client Type: Confidential**, then copy its Client ID and generate a Client Secret. IGDB v4 authenticates through Twitch application credentials.
+2. From this directory, store both values as encrypted Worker secrets:
 
-NTPrices Free/Indie plans require a source link wherever their data is shown. The game card therefore displays a “资料由 NTPrices 提供” link when this source is used. The Worker caches successful lookups for one day to reduce repeat requests.
+   ```powershell
+   wrangler secret put TWITCH_CLIENT_ID
+   wrangler secret put TWITCH_CLIENT_SECRET
+   ```
 
-Without the secret, Nintendo lookup returns an explicit configuration error; it does not return blank metadata as though the fetch succeeded.
+3. Deploy the Worker and its SQLite-backed global IGDB request coordinator:
+
+   ```powershell
+   wrangler deploy
+   ```
+
+The IGDB proxy offers `GET /ns/api/igdb/search?q=...` and `GET /ns/api/igdb/game?id=...`. Search results are cached for one hour and selected-game details for one day. A single global Durable Object serializes upstream requests with at least 275 ms between IGDB calls, below IGDB's documented four-requests-per-second limit. Twitch access tokens stay in Durable Object memory and are refreshed before expiry.
+
+The metadata editor preserves non-empty existing fields on the first import. It records fields manually edited in the CMS and leaves those overrides intact if another IGDB Game ID is selected. Clear an override explicitly before allowing IGDB data to fill that field.
+
+The D1 visit counter continues to use binding `DB` and `GET /ns/api/counter`.
