@@ -31,7 +31,7 @@
         )));
       }
     }
-    window.CMS.registerFieldType('game-platform-choice', PlatformChoice, null, { type: 'object', properties: { family: { type: 'string' }, platform: { type: 'string' } } });
+    window.CMS.registerFieldType('game-platform-choice', PlatformChoice);
 
     class GameStoreMetadata extends window.React.Component {
       constructor(props) { super(props); this.state = { loading: false, message: '' }; }
@@ -68,7 +68,7 @@
         );
       }
     }
-    window.CMS.registerFieldType('game-store-metadata', GameStoreMetadata, null, { type: 'object', properties: { storeUrl: { type: 'string' }, cover: { type: 'string' }, description: { type: 'string' }, releaseDate: { type: 'string' }, developer: { type: 'string' }, publisher: { type: 'string' }, genres: { type: 'array' } } });
+    window.CMS.registerFieldType('game-store-metadata', GameStoreMetadata);
     window.CMS.registerEditorComponent({
       id: 'game-card', label: '游戏卡片', icon: 'sports_esports', trigger: 'button',
       fields: [
