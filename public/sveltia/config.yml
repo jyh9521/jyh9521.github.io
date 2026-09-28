@@ -37,7 +37,7 @@ collections:
       - { name: updatedAt, label: 最近更新日期, widget: datetime, type: date, required: false }
       - { name: updateNote, label: 更新说明, widget: text, required: false }
       - { name: gameSlug, label: 关联游戏档案, widget: string, required: false, hint: "填入游戏档案文件名（不含 .md），例如 bloodrayne-terminal-cut。" }
-      - { name: body, label: 正文, widget: richtext, required: true, editor_components: [code-block, image, game-card, image-compare], hint: "图片描述优先读取 Markdown 图片引号标题。游戏卡片按钮可插入 Steam、索尼、微软或任天堂商店/平台版本；截图前后对比按钮可插入两张图并拖动滑块查看差异。代码块支持一键复制。" }
+      - { name: body, label: 正文, widget: richtext, required: true, editor_components: [code-block, image, pframe-card, nframe-card, xframe-card, sframe-card, image-compare], hint: "图片描述优先读取 Markdown 图片引号标题。平台游戏卡片按 IGDB Game ID 加载资料；先在游戏库搜索选择 IGDB 游戏，再将其 ID 填入 pframe/nframe/xframe/sframe 卡片。截图前后对比按钮可插入两张图并拖动滑块查看差异。代码块支持一键复制。" }
       - { name: audio, label: 音频文件, widget: file, required: false }
       - { name: video, label: 视频文件, widget: file, required: false }
       - { name: attachment, label: 下载附件, widget: file, required: false }
@@ -52,21 +52,17 @@ collections:
       editable: true
       pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', '只允许小写英文字母、数字和连字符']
     fields:
-      - { name: title, label: 游戏名称, widget: string, required: true }
+      - { name: title, label: 手动名称覆盖（优先于 IGDB）, widget: string, required: false }
       - { name: status, label: 当前状态, widget: string, required: true, hint: "例如：正在玩、已通关、想玩、已弃坑。" }
       - { name: summary, label: 简介, widget: text, required: false }
+      - { name: igdbGame, label: IGDB 游戏资料（搜索并选择后自动填入，可手动修改）, widget: igdb-game-metadata, required: false }
       - name: platforms
-        label: 平台与商店版本
+        label: 平台卡片样式（可选；游戏资料统一来自 IGDB）
         widget: list
         required: false
-        summary: '{{fields.store}} · {{fields.platform}} · {{fields.region}}'
+        summary: '{{fields.platformChoice.platform}}'
         fields:
           - { name: platformChoice, label: 平台家族与具体平台, widget: game-platform-choice, required: true }
-          - { name: region, label: 商店地区, widget: string, required: false, hint: "例如全球、香港、台湾、日本；旧平台可填实体版/数字版。" }
-          - { name: storeId, label: 商店商品 ID, widget: string, required: false, hint: "Steam AppID、任天堂商品 ID 等；老平台没有商品页时留空。" }
-          - { name: metadata, label: 商店/IGDB 资料（粘贴链接后可自动抓取）, widget: game-store-metadata, required: false }
-          - { name: catalogSource, label: 元数据来源, widget: string, required: false, hint: "可填 IGDB、官方商店、手动录入等。" }
-          - { name: catalogId, label: 来源数据 ID, widget: string, required: false }
       - name: events
         label: 时间线事件
         widget: list

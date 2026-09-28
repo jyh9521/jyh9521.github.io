@@ -10,3 +10,11 @@ database_id = "0c74164d-d224-420b-bebc-af05b8648073"
 [route]
 pattern = "blog.blfy.cc/ns/api/*"
 zone_name = "blfy.cc"
+
+[[durable_objects.bindings]]
+name = "IGDB_API"
+class_name = "IgdbApi"
+
+[exports.IgdbApi]
+type = "durable-object"
+storage = "sqlite"
