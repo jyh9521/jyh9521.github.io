@@ -65,7 +65,11 @@
           text('description', '游戏简介'),
           h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '10px' } }, input('releaseDate', '发售日期', 'date'), input('developer', '开发商'), input('publisher', '发行商')),
           h('label', { style: { display: 'grid', gap: '5px' } }, h('span', null, '游戏类型（可用逗号分隔）'), h('input', { type: 'text', value: Array.isArray(value.genres) ? value.genres.join(', ') : '', onChange: event => this.update('genres', event.target.value.split(/[,，/]/).map(item => item.trim()).filter(Boolean)), style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } })),
-          this.state.message && h('small', { role: 'status' }, this.state.message),
+          this.state.message && h('div', {
+            role: this.state.message.startsWith('资料已填入') ? 'status' : 'alert',
+            'aria-live': 'polite',
+            style: { padding: '9px 12px', borderRadius: '6px', border: `1px solid ${this.state.message.startsWith('资料已填入') ? '#2e7d32' : '#b7791f'}`, background: this.state.message.startsWith('资料已填入') ? 'rgba(46,125,50,.12)' : 'rgba(183,121,31,.12)' },
+          }, this.state.message),
         );
       },
     });
