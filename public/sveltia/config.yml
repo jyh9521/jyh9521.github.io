@@ -52,10 +52,10 @@ collections:
       editable: true
       pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', '只允许小写英文字母、数字和连字符']
     fields:
-      - { name: title, label: 手动名称覆盖（优先于 IGDB）, widget: string, required: false }
+      - { name: title, label: 手动名称覆盖（优先于 IGDB）, widget: string, required: false, hint: "关联始终使用下方永久保存的 IGDB Game ID；改中文名称或 IGDB 更新名称都不会改变关联。" }
       - { name: status, label: 当前状态, widget: string, required: true, hint: "例如：正在玩、已通关、想玩、已弃坑。" }
       - { name: summary, label: 简介, widget: text, required: false }
-      - { name: igdbGame, label: IGDB 游戏资料（搜索并选择后自动填入，可手动修改）, widget: igdb-game-metadata, required: false }
+      - { name: igdbGame, label: IGDB 关联与资料（Game ID 为永久关联标识）, widget: igdb-game-metadata, required: true, hint: "创建游戏档案前先搜索并选择 IGDB 游戏。Game ID 固定作为关联键，名称变化不会影响关联。" }
       - name: platforms
         label: 平台卡片样式（可选；游戏资料统一来自 IGDB）
         widget: list

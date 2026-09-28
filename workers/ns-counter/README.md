@@ -20,6 +20,6 @@ This Worker serves the visit counter and the IGDB proxy used by the static blog 
 
 The IGDB proxy offers `GET /ns/api/igdb/search?q=...` and `GET /ns/api/igdb/game?id=...`. Search results are cached for one hour and selected-game details for one day. A single global Durable Object serializes upstream requests with at least 275 ms between IGDB calls, below IGDB's documented four-requests-per-second limit. Twitch access tokens stay in Durable Object memory and are refreshed before expiry.
 
-The metadata editor preserves non-empty existing fields on the first import. It records fields manually edited in the CMS and leaves those overrides intact if another IGDB Game ID is selected. Clear an override explicitly before allowing IGDB data to fill that field.
+The selected IGDB Game ID is stored with each game as its permanent external identity; display names and translated title overrides do not participate in lookup. The metadata editor preserves non-empty existing fields on the first import. It records fields manually edited in the CMS and leaves those overrides intact if another IGDB Game ID is selected. Clear an override explicitly before allowing IGDB data to fill that field.
 
 The D1 visit counter continues to use binding `DB` and `GET /ns/api/counter`.

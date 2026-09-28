@@ -13,7 +13,7 @@ export type GamePlatform = {
   catalogId: string;
 };
 export type GameEvent = { date: string; title: string; note: string };
-export type GameRecord = { slug: string; title: string; status: string; summary: string; platforms: GamePlatform[]; events: GameEvent[] };
+export type GameRecord = { slug: string; igdbId: string; title: string; status: string; summary: string; platforms: GamePlatform[]; events: GameEvent[] };
 
 export const gameStoreLabels: Record<GameStore, string> = {
   pc: 'PC', playstation: 'PlayStation', xbox: 'Xbox', nintendo: 'Nintendo',

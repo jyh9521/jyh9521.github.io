@@ -63,13 +63,13 @@
           const game = await response.json();
           if (!response.ok) throw new Error(game.error || `读取失败（${response.status}）`);
           const current = this.props.value || {};
-          const importedBefore = Boolean(current.sourceGameId);
+          const importedBefore = Boolean(current.igdbId || current.sourceGameId);
           const manualFields = new Set(current.manualFields || []);
           if (!importedBefore) for (const key of ['title', 'cover', 'description', 'releaseDate', 'developer', 'platforms']) {
             const hasValue = Array.isArray(current[key]) ? current[key].length > 0 : Boolean(String(current[key] || '').trim());
             if (hasValue) manualFields.add(key);
           }
-          const next = { ...current, igdbId: String(game.id), slug: game.slug || '', sourceGameId: String(game.id), manualFields: [...manualFields] };
+          const next = { ...current, igdbId: String(game.id), slug: game.slug || '', manualFields: [...manualFields] };
           for (const key of ['title', 'cover', 'description', 'releaseDate', 'developer', 'platforms']) {
             if (manualFields.has(key)) continue;
             const hasValue = Array.isArray(current[key]) ? current[key].length > 0 : Boolean(String(current[key] || '').trim());
@@ -94,7 +94,7 @@
             key: item.id, type: 'button', disabled: this.state.loading, onClick: () => this.selectGame(item.id),
             style: { display: 'grid', gridTemplateColumns: '52px minmax(0,1fr)', gap: '10px', textAlign: 'left', padding: '8px', cursor: 'pointer', color: 'inherit', background: 'transparent', border: '1px solid #68707a', borderRadius: '6px' },
           }, item.cover && h('img', { src: item.cover, alt: '', style: { width: '52px', height: '68px', objectFit: 'cover' } }), h('span', null, h('strong', null, item.title), h('br'), `${item.year || '年份未知'} · ${(item.platforms || []).join('、') || '平台未知'} · IGDB ${item.id}`)))),
-          input('igdbId', 'IGDB Game ID'),
+          h('label', { style: { display: 'grid', gap: '5px' } }, h('span', null, '永久关联标识 · IGDB Game ID'), h('input', { type: 'text', value: value.igdbId || '', readOnly: true, placeholder: '搜索并选择游戏后自动固定', style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } })),
           input('title', '游戏名称'),
           input('cover', '封面图片 URL'),
           h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '10px' } }, input('releaseDate', '首次发售日期', 'date'), input('developer', '开发商')),
