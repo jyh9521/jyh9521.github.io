@@ -4,29 +4,40 @@ import matter from 'gray-matter';
 import type { GameEvent, GamePlatform, GameRecord, GameStore } from './game-types';
 
 const gamesDir = path.join(process.cwd(), 'content/games');
-const stores = new Set<GameStore>(['steam', 'playstation', 'xbox', 'nintendo']);
+const stores = new Set<GameStore>(['pc', 'steam', 'playstation', 'xbox', 'nintendo']);
 const asText = (value: unknown) => String(value ?? '').trim();
-const asDate = (value: unknown) => value instanceof Date ? value.toISOString().slice(0, 10) : asText(value).slice(0, 10);
+const asDate = (value: unknown) => value instanceof Date
+  ? new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(value)
+  : asText(value).slice(0, 10);
 
 function parsePlatform(record: any): GamePlatform | null {
-  const store = asText(record?.store).toLowerCase() as GameStore;
+  const choice = record?.platformChoice || {};
+  const family = asText(choice.family).toLowerCase();
+  const legacyStore = asText(record?.store).toLowerCase();
+  const store = (family || (legacyStore === 'steam' ? 'pc' : legacyStore)) as GameStore;
   if (!stores.has(store)) return null;
-  const storeUrl = asText(record.storeUrl);
-  const safeUrl = /^https?:\/\//i.test(storeUrl) ? storeUrl : '';
+  const metadata = record?.metadata || record;
+  const submittedUrl = asText(metadata.storeUrl);
+  const safeSubmittedUrl = /^https:\/\//i.test(submittedUrl) ? submittedUrl : '';
+  const metadataSource = asText(record.catalogSource || metadata.catalogSource);
+  const isIgdbUrl = /(^|\.)igdb\.com$/i.test((() => { try { return new URL(safeSubmittedUrl).hostname; } catch { return ''; } })()) || metadataSource.toLowerCase().includes('igdb');
+  const safeUrl = isIgdbUrl ? '' : safeSubmittedUrl;
+  const platform = asText(choice.platform || (legacyStore === 'steam' && asText(record.platform).toLowerCase() === 'pc' ? 'Steam' : record.platform) || (store === 'steam' ? 'Steam' : ''));
   return {
     store,
-    platform: asText(record.platform),
+    platform,
     region: asText(record.region),
-    storeId: asText(record.storeId),
+    storeId: asText(record.storeId || metadata.storeId || (store === 'pc' && /^(steam|steam store)$/i.test(platform) ? safeSubmittedUrl.match(/\/app\/(\d{1,12})(?:\/|$)/)?.[1] : '')),
     storeUrl: safeUrl,
-    cover: asText(record.cover),
-    description: asText(record.description),
-    developer: asText(record.developer),
-    publisher: asText(record.publisher),
-    releaseDate: asDate(record.releaseDate),
-    genres: Array.isArray(record.genres) ? record.genres.map(asText).filter(Boolean) : [],
-    catalogSource: asText(record.catalogSource),
-    catalogId: asText(record.catalogId),
+    catalogUrl: isIgdbUrl ? safeSubmittedUrl : asText(record.catalogUrl),
+    cover: asText(metadata.cover),
+    description: asText(metadata.description),
+    developer: asText(metadata.developer),
+    publisher: asText(metadata.publisher),
+    releaseDate: asDate(metadata.releaseDate),
+    genres: Array.isArray(metadata.genres) ? metadata.genres.map(asText).filter(Boolean) : [],
+    catalogSource: metadataSource,
+    catalogId: asText(record.catalogId || metadata.catalogId),
   };
 }
 
@@ -40,8 +51,8 @@ export function getGames(): GameRecord[] {
     const platforms = Array.isArray(data.platforms) ? data.platforms.map(parsePlatform).filter((item): item is GamePlatform => Boolean(item)) : [];
     // Read old Steam-only records so existing dossiers keep working during/after migration.
     if (!platforms.length && /^\d{1,12}$/.test(asText(data.appid))) platforms.push({
-      store: 'steam', platform: 'PC', region: 'Global', storeId: asText(data.appid),
-      storeUrl: `https://store.steampowered.com/app/${asText(data.appid)}/`, cover: '', description: '',
+      store: 'pc', platform: 'Steam', region: 'Global', storeId: asText(data.appid),
+      storeUrl: `https://store.steampowered.com/app/${asText(data.appid)}/`, catalogUrl: '', cover: '', description: '',
       developer: '', publisher: '', releaseDate: '', genres: [], catalogSource: '', catalogId: '',
     });
 

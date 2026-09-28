@@ -3,6 +3,9 @@ import path from 'node:path';
 import matter from 'gray-matter';
 
 const postsDir = path.join(process.cwd(), 'content/posts');
+const formatDate = (value: unknown) => value instanceof Date
+  ? new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(value)
+  : String(value || '').slice(0, 10);
 
 export function hasLocalAsset(url: string): boolean {
   if (/^https?:\/\//.test(url)) return true;
@@ -34,8 +37,8 @@ export function getPost(slug: string): Post | null {
   const file = path.join(postsDir, `${slug}.md`);
   if (!fs.existsSync(file)) return null;
   const { data, content } = matter(fs.readFileSync(file, 'utf8'));
-  const date = data.date instanceof Date ? data.date.toISOString() : String(data.date || '');
-  const updatedAt = data.updatedAt instanceof Date ? data.updatedAt.toISOString() : String(data.updatedAt || '');
+  const date = formatDate(data.date);
+  const updatedAt = formatDate(data.updatedAt);
   return {
     slug,
     title: String(data.title || slug),

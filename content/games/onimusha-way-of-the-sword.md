@@ -2,17 +2,17 @@
 title: 鬼武者：剑之道
 status: 已通关
 platforms:
-  - store: playstation
-    platform: PS5 Pro
+  - platformChoice:
+      family: playstation
+      platform: PS5 Pro
     region: 香港
-    storeUrl: https://www.playstation.com/zh-hans-hk/games/onimusha-way-of-the-sword/
-    cover: /uploads/gamefile/onimusha-way-of-the-sword.avif
-    releaseDate: 2026-09-04T00:00:00+09:00
-    developer: Capcom
-    publisher: Capcom
-    genres:
-      - 动作
-      - ARPG
+    metadata:
+      storeUrl: https://www.playstation.com/zh-hans-hk/games/onimusha-way-of-the-sword/
+      cover: /uploads/gamefile/onimusha-way-of-the-sword.avif
+      releaseDate: 2026-09-04
+      developer: Capcom
+      publisher: Capcom
+      genres: [动作, ARPG]
     catalogSource: 官方商店
 events:
   - date: 2026-09-05T00:00:00+09:00
