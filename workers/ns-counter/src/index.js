@@ -43,6 +43,12 @@ export default {
         const finalUrl = new URL(response.url || requested.href);
         if (!response.ok || !hostAllowed(finalUrl.hostname)) throw new Error("官方商店页面暂时无法读取，请检查链接或稍后重试。");
         const html = await response.text();
+        // Nintendo's store currently responds to non-browser requests with a
+        // JavaScript/cookie challenge and a 200 status, not product metadata.
+        // Detect it explicitly so the CMS never reports a blank successful fetch.
+        if (requested.hostname === "store-jp.nintendo.com" && /navigator\.cookieEnabled|\?c=ncl|cookietest=/.test(html)) {
+          throw new Error("任天堂商店返回了浏览器验证页，暂时没有可抓取的商品资料。请稍后重试，或先手动填写资料。");
+        }
         const decode = (value) => String(value || "").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">" ).replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code))).replace(/&#x([\da-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16))).trim();
         const metas = {};
         for (const tag of html.matchAll(/<meta\b[^>]*>/gi)) {
