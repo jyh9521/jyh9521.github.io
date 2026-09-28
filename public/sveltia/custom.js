@@ -1,6 +1,74 @@
 (() => {
   const register = () => {
     if (!window.CMS?.registerEditorComponent) return false;
+    if (!window.React?.createElement || !window.CMS.getFieldType?.('select')?.control) return false;
+    const h = window.React.createElement;
+    const SelectControl = window.CMS.getFieldType('select').control;
+    const platformOptions = {
+      pc: ['Steam', 'Epic Games Store', 'GOG', 'Ubisoft Connect', 'EA app', 'Battle.net', 'itch.io', 'Microsoft Store', '其他 PC 商店'],
+      playstation: ['PS5 Pro', 'PS5', 'PS4 Pro', 'PS4', 'PS3', 'PS Vita', 'PSP', 'PS2', 'PS1'],
+      xbox: ['Xbox Series X|S', 'Xbox One X', 'Xbox One', 'Xbox 360', '初代 Xbox'],
+      nintendo: ['Switch 2', 'Switch', '3DS', 'DS', 'Wii U', 'Wii', 'GameCube', 'Game Boy Advance', 'Game Boy'],
+    };
+    class PlatformChoice extends window.React.Component {
+      render() {
+        const value = this.props.value || {};
+        const family = ['pc', 'playstation', 'xbox', 'nintendo'].includes(value.family) ? value.family : 'pc';
+        const options = platformOptions[family].map(platform => ({ label: platform, value: platform }));
+        const platform = options.some(option => option.value === value.platform) ? value.platform : options[0].value;
+        const choices = [
+          ['平台家族', 'family', [{ label: 'PC', value: 'pc' }, { label: '索尼 PlayStation', value: 'playstation' }, { label: '微软 Xbox', value: 'xbox' }, { label: '任天堂', value: 'nintendo' }]],
+          ['具体商店/主机', 'platform', options],
+        ];
+        return h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: '12px' } }, choices.map(([label, key, choices]) => h('label', { key, style: { display: 'grid', gap: '6px' } },
+          h('span', null, label),
+          h(SelectControl, {
+            field: { name: `${this.props.forID}-${key}`, options: choices, dropdown_threshold: 1 },
+            value: key === 'family' ? family : platform,
+            forID: `${this.props.forID}-${key}`,
+            onChange: next => this.props.onChange(key === 'family' ? { family: next, platform: platformOptions[next][0] } : { ...value, family, platform: next }),
+          }),
+        )));
+      }
+    }
+    window.CMS.registerFieldType('game-platform-choice', PlatformChoice, null, { type: 'object', properties: { family: { type: 'string' }, platform: { type: 'string' } } });
+
+    class GameStoreMetadata extends window.React.Component {
+      constructor(props) { super(props); this.state = { loading: false, message: '' }; }
+      update(key, value) { this.props.onChange({ ...(this.props.value || {}), [key]: value }); }
+      async fetchMetadata() {
+        const url = String((this.props.value || {}).storeUrl || '').trim();
+        if (!url) { this.setState({ message: '先粘贴商店商品链接。' }); return; }
+        this.setState({ loading: true, message: '正在读取官方商店资料…' });
+        try {
+          const endpoint = `https://blog.blfy.cc/ns/api/game-metadata?url=${encodeURIComponent(url)}`;
+          const response = await fetch(endpoint);
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || `抓取失败（${response.status}）`);
+          this.props.onChange({ ...(this.props.value || {}), ...result });
+          this.setState({ message: '资料已填入，可检查后保存。' });
+        } catch (error) {
+          this.setState({ message: error instanceof Error ? error.message : '抓取失败，请检查链接后重试。' });
+        } finally { this.setState({ loading: false }); }
+      }
+      render() {
+        const value = this.props.value || {};
+        const input = (key, label, type = 'text') => h('label', { key, style: { display: 'grid', gap: '5px' } }, h('span', null, label), h('input', { type, value: value[key] || '', onChange: event => this.update(key, event.target.value), style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }));
+        const text = (key, label) => h('label', { key, style: { display: 'grid', gap: '5px' } }, h('span', null, label), h('textarea', { value: value[key] || '', onChange: event => this.update(key, event.target.value), rows: 3, style: { width: '100%', padding: '8px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }));
+        return h('div', { style: { display: 'grid', gap: '10px' } },
+          h('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto', gap: '8px', alignItems: 'end' } },
+        input('storeUrl', '官方商店或 IGDB 游戏页链接'),
+            h('button', { id: this.props.forID, type: 'button', disabled: this.state.loading, onClick: () => this.fetchMetadata(), style: { minHeight: '38px', padding: '7px 14px', cursor: this.state.loading ? 'wait' : 'pointer' } }, this.state.loading ? '抓取中…' : '抓取商店资料'),
+          ),
+          input('cover', '封面图片 URL'),
+          text('description', '游戏简介'),
+          h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '10px' } }, input('releaseDate', '发售日期', 'date'), input('developer', '开发商'), input('publisher', '发行商')),
+          h('label', { style: { display: 'grid', gap: '5px' } }, h('span', null, '游戏类型（可用逗号分隔）'), h('input', { type: 'text', value: Array.isArray(value.genres) ? value.genres.join(', ') : '', onChange: event => this.update('genres', event.target.value.split(/[,，/]/).map(item => item.trim()).filter(Boolean)), style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } })),
+          this.state.message && h('small', { role: 'status' }, this.state.message),
+        );
+      }
+    }
+    window.CMS.registerFieldType('game-store-metadata', GameStoreMetadata, null, { type: 'object', properties: { storeUrl: { type: 'string' }, cover: { type: 'string' }, description: { type: 'string' }, releaseDate: { type: 'string' }, developer: { type: 'string' }, publisher: { type: 'string' }, genres: { type: 'array' } } });
     window.CMS.registerEditorComponent({
       id: 'game-card', label: '游戏卡片', icon: 'sports_esports', trigger: 'button',
       fields: [

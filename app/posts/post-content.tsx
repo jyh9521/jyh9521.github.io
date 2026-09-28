@@ -76,8 +76,8 @@ export default function PostContent({ body, title, headings, images, cover, audi
       if (game) {
         const params = new URLSearchParams(game[1]);
         const store = params.get('store') as GameStore;
-        if (['steam', 'playstation', 'xbox', 'nintendo'].includes(store)) {
-          const platform: GamePlatform = { store, storeId: params.get('storeId') || '', platform: params.get('platform') || '', region: params.get('region') || '', storeUrl: params.get('storeUrl') || '', cover: params.get('cover') || '', description: params.get('description') || '', releaseDate: params.get('releaseDate') || '', developer: params.get('developer') || '', publisher: params.get('publisher') || '', genres: (params.get('genres') || '').split('/').filter(Boolean), catalogSource: '', catalogId: '' };
+        if (['pc', 'steam', 'playstation', 'xbox', 'nintendo'].includes(store)) {
+          const platform: GamePlatform = { store: store === 'steam' ? 'pc' : store, storeId: params.get('storeId') || '', platform: params.get('platform') || (store === 'steam' ? 'Steam' : ''), region: params.get('region') || '', storeUrl: params.get('storeUrl') || '', catalogUrl: '', cover: params.get('cover') || '', description: params.get('description') || '', releaseDate: params.get('releaseDate') || '', developer: params.get('developer') || '', publisher: params.get('publisher') || '', genres: (params.get('genres') || '').split('/').filter(Boolean), catalogSource: '', catalogId: '' };
           return <GamePlatformCard gameTitle={params.get('title') || '游戏商品'} platform={platform} />;
         }
       }
