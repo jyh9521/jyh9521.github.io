@@ -27,6 +27,7 @@ export default function GamePlatformCard({ gameTitle, status = '', platform, com
       <p className="game-platform-specs">{[platformName, platform.region, platform.releaseDate, platform.genres.slice(0, 2).join(' / ')].filter(Boolean).join(' · ') || gameStoreLabels[family]}</p>
       {(platform.developer || platform.publisher) && <p className="game-platform-credit">{[platform.developer, platform.publisher].filter(Boolean).join(' · ')}</p>}
       <a className={`game-platform-link game-platform-link-${family}`} href={storeUrl || fallbackUrl} target={storeUrl || isIgdb ? '_blank' : undefined} rel={storeUrl || isIgdb ? 'noreferrer' : undefined}>{linkText}</a>
+      {platform.catalogSource.toLowerCase().includes('ntprices') && /^https:\/\/ntprices\.com\//i.test(platform.catalogUrl) && <small><a href={platform.catalogUrl} target="_blank" rel="noreferrer">资料由 NTPrices 提供 ↗</a></small>}
     </div>
   </article>;
 }

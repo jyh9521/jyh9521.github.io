@@ -58,7 +58,8 @@
         const text = (key, label) => h('label', { key, style: { display: 'grid', gap: '5px' } }, h('span', null, label), h('textarea', { value: value[key] || '', onChange: event => this.update(key, event.target.value), rows: 3, style: { width: '100%', padding: '8px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }));
         return h('div', { style: { display: 'grid', gap: '10px' } },
           h('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto', gap: '8px', alignItems: 'end' } },
-        input('storeUrl', '官方商店或 IGDB 游戏页链接'),
+          input('storeUrl', '官方商店或 IGDB 游戏页链接'),
+          input('title', '识别到的商品名称（供核对）'),
             h('button', { id: this.props.forID, type: 'button', disabled: this.state.loading, onClick: () => this.fetchMetadata(), style: { minHeight: '38px', padding: '7px 14px', cursor: this.state.loading ? 'wait' : 'pointer' } }, this.state.loading ? '抓取中…' : '抓取商店资料'),
           ),
           input('cover', '封面图片 URL'),
