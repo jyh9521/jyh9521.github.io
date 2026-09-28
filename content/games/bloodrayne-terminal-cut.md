@@ -1,15 +1,19 @@
 ---
-title: 'BloodRayne: Terminal Cut'
-status: 已通关 · 汉化补丁已发布
-summary: Steam 版《吸血莱恩：终极剪辑版》。博客记录了简体中文汉化补丁、技术说明和游戏截图。
+title: 吸血莱恩：终极剪辑版
+status: 已通关
 platforms:
   - store: steam
     platform: PC
     region: 全球
     storeId: '1373510'
     storeUrl: https://store.steampowered.com/app/1373510/
-    description: Steam 版《吸血莱恩：终极剪辑版》。
-    genres: [动作]
+    cover: /uploads/gamefile/bloodrayne_terminal_cut.jpg
+    releaseDate: 2020-11-20T00:00:00+09:00
+    developer: Terminal Reality
+    publisher: Ziggurat
+    genres:
+      - 动作
+    catalogSource: Steam
 events:
   - date: 2026-07-29T09:00:00+09:00
     title: 开始游戏
