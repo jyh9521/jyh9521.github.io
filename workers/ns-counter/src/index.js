@@ -15,6 +15,52 @@ export default {
           return new Response(JSON.stringify({ error: "请使用支持的 PC/主机官方商店链接或 IGDB 游戏页面。" }), { status: 400, headers: { ...metadataHeaders, "Cache-Control": "no-store" } });
         }
 
+        // Nintendo blocks server-side HTML reads behind a browser challenge.
+        // Resolve its numeric eShop NSUID through NTPrices instead of returning
+        // an empty metadata object. Keep the original Nintendo URL for the card.
+        const nintendoMatch = requested.hostname === "store-jp.nintendo.com"
+          && requested.pathname.match(/^\/item\/software\/D?(\d{10,20})\/?$/i);
+        if (nintendoMatch) {
+          const nsuid = nintendoMatch[1];
+          if (!env.NTPRICES_API_KEY) {
+            return Response.json({ error: "任天堂商品资料源尚未配置。请在 Worker 中设置 NTPRICES_API_KEY 后再试。" }, { status: 503, headers: { ...metadataHeaders, "Cache-Control": "no-store" } });
+          }
+          const cacheKey = new Request(`https://nintendo-metadata-cache.invalid/nsuid/${nsuid}/JP`);
+          const cached = await caches.default.match(cacheKey);
+          if (cached) return cached;
+
+          const apiUrl = new URL("https://ntprices.com/api.php");
+          apiUrl.searchParams.set("key", env.NTPRICES_API_KEY);
+          apiUrl.searchParams.set("nsuid", nsuid);
+          apiUrl.searchParams.set("region", "JP");
+          const upstream = await fetch(apiUrl, { headers: { "Accept": "application/json" }, signal: AbortSignal.timeout(10000) });
+          const payload = await upstream.json();
+          if (!upstream.ok || Number(payload?.error) !== 0 || !payload?.NSUID) {
+            throw new Error(payload?.errorDesc || "任天堂商品资料库暂时没有返回该 NSUID 的资料。");
+          }
+          if (String(payload.NSUID) !== nsuid) throw new Error("商品资料库返回的商品编号不匹配，请检查链接。");
+
+          const genreNames = { GenreAction: "动作", GenreAdventure: "冒险", GenreArcade: "街机", GenreFighting: "格斗", GenreFPS: "第一人称射击", GenreHorror: "恐怖", GenreIntStory: "互动叙事", GenreMMO: "MMO", GenreMusic: "音乐", GenrePlatformer: "平台跳跃", GenrePuzzle: "解谜", GenreRacing: "竞速", GenreRPG: "角色扮演", GenreSimulation: "模拟", GenreSports: "体育", GenreStrategy: "策略", GenreTPS: "第三人称射击" };
+          const genres = Object.entries(genreNames).filter(([key]) => String(payload[key]) === "1").map(([, name]) => name);
+          const metadata = {
+            storeId: nsuid,
+            storeUrl: requested.href,
+            cover: [payload.CoverArt, payload.Img].find(value => typeof value === "string" && value.startsWith("https://")) || "",
+            description: String(payload.Desc || "").slice(0, 4000),
+            releaseDate: String(payload.ReleaseDate || "").match(/^\d{4}-\d{2}-\d{2}/)?.[0] || "",
+            developer: String(payload.Developer || ""),
+            publisher: String(payload.Publisher || ""),
+            genres,
+            catalogSource: "NTPrices",
+            catalogId: String(payload.PPID || nsuid),
+            catalogUrl: typeof payload.NTPricesURL === "string" && /^https:\/\/ntprices\.com\//i.test(payload.NTPricesURL) ? payload.NTPricesURL : "https://ntprices.com/",
+            title: String(payload.ProductName || payload.GameName || ""),
+          };
+          const response = Response.json(metadata, { headers: { ...metadataHeaders, "Cache-Control": "public, max-age=3600, s-maxage=86400" } });
+          ctx.waitUntil(caches.default.put(cacheKey, response.clone()));
+          return response;
+        }
+
         const steamMatch = requested.hostname === "store.steampowered.com" && requested.pathname.match(/^\/app\/(\d{1,12})(?:\/|$)/);
         if (steamMatch) {
           const appid = steamMatch[1];
@@ -47,7 +93,7 @@ export default {
         // JavaScript/cookie challenge and a 200 status, not product metadata.
         // Detect it explicitly so the CMS never reports a blank successful fetch.
         if (requested.hostname === "store-jp.nintendo.com" && /navigator\.cookieEnabled|\?c=ncl|cookietest=/.test(html)) {
-          throw new Error("任天堂商店返回了浏览器验证页，暂时没有可抓取的商品资料。请稍后重试，或先手动填写资料。");
+          throw new Error("暂不支持此格式的任天堂商品链接。请粘贴 /item/software/D加数字 的商品页链接。");
         }
         const decode = (value) => String(value || "").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">" ).replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code))).replace(/&#x([\da-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16))).trim();
         const metas = {};

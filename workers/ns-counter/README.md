@@ -1,10 +1,13 @@
-# NS visitor counter Worker
+# Blog Worker setup
 
-The static page is deployed at `/ns/` from the repository's `public/ns/` directory. This Worker serves `GET /ns/api/counter` and increments the `ns` row in D1.
+The Nintendo metadata lookup uses the Nintendo NSUID in the product URL and the NTPrices catalog. The API key stays in a Worker secret; do not put it in `wrangler.toml`, source files, or blog content.
 
-1. Create a Cloudflare D1 database named `ns-counter` and execute `schema.sql`.
-2. Set the returned database ID as `database_id` in `wrangler.toml` and ensure binding `DB` points to it.
-3. From this directory run `npx wrangler deploy`.
-4. Configure Worker route `blog.blfy.cc/ns/api/*`; the hostname must route through Cloudflare.
+## Configure the catalog key
 
-The first visitor count starts at 1. Import a previous total before launch only if you have the old `data/count.txt` value.
+1. Request an NTPrices API key from [the developer page](https://ntprices.com/developers). Their current legacy v1 response includes product name, cover art, description, release date, developer, publisher, and genres by NSUID. The provider documents v1 retirement for 2026-12-01; migrate this adapter to an equivalent v2 dataset before that date.
+2. From this directory, run `wrangler secret put NTPRICES_API_KEY` and enter the key at the prompt.
+3. Deploy this Worker with `wrangler deploy`.
+
+NTPrices Free/Indie plans require a source link wherever their data is shown. The game card therefore displays a “资料由 NTPrices 提供” link when this source is used. The Worker caches successful lookups for one day to reduce repeat requests.
+
+Without the secret, Nintendo lookup returns an explicit configuration error; it does not return blank metadata as though the fetch succeeded.

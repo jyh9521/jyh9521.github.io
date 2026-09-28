@@ -29,7 +29,7 @@ function parsePlatform(record: any): GamePlatform | null {
     region: asText(record.region),
     storeId: asText(record.storeId || metadata.storeId || (store === 'pc' && /^(steam|steam store)$/i.test(platform) ? safeSubmittedUrl.match(/\/app\/(\d{1,12})(?:\/|$)/)?.[1] : '')),
     storeUrl: safeUrl,
-    catalogUrl: isIgdbUrl ? safeSubmittedUrl : asText(record.catalogUrl),
+    catalogUrl: isIgdbUrl ? safeSubmittedUrl : (/^https:\/\/(?:www\.)?ntprices\.com\//i.test(asText(metadata.catalogUrl || record.catalogUrl)) ? asText(metadata.catalogUrl || record.catalogUrl) : ''),
     cover: asText(metadata.cover),
     description: asText(metadata.description),
     developer: asText(metadata.developer),
