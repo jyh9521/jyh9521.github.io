@@ -136,11 +136,24 @@ export default {
       }
     }
     if (url.pathname !== "/ns/api/counter") return new Response("Not found", { status: 404 });
-    if (request.method !== "GET") return new Response("Method not allowed", { status: 405, headers: { Allow: "GET", "Cache-Control": "no-store" } });
+    if (request.method === "GET") {
+      const row = await env.DB.prepare("SELECT count FROM visit_counter WHERE id = 'ns'").first();
+      return Response.json({ pageViews: Number(row?.count || 0) }, { headers: { "Cache-Control": "no-store" } });
+    }
+    if (request.method !== "POST") return new Response("Method not allowed", { status: 405, headers: { Allow: "GET, POST", "Cache-Control": "no-store" } });
+
+    let visitorId = "";
+    try {
+      const body = await request.json();
+      if (typeof body?.visitorId === "string" && /^[\w-]{16,128}$/.test(body.visitorId)) visitorId = body.visitorId;
+    } catch { /* A malformed visitor ID still counts as a page view. */ }
+
     const row = await env.DB.prepare(
       "INSERT INTO visit_counter (id, count) VALUES ('ns', 1) " +
       "ON CONFLICT(id) DO UPDATE SET count = count + 1 RETURNING count"
     ).first();
-    return Response.json({ count: Number(row.count) }, { headers: { "Cache-Control": "no-store" } });
+    if (visitorId) await env.DB.prepare("INSERT INTO visit_visitors (visitor_id) VALUES (?) ON CONFLICT(visitor_id) DO NOTHING").bind(visitorId).run();
+    const unique = await env.DB.prepare("SELECT COUNT(*) AS count FROM visit_visitors").first();
+    return Response.json({ pageViews: Number(row.count), uniqueVisitors: Number(unique?.count || 0) }, { headers: { "Cache-Control": "no-store" } });
   },
 };
