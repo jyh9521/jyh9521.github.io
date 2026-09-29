@@ -22,4 +22,13 @@ The IGDB proxy offers `GET /ns/api/igdb/search?q=...` and `GET /ns/api/igdb/game
 
 The selected IGDB Game ID is stored with each game as its permanent external identity; display names and translated title overrides do not participate in lookup. The metadata editor preserves non-empty existing fields on the first import. It records fields manually edited in the CMS and leaves those overrides intact if another IGDB Game ID is selected. Clear an override explicitly before allowing IGDB data to fill that field.
 
-The D1 visit counter continues to use binding `DB` and `GET /ns/api/counter`.
+The D1 visit counter uses `POST /ns/api/counter` to atomically increment page views and register a random browser-local visitor ID for unique-visitor counts. `GET /ns/api/counter` is read-only and returns the current page-view total. The blog footer and NS page share one page-view request during client-side navigation.
+
+Before deploying this counter update, apply the new D1 table migration from this directory, then deploy the Worker:
+
+```powershell
+npx wrangler d1 migrations apply ns-counter --remote
+npx wrangler deploy
+```
+
+The browser uses the same-origin Worker route, so it does not depend on the third-party Busuanzi script host.
