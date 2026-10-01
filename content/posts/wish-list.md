@@ -8,7 +8,24 @@ tags:
 pinned: true
 ---
 
+[Red Faction II](https://store.steampowered.com/app/20550/)
+
+[Red Faction Guerrilla Re-Mars-tered](https://store.steampowered.com/app/667720/)
+
+[Vampire: The Masquerade - Redemption](https://store.steampowered.com/app/559680/)
+
+[POSTAL: Brain Damaged](https://store.steampowered.com/app/1359980)[
+](https://store.steampowered.com/app/1359980/)
+
 [Clive Barker's Undying](https://www.gog.com/en/game/clive_barkers_undying)
+
+[XIII - Classic](https://store.steampowered.com/app/1170760)
+
+[Thief Gold (1999)](https://store.steampowered.com/app/211600/)
+
+[Thief II: The Metal Age](https://store.steampowered.com/app/211740/)
+
+[Thief: Deadly Shadows](https://store.steampowered.com/app/6980/)
 
 [Sacrifice](https://www.gog.com/en/game/sacrifice)
 
@@ -29,3 +46,5 @@ Heavy Metal: F.A.K.K. 2
 [Freedom Force](https://store.steampowered.com/app/8880/)
 
 [Omikron: The Nomad Soul](https://www.gog.com/en/game/omikron_the_nomad_soul)
+
+Mercenaries 2: World in Flames
