@@ -20,6 +20,8 @@ This Worker serves the visit counter and the IGDB proxy used by the static blog 
 
 The IGDB proxy offers `GET /ns/api/igdb/search?q=...` and `GET /ns/api/igdb/game?id=...`. Search results are cached for one hour and selected-game details for one day. A single global Durable Object serializes upstream requests with at least 275 ms between IGDB calls, below IGDB's documented four-requests-per-second limit. Twitch access tokens stay in Durable Object memory and are refreshed before expiry.
 
+In the CMS game editor, you can either search by name or paste a numeric IGDB Game ID copied from IGDB and select **按 ID 获取资料**. Manual-ID import skips the proxy's name-search request but still needs valid Twitch app credentials in Worker Secrets, because the Worker must authenticate to IGDB to retrieve game details.
+
 The selected IGDB Game ID is stored with each game as its permanent external identity; display names and translated title overrides do not participate in lookup. The metadata editor preserves non-empty existing fields on the first import. It records fields manually edited in the CMS and leaves those overrides intact if another IGDB Game ID is selected. Clear an override explicitly before allowing IGDB data to fill that field.
 
 The D1 visit counter uses `POST /ns/api/counter` to atomically increment page views and register a random browser-local visitor ID for unique-visitor counts. `GET /ns/api/counter` is read-only and returns the current page-view total. The blog footer and NS page share one page-view request during client-side navigation.
