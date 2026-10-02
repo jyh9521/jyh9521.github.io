@@ -18,7 +18,6 @@ gameMetadata:
     releaseDate: rawg
     title: manual
     website: rawg
-    selectedPlatforms: manual
   genres:
     - Action
   id: rawg:514899
@@ -26,7 +25,6 @@ gameMetadata:
   manualFields:
     - title
     - description
-    - selectedPlatforms
   originalName: 'BloodRayne: Terminal Cut'
   platforms:
     - PC
@@ -45,8 +43,6 @@ gameMetadata:
   title: 'BloodRayne: Terminal Cut'
   updatedAt: 2026-10-02T00:39:01.646Z
   website: https://www.ziggurat.games/
-  selectedPlatforms:
-    - PC
 manual:
   availabilityStatus: available
   officialStores:
@@ -54,17 +50,6 @@ manual:
       note: ''
       region: ''
       url: https://store.steampowered.com/app/1373510/
-platforms:
-  - platformChoice:
-      family: pc
-      platform: PC
-    metadata:
-      cover: /uploads/gamefile/bloodrayne_terminal_cut.jpg
-      developer: Terminal Reality
-      genres:
-        - 动作
-      publisher: Ziggurat
-      releaseDate: 2020-11-20
 events:
   - date: 2026-07-29T09:00:00+09:00
     title: 开始游戏
