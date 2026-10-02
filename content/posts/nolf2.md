@@ -20,7 +20,11 @@ gameSlug: no-one-lives-forever-2
 
 因此，本项目应被视为目前具有明确来源、能够稳定运行并支持完整流程游玩的现代简体中文本地化版本，而不是对某个已经得到证实的官方中文版所进行的重复汉化。
 
-***
+
+
+---
+
+
 
 ## 二、技术说明
 
@@ -37,26 +41,45 @@ NOLF2 使用的 LithTech (Jupiter) 是一款 2002 年的老引擎，给汉化带
 
 当前对照表约 4900 条，覆盖主菜单、HUD、场景字幕、任务目标、情报文档等全流程文本。经完整通关测试，除少量漏译外可稳定游玩。
 
-***
+
+
+---
+
+
 
 ## 三、截图
 
+![](/uploads/chinesetranslationpatch/nolf2/主菜单.avif)
+
+![](/uploads/chinesetranslationpatch/nolf2/设置选项.avif)
+
+![](/uploads/chinesetranslationpatch/nolf2/载入界面.avif)
+
+![](/uploads/chinesetranslationpatch/nolf2/游戏暂停界面.avif)
+
+![](/uploads/chinesetranslationpatch/nolf2/游戏内文档.avif)
+
+![](/uploads/chinesetranslationpatch/nolf2/过场动画.avif)
 
 
 
+---
 
 
-***
 
 ## 四、已知问题
 
 - **少量漏译**：个别武器专有名、少数情报标题等尚未翻译（属翻译数据缺口，不影响流程），懒得修了。
 - **不支持独占全屏**：本引擎在部分现代显卡上以独占全屏方式"启动"会崩溃，因此汉化默认以窗口模式启动。想要接近全屏，进游戏后在"选项 → 显示"里把分辨率调到与桌面一致即可（游戏内切换分辨率是安全的）。
-- **纸质便签/信件类"图片文字"**：游戏里部分手写便签、信件是把文字直接烤进贴图的图片（而非文本），渲染器无法处理，仍显示英文；情报"日志"界面里的文字条目是文本，已正常汉化。
+- \*\*纸质便签/信件类"图片文字"\*\*：游戏里部分手写便签、信件是把文字直接烤进贴图的图片（而非文本），渲染器无法处理，仍显示英文；情报"日志"界面里的文字条目是文本，已正常汉化。
 - **个别滚动长帮助文本**：极少数超长、逐段滚动显示的帮助提示可能保持英文。
 - **依赖特定 Modernizer 版本**：本汉化基于 Modernizer 2 Beta 2c 制作，仅适配该版本；自行更换其他 Modernizer 版本可能导致显示异常或崩溃。
 
-***
+
+
+---
+
+
 
 ## 五、安装与运行（简要）
 
@@ -66,15 +89,23 @@ NOLF2 使用的 LithTech (Jupiter) 是一款 2002 年的老引擎，给汉化带
 
 详细步骤见包内 安装说明.txt。
 
-***
+
+
+---
+
+
 
 ## 六、作弊码
 
 游戏中按 T（聊天/控制台）输入以下命令即可：
 
-作弊码
+![](/uploads/chinesetranslationpatch/nolf2/%E4%BD%9C%E5%BC%8A%E7%A0%81.avif)
 
-***
+
+
+---
+
+
 
 ## 七、下载地址
 
@@ -82,7 +113,11 @@ NOLF2 使用的 LithTech (Jupiter) 是一款 2002 年的老引擎，给汉化带
 
 [百度网盘](https://pan.baidu.com/s/1dOxeSwqax80fcbF3lzGTTA?pwd=1jqp) 提取码: 1jqp
 
-***
+
+
+---
+
+
 
 ## 八、致谢
 
