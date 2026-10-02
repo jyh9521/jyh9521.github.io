@@ -49,17 +49,17 @@ NOLF2 使用的 LithTech (Jupiter) 是一款 2002 年的老引擎，给汉化带
 
 ## 三、截图
 
-![](/uploads/chinesetranslationpatch/nolf2/主菜单.avif)
+![主菜单](/uploads/chinesetranslationpatch/nolf2/主菜单.avif "主菜单")
 
-![](/uploads/chinesetranslationpatch/nolf2/设置选项.avif)
+![设置选项](/uploads/chinesetranslationpatch/nolf2/设置选项.avif "设置选项")
 
-![](/uploads/chinesetranslationpatch/nolf2/载入界面.avif)
+![载入界面](/uploads/chinesetranslationpatch/nolf2/载入界面.avif "载入界面")
 
-![](/uploads/chinesetranslationpatch/nolf2/游戏暂停界面.avif)
+![游戏暂停界面](/uploads/chinesetranslationpatch/nolf2/游戏暂停界面.avif "游戏暂停界面")
 
-![](/uploads/chinesetranslationpatch/nolf2/游戏内文档.avif)
+![游戏内文档](/uploads/chinesetranslationpatch/nolf2/游戏内文档.avif "游戏内文档")
 
-![](/uploads/chinesetranslationpatch/nolf2/过场动画.avif)
+![过场动画](/uploads/chinesetranslationpatch/nolf2/过场动画.avif "过场动画")
 
 
 
@@ -99,7 +99,7 @@ NOLF2 使用的 LithTech (Jupiter) 是一款 2002 年的老引擎，给汉化带
 
 游戏中按 T（聊天/控制台）输入以下命令即可：
 
-![](/uploads/chinesetranslationpatch/nolf2/%E4%BD%9C%E5%BC%8A%E7%A0%81.avif)
+![作弊码](/uploads/chinesetranslationpatch/nolf2/%E4%BD%9C%E5%BC%8A%E7%A0%81.avif "作弊码")
 
 
 
