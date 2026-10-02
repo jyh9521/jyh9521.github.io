@@ -135,16 +135,70 @@
       },
     });
     window.CMS.registerFieldType('game-metadata', GameMetadata);
+    const normalizeName = value => String(value || '').normalize('NFKC').toLocaleLowerCase().replace(/[\s\p{P}\p{S}]/gu, '');
+    const GameArchivePicker = createClass({
+      getInitialState: function () { return { entries: [], open: false, query: '', loading: false, error: '', active: 0 }; },
+      componentDidMount: function () { this.alive = true; this.loadEntries(); },
+      componentWillUnmount: function () { this.alive = false; },
+      loadEntries: async function () {
+        this.setState({ loading: true, error: '' });
+        try {
+          const response = await fetch('/game-dossiers.json', { cache: 'no-store' });
+          if (!response.ok) throw new Error('本地游戏档案读取失败，请重试。');
+          const entries = await response.json();
+          if (!Array.isArray(entries)) throw new Error('本地游戏档案格式异常。');
+          if (this.alive) this.setState({ entries: entries.filter(entry => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(entry.slug) && typeof entry.title === 'string') });
+        } catch (error) {
+          if (this.alive) this.setState({ error: error instanceof Error ? error.message : '本地游戏档案读取失败，请重试。' });
+        } finally { if (this.alive) this.setState({ loading: false }); }
+      },
+      options: function () {
+        const query = normalizeName(this.state.query);
+        return this.state.entries.filter(entry => !query || [entry.title, entry.slug, ...(entry.names || [])].some(name => normalizeName(name).includes(query)));
+      },
+      choose: function (entry) { this.props.onChange(entry.slug); this.setState({ open: false, query: '', active: 0 }); this.toggle?.focus(); },
+      render: function () {
+        const { entries, open, query, loading, error, active } = this.state;
+        const selected = entries.find(entry => entry.slug === this.props.value);
+        const options = this.options();
+        const listId = `${this.props.forID || 'game-archive'}-options`;
+        const style = { width: '100%', minHeight: '40px', padding: '8px 12px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit', textAlign: 'left' };
+        return h('div', { onBlur: event => { if (!event.currentTarget.contains(event.relatedTarget)) this.setState({ open: false }); } },
+          h('button', { type: 'button', ref: element => { this.toggle = element; }, disabled: this.props.readonly,
+            'aria-label': '选择游戏档案', 'aria-haspopup': 'listbox', 'aria-expanded': open, 'aria-controls': listId, style,
+            onClick: () => { this.setState({ open: !open, query: '', active: 0 }); if (!open && !loading) this.loadEntries(); },
+          }, selected?.title || (this.props.value ? `档案：${this.props.value}` : '请选择已有游戏档案'), h('span', { style: { float: 'right' }, 'aria-hidden': true }, ' ▾')),
+          open && h('div', { style: { border: '1px solid #68707a', borderRadius: '6px', marginTop: '4px', padding: '8px' } },
+            h('input', { ref: element => { if (element && this.searchInput !== element) { this.searchInput = element; element.focus(); } },
+              type: 'search', value: query, placeholder: '搜索手动名称、原名或别名…', role: 'combobox',
+              'aria-label': '筛选已有游戏档案', 'aria-expanded': true, 'aria-controls': listId, 'aria-autocomplete': 'list',
+              'aria-activedescendant': options[active] ? `${listId}-${active}` : undefined, style,
+              onChange: event => this.setState({ query: event.target.value, active: 0 }),
+              onKeyDown: event => {
+                if (event.key === 'Escape') { event.preventDefault(); this.setState({ open: false }); this.toggle?.focus(); }
+                else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); this.setState({ active: Math.max(0, Math.min(options.length - 1, active + (event.key === 'ArrowDown' ? 1 : -1))) }); }
+                else if (event.key === 'Enter') { event.preventDefault(); if (options[active]) this.choose(options[active]); }
+              },
+            }),
+            loading && h('small', { role: 'status' }, '正在读取本地游戏档案…'),
+            error && h('div', { role: 'alert' }, error, h('button', { type: 'button', onClick: this.loadEntries }, '重试')),
+            h('div', { id: listId, role: 'listbox', 'aria-label': '已有游戏档案', style: { maxHeight: '260px', overflowY: 'auto', marginTop: '6px' } },
+              ...options.map((entry, index) => h('button', { key: entry.slug, id: `${listId}-${index}`, type: 'button', role: 'option',
+                'aria-selected': entry.slug === this.props.value, style: { ...style, border: 0, background: index === active ? 'rgba(128,128,128,.18)' : 'transparent' },
+                onMouseDown: event => event.preventDefault(), onClick: () => this.choose(entry),
+              }, entry.title))),
+            !loading && !error && !options.length && h('small', { role: 'status' }, entries.length ? '没有匹配的本地档案。' : '尚无已发布的游戏档案，请先保存档案并等待网站部署完成。'),
+          ), h('small', null, '仅筛选本站已有档案；名称与原名均可匹配，显示档案的手动覆盖名称。新保存的档案在网站部署完成后进入列表。'));
+      },
+    });
+    window.CMS.registerFieldType('game-archive-picker', GameArchivePicker);
     window.CMS.registerEditorComponent({
         id: 'game-card', label: '添加游戏', tooltip: '添加游戏', icon: 'sports_esports', trigger: 'button',
         fields: [
-          { name: 'gameSlug', label: '选择游戏档案', widget: 'relation', collection: 'games', required: true, multiple: false,
-            value_field: '{{slug}}', display_fields: ['title'],
-            search_fields: ['title', '{{slug}}'],
-            dropdown_threshold: 0, hint: '输入名称筛选已保存的档案；显示手动覆盖名称，选中后自动引用档案资料。' },
+          { name: 'gameSlug', label: '选择游戏档案', widget: 'game-archive-picker', required: true },
           // Keep legacy frame identity when editing an existing article card.
           { name: 'frame', widget: 'hidden', default: 'g' },
-          { name: 'title', label: '本文标题覆盖（可选）', widget: 'string', required: false, hint: '留空时使用档案中的手动名称覆盖，随档案更新。' },
+          { name: 'title', widget: 'hidden', required: false },
           { name: 'status', label: '本文状态覆盖（可选）', widget: 'string', required: false, hint: '留空时使用档案当前状态。' },
         ],
         pattern: /^\[(g|p|n|x|s)frame\]\s*([a-z0-9]+(?:-[a-z0-9]+)*)(?:\|([^|\]]*))?(?:\|([^|\]]*))?\s*\[\/\1frame\]$/,

@@ -5,13 +5,14 @@ const vm = require('node:vm');
 const ts = require('typescript');
 const yaml = require('js-yaml');
 
-function loadCms() {
+function loadCms(extra = {}) {
   const components = [];
+  components.fieldTypes = {};
   const window = {
-    h: () => null, createClass: value => value,
-    CMS: { getFieldType: () => ({ control: () => null }), registerFieldType() {}, registerEditorComponent: component => components.push(component) },
+    h: (type, props, ...children) => ({ type, props: props || {}, children }), createClass: value => value,
+    CMS: { getFieldType: () => ({ control: () => null }), registerFieldType(name, control) { components.fieldTypes[name] = control; }, registerEditorComponent: component => components.push(component) },
   };
-  vm.runInNewContext(fs.readFileSync('public/sveltia/custom.js', 'utf8'), { window });
+  vm.runInNewContext(fs.readFileSync('public/sveltia/custom.js', 'utf8'), { window, ...extra });
   return components;
 }
 
@@ -19,7 +20,7 @@ function loadTs(file, dependencies = {}) {
   const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
     compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX },
   }).outputText;
-  const context = { exports: {}, URLSearchParams, require: name => dependencies[name] || require(name) };
+  const context = { exports: {}, URLSearchParams, Response, require: name => dependencies[name] || require(name) };
   vm.runInNewContext(code, context);
   return context.exports;
 }
@@ -33,17 +34,11 @@ test('toolbar has one searchable local-game picker and uses manual title labels'
   assert.equal(component.label, '添加游戏');
   assert.equal(component.tooltip, '添加游戏');
   const field = component.fields.find(field => field.name === 'gameSlug');
-  assert.equal(field.widget, 'relation');
-  assert.equal(field.collection, 'games');
-  assert.equal(field.value_field, '{{slug}}');
-  assert.deepEqual(Array.from(field.display_fields), ['title']);
-  assert.ok(field.search_fields.includes('title'));
-  assert.deepEqual(Array.from(field.search_fields), ['title', '{{slug}}']);
-  assert.equal(field.dropdown_threshold, 0);
-  assert.equal(field.multiple, false);
+  assert.equal(field.widget, 'game-archive-picker');
+  assert.ok(components.fieldTypes[field.widget]);
+  assert.equal(field.search_fields, undefined); // No undeclared nested relation paths.
+  assert.equal(component.fields.find(field => field.name === 'title').widget, 'hidden');
   const config = yaml.load(fs.readFileSync('public/sveltia/config.yml', 'utf8'));
-  const declaredFields = config.collections.find(collection => collection.name === field.collection).fields.map(field => field.name);
-  for (const name of field.search_fields) assert.ok(name === '{{slug}}' || declaredFields.includes(name), 'relation search field must be declared in CMS schema: ' + name);
   const body = config.collections.find(collection => collection.name === 'post').fields.find(field => field.name === 'body');
   assert.ok(body.editor_components.includes(component.id));
   assert.ok(!body.editor_components.some(id => /^[pnxs]frame-card$/.test(id)));
@@ -89,5 +84,60 @@ test('generic card takes the selected local platform and current manual title, n
   game.title = '手动修改后的名称';
   assert.equal(Card({ frame: 'g', game }).props.gameTitle, game.title);
   assert.equal(Card({ frame: 's', game }).props.platform, pc);
-  assert.equal(Card({ frame: 'g', game, title: '本文覆盖' }).props.gameTitle, '本文覆盖');
+  assert.equal(Card({ frame: 'g', game, title: '旧的本文覆盖' }).props.gameTitle, game.title);
+});
+
+test('local picker opens a filterable dropdown, matches original names and saves only the slug', async () => {
+  const requests = [];
+  const entries = [{ slug: 'onimusha', title: '鬼武者：剑之道', names: ['Onimusha: Way of the Sword', '鬼武者：剑之道'] }];
+  const components = loadCms({ fetch: async (...args) => { requests.push(args); return { ok: true, json: async () => entries }; } });
+  const definition = components.fieldTypes['game-archive-picker'];
+  let saved;
+  const picker = { ...definition, props: { value: '', onChange: value => { saved = value; } }, state: definition.getInitialState(), alive: true,
+    setState(next) { Object.assign(this.state, next); } };
+  assert.equal(picker.state.open, false);
+  await picker.loadEntries();
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0][0], '/game-dossiers.json');
+  let view = picker.render();
+  view.children[0].props.onClick();
+  assert.equal(picker.state.open, true);
+  await picker.loadEntries();
+  view = picker.render();
+  const input = view.children[1].children[0];
+  assert.equal(input.props.role, 'combobox');
+  input.props.onChange({ target: { value: 'onimusha' } });
+  assert.equal(picker.options().length, 1);
+  for (const query of ['鬼武者', 'ONIMUSHA', 'way of the sword', 'Way-of-the-Sword']) {
+    picker.state.query = query;
+    assert.equal(picker.options()[0].title, '鬼武者：剑之道');
+  }
+  picker.state.query = '不存在';
+  assert.equal(picker.options().length, 0);
+  picker.choose(entries[0]);
+  assert.equal(saved, 'onimusha');
+  assert.equal(picker.state.open, false);
+  assert.ok(requests.every(([url]) => url === '/game-dossiers.json')); // Never searches RAWG or ScreenScraper.
+  assert.ok(components.fieldTypes['game-metadata'].searchGames);
+});
+
+test('local picker errors preserve selection and offer retry', async () => {
+  const components = loadCms({ fetch: async () => ({ ok: false }) });
+  const definition = components.fieldTypes['game-archive-picker'];
+  const picker = { ...definition, props: { value: 'existing-game', onChange() { assert.fail('fetch error must not clear saved slug'); } },
+    state: definition.getInitialState(), alive: true, setState(next) { Object.assign(this.state, next); } };
+  await picker.loadEntries();
+  assert.ok(picker.state.error);
+  assert.equal(picker.state.loading, false);
+  assert.equal(picker.props.value, 'existing-game');
+});
+
+test('local archive index includes search names but excludes secrets and manual notes', async () => {
+  const { GET } = loadTs('app/game-dossiers.json/route.ts', { '../../lib/games': { getGames: () => [{ slug: 'onimusha', title: '鬼武者', manual: { notes: 'private note' }, metadata: { title: 'Onimusha', originalName: '鬼武者 原名', alternativeNames: ['Alias'] } }] } });
+  const data = await GET().json();
+  assert.deepEqual(Object.keys(data[0]), ['slug', 'title', 'names']);
+  assert.equal(data[0].title, '鬼武者');
+  assert.ok(data[0].names.includes('Onimusha'));
+  assert.ok(data[0].names.includes('鬼武者 原名'));
+  assert.ok(!JSON.stringify(data).includes('private note'));
 });
