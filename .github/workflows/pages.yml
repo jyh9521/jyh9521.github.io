@@ -9,13 +9,11 @@ permissions:
   id-token: write
 concurrency:
   group: pages
-  cancel-in-progress: true
+  # Finish the active release; GitHub keeps only the latest pending run.
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -28,5 +26,13 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # Only the actual publishing job creates a deployment record.
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4
