@@ -30,8 +30,6 @@ pinned: true
 
 [gframe]shogo-mobile-armor-division||[/gframe]
 
-[gframe]messiah||[/gframe]
-
 [gframe]soldier-of-fortune-platinum-edition||[/gframe]
 
 [gframe]heretic-2||[/gframe]
