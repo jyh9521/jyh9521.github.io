@@ -140,7 +140,7 @@
         fields: [
           { name: 'gameSlug', label: '选择游戏档案', widget: 'relation', collection: 'games', required: true, multiple: false,
             value_field: '{{slug}}', display_fields: ['title'],
-            search_fields: ['title', 'gameMetadata.title', 'gameMetadata.localizedName', 'gameMetadata.originalName', '{{slug}}'],
+            search_fields: ['title', '{{slug}}'],
             dropdown_threshold: 0, hint: '输入名称筛选已保存的档案；显示手动覆盖名称，选中后自动引用档案资料。' },
           // Keep legacy frame identity when editing an existing article card.
           { name: 'frame', widget: 'hidden', default: 'g' },

@@ -38,10 +38,12 @@ test('toolbar has one searchable local-game picker and uses manual title labels'
   assert.equal(field.value_field, '{{slug}}');
   assert.deepEqual(Array.from(field.display_fields), ['title']);
   assert.ok(field.search_fields.includes('title'));
-  assert.ok(field.search_fields.includes('gameMetadata.originalName'));
+  assert.deepEqual(Array.from(field.search_fields), ['title', '{{slug}}']);
   assert.equal(field.dropdown_threshold, 0);
   assert.equal(field.multiple, false);
   const config = yaml.load(fs.readFileSync('public/sveltia/config.yml', 'utf8'));
+  const declaredFields = config.collections.find(collection => collection.name === field.collection).fields.map(field => field.name);
+  for (const name of field.search_fields) assert.ok(name === '{{slug}}' || declaredFields.includes(name), 'relation search field must be declared in CMS schema: ' + name);
   const body = config.collections.find(collection => collection.name === 'post').fields.find(field => field.name === 'body');
   assert.ok(body.editor_components.includes(component.id));
   assert.ok(!body.editor_components.some(id => /^[pnxs]frame-card$/.test(id)));
