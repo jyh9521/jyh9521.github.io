@@ -22,7 +22,11 @@ gameSlug: bloodrayne-terminal-cut
 首先肯定是因为我完整测试过了。
 其次，英文文本和日文文本原文在台词节奏、人物语气、表达细节上不一样，而且英文文本说话人前面有名字，日文文本没有。
 
-***
+
+
+---
+
+
 
 ## 二、技术说明 + MOD支持
 
@@ -30,7 +34,11 @@ gameSlug: bloodrayne-terminal-cut
 理论上是兼容所有原版 MOD 的，下面的截图我也是用了N网的高清贴图材质 + 面部修复游玩并且截图的。
 具体的 MOD 请自行去N网转区翻阅。
 
-***
+
+
+---
+
+
 
 ## 三、已知问题
 
@@ -66,7 +74,11 @@ STextureEntry::loadOptimized - Out of memory
 目前通关测试中遇到的已知问题都已经处理。
 但如果还有漏网之鱼导致闪退，请使用附带的工具自助修改文本（
 
-***
+
+
+---
+
+
 
 ## 四、截图
 
@@ -84,7 +96,11 @@ STextureEntry::loadOptimized - Out of memory
 
 ![残留的英文 / 德文](/uploads/chinesetranslationpatch/bloodrayne/%E6%AE%8B%E7%95%99%E7%9A%84%E8%8B%B1%E6%96%87%20%E5%BE%B7%E6%96%87.png "残留的英文 / 德文")
 
-***
+
+
+---
+
+
 
 ## 四、安装和运行
 
@@ -104,7 +120,11 @@ STextureEntry::loadOptimized - Out of memory
 
 直接启动游戏，选择Japanese即可。 默认就是基于英文文本的简体中文版本。
 
-***
+
+
+---
+
+
 
 ## 五、小工具说明
 
@@ -192,7 +212,11 @@ STextureEntry::loadOptimized - Out of memory
 
  给 rayne1.exe 开启 Large Address Aware。 首次启用前会备份原版 exe，可以一键恢复。
 
-***
+
+
+---
+
+
 
 ## 六、卸载方法
 
@@ -206,7 +230,11 @@ STextureEntry::loadOptimized - Out of memory
 - 4GB / LAA 补丁：工具里点恢复原版 exe；
 - 字体：工具里点恢复默认字体。
 
-***
+
+
+---
+
+
 
 ## 七、下载地址
 
