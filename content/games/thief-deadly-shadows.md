@@ -1,7 +1,7 @@
 ---
 title: 神偷：致命阴影
 status:
-  - 想玩
+  - 考虑制作补丁
 gameMetadata:
   alternativeNames: []
   cover: https://media.rawg.io/media/games/f89/f899f0bdeb6bcd7419d9b2281a693ad8.jpg
