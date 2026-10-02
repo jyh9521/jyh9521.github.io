@@ -11,3 +11,11 @@ migrations_dir = "migrations"
 [route]
 pattern = "blog.blfy.cc/ns/api/*"
 zone_name = "blfy.cc"
+
+[[durable_objects.bindings]]
+name = "IGDB_API"
+class_name = "IgdbApi"
+
+[exports.IgdbApi]
+type = "durable-object"
+storage = "sqlite"

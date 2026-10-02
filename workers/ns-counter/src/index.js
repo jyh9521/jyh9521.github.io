@@ -1,4 +1,14 @@
 import { RAWGProvider, ScreenScraperProvider, areSameGame, combineCandidates, mergeMetadata } from "./game-providers.js";
+import { DurableObject } from "cloudflare:workers";
+
+// Keep the already-provisioned namespace export during the provider migration.
+// The old IGDB endpoints are retired; this stub prevents a destructive DO
+// deletion while allowing RAWG/ScreenScraper routes to deploy without Twitch.
+export class IgdbApi extends DurableObject {
+  async fetch() {
+    return Response.json({ error: "IGDB API 已停用。" }, { status: 410 });
+  }
+}
 
 const jsonHeaders = { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" };
 async function readMetadataCache(env, key) {
