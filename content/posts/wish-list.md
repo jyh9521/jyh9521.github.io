@@ -8,40 +8,38 @@ tags:
 pinned: true
 ---
 
-[Red Faction II](https://store.steampowered.com/app/20550/)
+[gframe]red-faction-2||[/gframe]
 
-[Vampire: The Masquerade - Redemption](https://store.steampowered.com/app/559680/)
+[gframe]vampire-the-masquerade-redemption||[/gframe]
 
-[POSTAL: Brain Damaged](https://store.steampowered.com/app/1359980)
+[gframe]postal-brain-damaged||[/gframe]
 
-[Clive Barker's Undying](https://www.gog.com/en/game/clive_barkers_undying)
+[gframe]clive-barkers-undying||[/gframe]
 
-[XIII - Classic](https://store.steampowered.com/app/1170760)
+[gframe]xiii-classic||[/gframe]
 
-[Thief Gold (1999)](https://store.steampowered.com/app/211600/)
+[gframe]thief-gold||[/gframe]
 
-[Thief II: The Metal Age](https://store.steampowered.com/app/211740/)
+[gframe]thief-2-the-metal-age||[/gframe]
 
-[Thief: Deadly Shadows](https://store.steampowered.com/app/6980/)
+[gframe]thief-deadly-shadows||[/gframe]
 
-[Sacrifice](https://www.gog.com/en/game/sacrifice)
+[gframe]the-wheel-of-time||[/gframe]
 
-[The Wheel of Time](https://www.gog.com/en/game/the_wheel_of_time)
+[gframe]rune-classic||[/gframe]
 
-[Rune Classic](https://store.steampowered.com/app/210950/)
+[gframe]shogo-mobile-armor-division||[/gframe]
 
-[Shogo: Mobile Armor Division](https://www.gog.com/en/game/shogo_mobile_armor_division)
+[gframe]messiah||[/gframe]
 
-[Messiah](https://www.gog.com/en/game/messiah)
+[gframe]soldier-of-fortune-platinum-edition||[/gframe]
 
-[Soldier of Fortune: Platinum Edition](https://www.gog.com/en/game/soldier_of_fortune_platinum_edition)
+[gframe]heretic-2||[/gframe]
 
-Heretic II
+[gframe]heavy-metal-fakk-2||[/gframe]
 
-Heavy Metal: F.A.K.K. 2
+[gframe]freedom-force||[/gframe]
 
-[Freedom Force](https://store.steampowered.com/app/8880/)
+[gframe]omikron-the-nomad-soul||[/gframe]
 
-[Omikron: The Nomad Soul](https://www.gog.com/en/game/omikron_the_nomad_soul)
-
-Mercenaries 2: World in Flames
+[gframe]mercenaries-2-world-in-flames||[/gframe]
