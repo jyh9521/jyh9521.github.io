@@ -18,6 +18,7 @@ gameMetadata:
     releaseDate: rawg
     title: manual
     website: rawg
+    selectedPlatforms: manual
   genres:
     - Action
   id: rawg:514899
@@ -25,6 +26,7 @@ gameMetadata:
   manualFields:
     - title
     - description
+    - selectedPlatforms
   originalName: 'BloodRayne: Terminal Cut'
   platforms:
     - PC
@@ -43,6 +45,8 @@ gameMetadata:
   title: 'BloodRayne: Terminal Cut'
   updatedAt: 2026-10-02T00:39:01.646Z
   website: https://www.ziggurat.games/
+  selectedPlatforms:
+    - PC
 manual:
   availabilityStatus: available
   officialStores:
