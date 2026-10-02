@@ -48,7 +48,7 @@ gameMetadata:
   sources:
     rawg:
       id: '514899'
-  title: 吸血莱恩：终极剪辑版
+  title: 'BloodRayne: Terminal Cut'
   updatedAt: 2026-10-02T00:39:01.646Z
   website: https://www.ziggurat.games/
 manual:
