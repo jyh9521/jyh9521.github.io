@@ -1,9 +1,10 @@
- 'use client';
+'use client';
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import type { GameRecord } from '../../lib/game-types';
 import { gameStoreLabels } from '../../lib/game-types';
+import { gameStatuses } from '../../lib/game-status';
 
 export default function GameShelf({ games }: { games: GameRecord[] }) {
   const [query, setQuery] = useState('');
@@ -12,7 +13,7 @@ export default function GameShelf({ games }: { games: GameRecord[] }) {
   const [yearFilter, setYearFilter] = useState('all');
   const [genreFilter, setGenreFilter] = useState('all');
   const platformOptions = useMemo(() => [...new Set(games.flatMap(game => game.platforms.map(platform => `${gameStoreLabels[platform.store]} · ${platform.platform}`)))].sort((a, b) => a.localeCompare(b, 'zh-CN')), [games]);
-  const statusOptions = useMemo(() => [...new Set(games.map(game => game.status).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'zh-CN')), [games]);
+  const statusOptions = [...gameStatuses];
   const yearOf = (game: GameRecord) => (game.metadata?.releaseDate || game.platforms.find(platform => platform.releaseDate)?.releaseDate || '').slice(0, 4);
   const yearOptions = useMemo(() => [...new Set(games.map(yearOf).filter(year => /^\d{4}$/.test(year)))].sort((a, b) => b.localeCompare(a)), [games]);
   const genresOf = (game: GameRecord) => [...new Set([...(game.metadata?.genres || []), ...game.platforms.flatMap(platform => platform.genres || [])])];

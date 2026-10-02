@@ -5,7 +5,7 @@
     "dev": "next dev",
     "build": "next build",
     "check": "tsc --noEmit",
-    "test": "npm --prefix workers/ns-counter test"
+    "test": "node --test scripts/game-status.test.cjs && npm --prefix workers/ns-counter test"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",

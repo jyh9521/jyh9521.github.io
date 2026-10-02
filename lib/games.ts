@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
+import { normalizeGameStatus } from './game-status';
 import type { AvailabilityStatus, GameEvent, GameManual, GameMetadata, GamePlatform, GameRecord, GameStore, StoreLink } from './game-types';
 
 const gamesDir = path.join(process.cwd(), 'content/games');
@@ -101,7 +102,7 @@ export function getGames(): GameRecord[] {
     })).sort((a: GameEvent, b: GameEvent) => b.date.localeCompare(a.date)) : [];
     return [{
       id: slug, slug,
-      title: asText(data.title || metadata.localizedName || metadata.title), status: asText(data.status) || '想玩',
+      title: asText(data.title || metadata.localizedName || metadata.title), status: normalizeGameStatus(data.status),
       summary: asText(data.summary || metadata.description), metadata: hasMetadata ? metadata : null, manual, platforms, events,
     }];
   }).sort((a, b) => a.title.localeCompare(b.title, 'zh-CN'));

@@ -1,6 +1,6 @@
 ---
 title: 吸血莱恩2：终极剪辑版
-status: 已通关、已发布汉化补丁
+status: 已通关
 gameMetadata:
   alternativeNames: []
   cover: https://media.rawg.io/media/games/61e/61e3d39225c5761eb51cf035a508a91b.jpg
