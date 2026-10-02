@@ -39,7 +39,11 @@ export function normalizeRawgGame(game) {
     cover: clean(game.background_image || game.background_image_additional),
     screenshots: (Array.isArray(game.short_screenshots) ? game.short_screenshots : [])
       .map(item => clean(item?.image)).filter(Boolean),
-    website: clean(game.website), sources: { rawg: { id: String(game.id) } },
+    website: clean(game.website), sources: { rawg: {
+      id: String(game.id),
+      ...(clean(game.slug) ? { slug: clean(game.slug) } : {}),
+      url: `https://rawg.io/games/${encodeURIComponent(String(game.id))}`,
+    } },
     fieldSources: {}, updatedAt: new Date().toISOString(),
   };
   normalized.fieldSources = sourceFields('rawg', ['title', 'localizedName', 'originalName', 'alternativeNames', 'description', 'releaseDate', 'developers', 'publishers', 'platforms', 'genres', 'cover', 'screenshots', 'website'].map(key => [key, normalized[key]]));
@@ -91,7 +95,10 @@ export function normalizeScreenScraperGame(game, system = {}) {
     developers: list(game.developpeur?.text || game.developpeur), publishers: list(game.editeur?.text || game.editeur),
     platforms: [clean(game.systeme?.nom || system.name)].filter(Boolean), genres: [...new Set(genreValues)],
     cover, screenshots: [...new Set(screenshots)], website: '',
-    sources: { screenscraper: { id: clean(game.id), systemId } }, fieldSources: {}, updatedAt: new Date().toISOString(),
+    sources: { screenscraper: {
+      id: clean(game.id), systemId,
+      ...(clean(game.id) && systemId ? { url: `https://www.screenscraper.fr/index.php?gameid=${encodeURIComponent(clean(game.id))}&plateforme=${encodeURIComponent(systemId)}` } : {}),
+    } }, fieldSources: {}, updatedAt: new Date().toISOString(),
   };
   normalized.fieldSources = sourceFields('screenscraper', ['title', 'localizedName', 'originalName', 'alternativeNames', 'description', 'releaseDate', 'developers', 'publishers', 'platforms', 'genres', 'cover', 'screenshots', 'website'].map(key => [key, normalized[key]]));
   return normalized;

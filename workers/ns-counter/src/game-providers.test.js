@@ -4,7 +4,7 @@ import { areSameGame, combineCandidates, mergeMetadata, normalizeRawgGame, norma
 
 test('RAWG records are normalized without leaking provider field shape', () => {
   const game = normalizeRawgGame({
-    id: 42, name: 'Resident Evil 2', name_original: 'Biohazard 2', released: '1998-01-21',
+    id: 42, slug: 'resident-evil-2', name: 'Resident Evil 2', name_original: 'Biohazard 2', released: '1998-01-21',
     description_raw: 'A survival horror game.', developers: [{ name: 'Capcom' }],
     publishers: [{ name: 'Capcom' }], platforms: [{ platform: { name: 'PlayStation' } }],
     genres: [{ name: 'Action' }], background_image: 'https://example.test/cover.jpg', website: 'https://example.test',
@@ -17,6 +17,7 @@ test('RAWG records are normalized without leaking provider field shape', () => {
   assert.equal(game.cover, 'https://example.test/cover.jpg');
   assert.deepEqual(game.screenshots, ['https://example.test/screenshot.jpg']);
   assert.equal(game.sources.rawg.id, '42');
+  assert.equal(game.sources.rawg.url, 'https://rawg.io/games/42');
 });
 
 test('ScreenScraper names, synopsis, dates, credits and media normalize from API shape', () => {
@@ -37,6 +38,7 @@ test('ScreenScraper names, synopsis, dates, credits and media normalize from API
   assert.deepEqual(game.screenshots, ['https://example.test/shot.png']);
   assert.deepEqual(game.platforms, ['PlayStation']);
   assert.equal(game.sources.screenscraper.systemId, '1');
+  assert.equal(game.sources.screenscraper.url, 'https://www.screenscraper.fr/index.php?gameid=123&plateforme=1');
 });
 
 test('same-title localized/alias records merge, but different release years stay distinct', () => {

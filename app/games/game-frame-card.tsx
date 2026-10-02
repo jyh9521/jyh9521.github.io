@@ -22,6 +22,15 @@ export default function GameFrameCard({ frame, game, title = '', status = '' }: 
     developer: metadata?.developers.join(', ') || '', publisher: metadata?.publishers.join(', ') || '',
     releaseDate: metadata?.releaseDate || '', genres: metadata?.genres || [],
     catalogSource: Object.keys(metadata?.sources || {}).join(' + ') || '手动资料', catalogId: metadata?.id || game.slug,
+    catalogSourceLinks: Object.entries(metadata?.sources || {}).flatMap(([source, details]) => {
+      if (!details?.id) return [];
+      const url = details.url || (source === 'rawg'
+        ? `https://rawg.io/games/${encodeURIComponent(details.id)}`
+        : source === 'screenscraper' && details.systemId
+          ? `https://www.screenscraper.fr/index.php?gameid=${encodeURIComponent(details.id)}&plateforme=${encodeURIComponent(details.systemId)}`
+          : '');
+      return url ? [{ source, url }] : [];
+    }),
   } satisfies GamePlatform;
   return <GamePlatformCard gameTitle={title || game.title} status={status || game.status} platform={platform} manual={game.manual} />;
 }

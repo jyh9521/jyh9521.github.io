@@ -22,7 +22,7 @@ export default function GamePlatformSelector({ title, status, platforms, manual 
 
   return <section className="game-platform-panel" aria-label="选择游戏平台">
     <div className="game-platform-tabs" role="tablist" aria-label="游戏平台家族">
-      {stores.map(store => <button key={store} type="button" role="tab" aria-selected={selected === store} className={selected === store ? 'is-selected' : ''} onClick={() => setSelected(store)}>{gameStoreLabels[store]}</button>)}
+      {stores.map(store => <button key={store} type="button" role="tab" aria-selected={selected === store} className={selected === store ? `is-selected is-selected-${store}` : ''} onClick={() => setSelected(store)}>{gameStoreLabels[store]}</button>)}
     </div>
     <div className="game-platform-list">{choices.map((platform, index) => <GamePlatformCard key={`${platform.store}-${platform.platform}-${platform.catalogId || index}`} gameTitle={title} status={status} platform={platform} manual={manual} />)}</div>
   </section>;

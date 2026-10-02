@@ -54,6 +54,15 @@ function parsePlatform(record: any, metadata: GameMetadata, slug: string): GameP
   const platform = /^steam$/i.test(selectedPlatform) ? 'PC' : selectedPlatform;
   const sources = Object.keys(metadata.sources || {});
   const catalogSource = sources.length ? sources.join(' + ') : '手动资料';
+  const catalogSourceLinks = Object.entries(metadata.sources || {}).flatMap(([source, details]) => {
+    if (!details?.id) return [];
+    const url = details.url || (source === 'rawg'
+      ? `https://rawg.io/games/${encodeURIComponent(details.id)}`
+      : source === 'screenscraper' && details.systemId
+        ? `https://www.screenscraper.fr/index.php?gameid=${encodeURIComponent(details.id)}&plateforme=${encodeURIComponent(details.systemId)}`
+        : '');
+    return url ? [{ source, url }] : [];
+  });
   return {
     store, platform,
     catalogUrl: `/games/${encodeURIComponent(slug)}/`,
@@ -62,7 +71,7 @@ function parsePlatform(record: any, metadata: GameMetadata, slug: string): GameP
     publisher: asList(overrides.publishers || overrides.publisher || metadata.publishers).join(', '),
     releaseDate: asDate(overrides.releaseDate || metadata.releaseDate),
     genres: asList(overrides.genres || metadata.genres), catalogSource,
-    catalogId: metadata.id || slug,
+    catalogId: metadata.id || slug, catalogSourceLinks,
   };
 }
 
