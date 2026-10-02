@@ -23,7 +23,11 @@ gameSlug: bloodrayne2-terminal-cut
 
 缺点也很明显，比如打击感完全是一坨，新增的连招系统用键鼠基本搓不出来……
 
-***
+
+
+---
+
+
 
 ## 二、汉化内容
 
@@ -42,7 +46,11 @@ gameSlug: bloodrayne2-terminal-cut
 
 游戏配音仍然保留**英语原声**。
 
-***
+
+
+---
+
+
 
 ## 三、技术说明
 
@@ -77,7 +85,11 @@ gameSlug: bloodrayne2-terminal-cut
 
 俄语在这里单纯只是作为中文汉化的“载体”，不会真的出现俄文。
 
-***
+
+
+---
+
+
 
 ## 四、MOD支持
 
@@ -99,7 +111,11 @@ W32ART.POD、W32ENSND.POD、视频文件、存档等都不会被修改。
 
 唯一需要注意的是，如果其他MOD同样使用了 dinput8.dll，那么两边会占用同一个代理DLL文件，不能直接互相覆盖。
 
-***
+
+
+---
+
+
 
 ## 五、安装方法
 
@@ -141,7 +157,11 @@ BloodRayne 2 Terminal Cut/
 
 ![启动器](/uploads/chinesetranslationpatch/bloodrayne2/videooptioins.webp "启动器")
 
-***
+
+
+---
+
+
 
 ## 六、截图
 
@@ -159,7 +179,11 @@ BloodRayne 2 Terminal Cut/
 
 ![存档界面](/uploads/chinesetranslationpatch/bloodrayne2/7.webp "存档界面")
 
-***
+
+
+---
+
+
 
 ## 七、下载地址
 
@@ -169,7 +193,11 @@ BloodRayne 2 Terminal Cut/
 
 [百度网盘](https://pan.baidu.com/s/1U-IGckFfRhcLJOHTsa4sOg?pwd=id4j) 提取码: id4j
 
-***
+
+
+---
+
+
 
 ## 八、问题反馈
 
@@ -185,7 +213,11 @@ BloodRayne 2 Terminal Cut/
 
 这样找起来会快很多。
 
-***
+
+
+---
+
+
 
 ## 九、最后
 
@@ -197,7 +229,11 @@ BloodRayne 2 Terminal Cut/
 
 **Have fun.**
 
-***
+
+
+---
+
+
 
 《BloodRayne 2》及相关素材版权归其权利人所有。
 
