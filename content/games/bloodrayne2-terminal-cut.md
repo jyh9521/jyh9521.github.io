@@ -50,10 +50,6 @@ manual:
       note: ''
       region: ''
       url: https://store.steampowered.com/app/1373550/
-platforms:
-  - platformChoice:
-      family: pc
-      platform: Windows
 events:
   - date: 2026-09-30
     title: 开始游戏
