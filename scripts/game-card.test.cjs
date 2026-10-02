@@ -55,6 +55,26 @@ test('new cards store stable slugs and legacy cards round-trip with platform and
   }
 });
 
+test('article association reuses local picker and can clear an optional saved slug', () => {
+  const config = yaml.load(fs.readFileSync('public/sveltia/config.yml', 'utf8'));
+  const field = config.collections.find(collection => collection.name === 'post').fields.find(field => field.name === 'gameSlug');
+  assert.equal(field.widget, 'game-archive-picker');
+  assert.equal(field.required, false);
+  const definition = loadCms().fieldTypes[field.widget];
+  let saved = 'existing-game';
+  const picker = { ...definition, props: { field: { get: key => field[key] }, value: saved, onChange: value => { saved = value; } },
+    state: definition.getInitialState(), setState(next) { Object.assign(this.state, next); } };
+  picker.state.entries = [{ slug: saved, title: '手动中文名称', names: ['Original Game'] }];
+  assert.equal(picker.render().children[0].children[0], '手动中文名称');
+  const clear = picker.render().children.find(child => child?.type === 'button' && child.children[0] === '取消关联');
+  assert.ok(clear);
+  clear.props.onClick();
+  assert.equal(saved, '');
+  picker.props.required = true;
+  picker.props.field = { required: true };
+  assert.ok(!picker.render().children.some(child => child?.type === 'button' && child.children[0] === '取消关联'));
+});
+
 test('Markdown recognizes generic and all legacy frames without mismatched closing tags', () => {
   const { remarkGameFrames } = loadTs('app/posts/game-frames.ts');
   for (const frame of ['g', 'p', 'n', 'x', 's']) {

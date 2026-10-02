@@ -160,6 +160,7 @@
       render: function () {
         const { entries, open, query, loading, error, active } = this.state;
         const selected = entries.find(entry => entry.slug === this.props.value);
+        const optional = this.props.required === false || this.props.field?.get?.('required') === false || this.props.field?.required === false;
         const options = this.options();
         const listId = `${this.props.forID || 'game-archive'}-options`;
         const style = { width: '100%', minHeight: '40px', padding: '8px 12px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit', textAlign: 'left' };
@@ -188,7 +189,10 @@
                 onMouseDown: event => event.preventDefault(), onClick: () => this.choose(entry),
               }, entry.title))),
             !loading && !error && !options.length && h('small', { role: 'status' }, entries.length ? '没有匹配的本地档案。' : '尚无已发布的游戏档案，请先保存档案并等待网站部署完成。'),
-          ), h('small', null, '仅筛选本站已有档案；名称与原名均可匹配，显示档案的手动覆盖名称。新保存的档案在网站部署完成后进入列表。'));
+          ), optional && this.props.value && h('button', { type: 'button', disabled: this.props.readonly,
+            onClick: () => { this.props.onChange(''); this.setState({ open: false, query: '', active: 0 }); },
+            style: { marginTop: '6px', marginRight: '8px' },
+          }, '取消关联'), h('small', null, '仅筛选本站已有档案；名称与原名均可匹配，显示档案的手动覆盖名称。新保存的档案在网站部署完成后进入列表。'));
       },
     });
     window.CMS.registerFieldType('game-archive-picker', GameArchivePicker);
