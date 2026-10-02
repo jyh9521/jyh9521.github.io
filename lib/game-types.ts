@@ -38,7 +38,7 @@ export type GameMetadata = {
   updatedAt: string;
 };
 export type GameEvent = { date: string; title: string; note: string };
-export type GameRecord = { id: string; slug: string; title: string; status: GameStatus; summary: string; metadata: GameMetadata | null; manual: GameManual; platforms: GamePlatform[]; events: GameEvent[] };
+export type GameRecord = { id: string; slug: string; title: string; status: string; summary: string; metadata: GameMetadata | null; manual: GameManual; platforms: GamePlatform[]; events: GameEvent[] };
 
 export const gameStoreLabels: Record<GameStore, string> = {
   pc: 'PC', playstation: 'PlayStation', xbox: 'Xbox', nintendo: 'Nintendo',
@@ -50,4 +50,3 @@ export const gamePlatforms: Record<GameStore, string[]> = {
   xbox: ['Xbox Series X|S', 'Xbox One X', 'Xbox One', 'Xbox 360', '初代 Xbox'],
   nintendo: ['Switch 2', 'Switch', '3DS', 'DS', 'Wii U', 'Wii', 'GameCube', 'Game Boy Advance', 'Game Boy'],
 };
-import type { GameStatus } from './game-status';

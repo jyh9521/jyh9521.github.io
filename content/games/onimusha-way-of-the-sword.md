@@ -1,6 +1,6 @@
 ---
 title: 鬼武者：剑之道
-status: 已通关
+status: [已通关]
 gameMetadata:
   alternativeNames: []
   cover: https://media.rawg.io/media/games/48e/48ea2f7adb60615d658887899ffe4d1f.jpg

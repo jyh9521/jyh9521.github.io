@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import type { GameRecord } from '../../lib/game-types';
 import { gameStoreLabels } from '../../lib/game-types';
-import { gameStatuses } from '../../lib/game-status';
+import { gameStatuses, matchesGameStatus } from '../../lib/game-status';
 
 export default function GameShelf({ games }: { games: GameRecord[] }) {
   const [query, setQuery] = useState('');
@@ -25,7 +25,7 @@ export default function GameShelf({ games }: { games: GameRecord[] }) {
       const platforms = game.platforms.map(platform => `${gameStoreLabels[platform.store]} · ${platform.platform}`);
       return (!normalizedQuery || searchText.includes(normalizedQuery))
         && (platformFilter === 'all' || platforms.includes(platformFilter))
-        && (statusFilter === 'all' || game.status === statusFilter)
+        && matchesGameStatus(game.status, statusFilter)
         && (yearFilter === 'all' || yearOf(game) === yearFilter)
         && (genreFilter === 'all' || genresOf(game).includes(genreFilter));
     });

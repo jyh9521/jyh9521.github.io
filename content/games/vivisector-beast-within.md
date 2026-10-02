@@ -1,6 +1,6 @@
 ---
 title: 活体解剖者：人面兽心
-status: 已制作补丁
+status: [已制作补丁]
 gameMetadata:
   alternativeNames: []
   cover: https://media.rawg.io/media/screenshots/90d/90d23bb6dcb323e707ba0e7423f1d1c0.jpg

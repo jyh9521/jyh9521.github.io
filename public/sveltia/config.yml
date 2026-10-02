@@ -57,9 +57,11 @@ collections:
         label: 当前状态
         widget: select
         required: true
-        default: 想玩
+        multiple: true
+        min: 1
+        default: [想玩]
         options: [想玩, 正在玩, 已通关, 暂时搁置, AFK, 考虑制作补丁, 已制作补丁]
-        hint: "选择当前状态；开始、通关、回坑及补丁发布等历史记录保留在时间线中。"
+        hint: "可多选，例如已通关 + 已制作补丁；至少选择一项。开始、通关、回坑及补丁发布等历史记录保留在时间线中。"
       - { name: summary, label: 简介, widget: text, required: false }
       - { name: gameMetadata, label: 游戏资料（元数据来源）, widget: game-metadata, required: false, hint: "搜索候选后手动确认并导入；在资料组件中勾选要生成档案卡片的平台。资料保留完整平台清单，前台仅显示勾选的平台卡片。" }
       - { name: manual, label: 正版渠道与人工状态, widget: game-manual, required: false, hint: "正版售卖渠道、可获得状态和备注独立于资料数据源；刷新游戏资料不会覆盖。" }
