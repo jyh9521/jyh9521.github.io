@@ -4,21 +4,12 @@ status: 已通关
 gameMetadata:
   alternativeNames: []
   cover: https://media.rawg.io/media/games/7bc/7bc71a03ca2351d7872ad37d29613718.jpg
-  description: |-
-    Enhanced and updated for modern systems by the game's original developers, this is the definitive edition of BloodRayne.
-    In the years between the World Wars, Agent BloodRayne works as a killing machine for The Brimstone Society – a top secret fraternity that hunts down and destroys supernatural threats. Two missions, five years apart, turn out to be connected by one man. For years, this man has been searching the world for powerful occult relics to bring about a new age of domination for the Third Reich. In this frenetic and bloody third-person shooter that unleashed the iconic red-headed femme fatale on the world, the dhampir Rayne faces horrific creatures, hordes of soldiers with an array of tools and firepower, and every Nazi officer that stands between her and the one she must stop.
-    Features and enhancements of the Terminal Cut edition, created by the game’s original development team:
-    Support for higher display resolutions (up to 4K / 3840x2160).
-    Upscaled cinematic videos
-    Support for modern gamepads (XInput)
-    Improved rendering with up to 4x anti-aliasing
-    Support for higher texture resolutions, allowing for use of uncompressed original textures
-    Improvements to effects such as reflections, water, fog, and shadows
+  description: Enhanced and updated for modern systems, this is the definitive edition of the action horror game that unleashed the red-headed dhampir on the world. In a story spanning five years, Rayne must stop a madman bent on using occult relics to bring about a new age of domination for the Third Reich.
   developers:
     - Terminal Reality
   fieldSources:
     cover: rawg
-    description: rawg
+    description: manual
     developers: rawg
     genres: rawg
     originalName: rawg
@@ -33,6 +24,7 @@ gameMetadata:
   localizedName: ''
   manualFields:
     - title
+    - description
   originalName: 'BloodRayne: Terminal Cut'
   platforms:
     - PC
