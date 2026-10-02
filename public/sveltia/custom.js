@@ -7,35 +7,6 @@
     const SelectControl = window.CMS.getFieldType('select').control;
     const sourceLabels = { rawg: 'RAWG', screenscraper: 'ScreenScraper', igdb: 'IGDB' };
     const labelSources = sources => Object.keys(sources || {}).map(source => sourceLabels[source] || source).join(' + ');
-    const platformOptions = {
-      pc: ['PC', 'Windows', 'macOS', 'Linux'],
-      playstation: ['PS5 Pro', 'PS5', 'PS4 Pro', 'PS4', 'PS3', 'PS Vita', 'PSP', 'PS2', 'PS1'],
-      xbox: ['Xbox Series X|S', 'Xbox One X', 'Xbox One', 'Xbox 360', '初代 Xbox'],
-      nintendo: ['Switch 2', 'Switch', '3DS', 'DS', 'Wii U', 'Wii', 'GameCube', 'Game Boy Advance', 'Game Boy'],
-    };
-    const PlatformChoice = createClass({
-      render: function () {
-        const value = this.props.value || {};
-        const family = ['pc', 'playstation', 'xbox', 'nintendo'].includes(value.family) ? value.family : 'pc';
-        const options = platformOptions[family].map(platform => ({ label: platform, value: platform }));
-        const platform = options.some(option => option.value === value.platform) ? value.platform : options[0].value;
-        const choices = [
-          ['平台家族', 'family', [{ label: 'PC', value: 'pc' }, { label: '索尼 PlayStation', value: 'playstation' }, { label: '微软 Xbox', value: 'xbox' }, { label: '任天堂', value: 'nintendo' }]],
-          ['具体平台', 'platform', options],
-        ];
-        return h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: '12px' } }, choices.map(([label, key, choices]) => h('label', { key, style: { display: 'grid', gap: '6px' } },
-          h('span', null, label),
-          h(SelectControl, {
-            field: { name: `${this.props.forID}-${key}`, options: choices, dropdown_threshold: 1 },
-            value: key === 'family' ? family : platform,
-            forID: `${this.props.forID}-${key}`,
-            onChange: next => this.props.onChange(key === 'family' ? { family: next, platform: platformOptions[next][0] } : { ...value, family, platform: next }),
-          }),
-        )));
-      },
-    });
-    window.CMS.registerFieldType('game-platform-choice', PlatformChoice);
-
     const GameManual = createClass({
       getInitialState: function () { return { urlErrors: {} }; },
       change: function (next) { this.props.onChange({ ...(this.props.value || {}), ...next }); },
