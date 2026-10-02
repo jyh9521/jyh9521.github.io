@@ -1,20 +1,75 @@
 ---
 title: 鬼武者：剑之道
 status: 已通关
+gameMetadata:
+  id: rawg:994600
+  sources:
+    rawg:
+      id: '994600'
+  fieldSources:
+    title: rawg
+    originalName: rawg
+    description: rawg
+    releaseDate: rawg
+    developers: rawg
+    publishers: rawg
+    platforms: rawg
+    genres: rawg
+    cover: rawg
+  updatedAt: 2026-10-02T00:40:15.916Z
+  manualFields: []
+  title: 'Onimusha: Way Of The Sword'
+  localizedName: ''
+  originalName: 'Onimusha: Way Of The Sword'
+  alternativeNames: []
+  description: |-
+    Fight through bloodstained battlefields of intense swordplay action. Explore the historic Japanese capital of Edo-era Kyoto, twisted by malevolent clouds of Malice.
+    With every stage cloaked in mystery, danger and intrigue. Battle against monstrosities from the underworld known as Genma in a tale of dark fantasy.
+    Follow the tale of a samurai who wields the Oni Gauntlet, a mystical artifact that grants its bearer the power to slay Genma.
+    Through gritty, blood-soaked brawls, he searches for his reason to fight. What fate awaits at the end of his path?
+  releaseDate: 2026-09-04
+  developers:
+    - Capcom
+  publishers:
+    - Capcom
+  platforms:
+    - Xbox Series S/X
+    - PlayStation 5
+    - PC
+  genres:
+    - Action
+    - Adventure
+    - RPG
+  cover: https://media.rawg.io/media/games/48e/48ea2f7adb60615d658887899ffe4d1f.jpg
+  screenshots:
+    - https://media.rawg.io/media/screenshots/a34/a3444739430f1b440bbef6d493a62585.jpg
+    - https://media.rawg.io/media/screenshots/184/18431ea009b07288111a9fb3743a2830.jpg
+    - https://media.rawg.io/media/screenshots/bb8/bb82117127b5839995ea4c7186354190.jpg
+    - https://media.rawg.io/media/screenshots/965/9653d36f42d6a7a360c99963253384ff.jpg
+  website: ''
+manual:
+  availabilityStatus: available
+  officialStores:
+    - name: PlayStation
+      note: ''
+      region: ''
+      url: https://www.playstation.com/zh-hans-hk/games/onimusha-way-of-the-sword/
 platforms:
   - platformChoice:
       family: playstation
       platform: PS5 Pro
     metadata:
       cover: /uploads/gamefile/onimusha-way-of-the-sword.avif
-      releaseDate: 2026-09-04
       developer: Capcom
+      genres:
+        - 动作
+        - ARPG
       publisher: Capcom
-      genres: [动作, ARPG]
+      releaseDate: 2026-09-04
 events:
-  - date: 2026-09-05T00:00:00+09:00
+  - date: 2026-09-05
     title: 开始游戏
-  - date: 2026-09-19T00:00:00+09:00
+  - date: 2026-09-19
     title: 通关游戏
     note: |-
       动作系统的表现极其强悍，动作资产丰富到了夸张的地步，各种想得到和想不到的细节全都有专门的独立动作匹配，打起来的交互反馈非常扎实。唯一的瑕疵在于处决动画偶尔会出现滑步判定，位移修正略显生硬，算是一个影响沉浸感的小缺点。
