@@ -1,6 +1,6 @@
 ---
 title: 无人永生2
-status: 已弃坑
+status: AFK
 gameMetadata:
   alternativeNames: []
   cover: https://media.rawg.io/media/games/24a/24a7490f304e74d503bd461bc23b37a2.jpg
