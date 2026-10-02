@@ -9,11 +9,12 @@ import { remarkImageCompare } from './compare-markdown';
 import { remarkHeadingIds, type ArticleImage, type HeadingItem } from './markdown-utils';
 import { ReadingProgress, ShareButton } from '../site-enhancements';
 import ImageCompare from './image-compare';
-import IgdbFrameCard from '../games/igdb-frame-card';
+import GameFrameCard from '../games/game-frame-card';
+import type { GameRecord } from '../../lib/game-types';
 
-type Props = { body: string; title: string; headings: HeadingItem[]; images: ArticleImage[]; cover?: ArticleImage; audio?: string; video?: string; attachment?: string };
+type Props = { body: string; title: string; headings: HeadingItem[]; images: ArticleImage[]; games: GameRecord[]; cover?: ArticleImage; audio?: string; video?: string; attachment?: string };
 
-export default function PostContent({ body, title, headings, images, cover, audio, video, attachment }: Props) {
+export default function PostContent({ body, title, headings, images, games, cover, audio, video, attachment }: Props) {
   const [tocOpen, setTocOpen] = useState(false);
   const [activeImage, setActiveImage] = useState<number | null>(null);
   const [activeHeading, setActiveHeading] = useState('');
@@ -70,8 +71,8 @@ export default function PostContent({ body, title, headings, images, cover, audi
     },
     h1: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => <h1 {...props}>{children}</h1>,
     a: ({ href = '', children }: { href?: string; children?: React.ReactNode }) => {
-      const game = href.match(/igdb-frame\.invalid\/(p|n|x|s)\?([^#]*)/);
-      if (game) { const params = new URLSearchParams(game[2]); return <IgdbFrameCard frame={game[1]} id={params.get('id') || ''} title={params.get('title') || ''} status={params.get('status') || ''} />; }
+      const game = href.match(/game-frame\.invalid\/(p|n|x|s)\?([^#]*)/);
+      if (game) { const params = new URLSearchParams(game[2]); const slug = params.get('slug') || ''; return <GameFrameCard frame={game[1]} game={games.find(item => item.slug === slug)} title={params.get('title') || ''} status={params.get('status') || ''} />; }
       const compare = href.match(/image-compare\.invalid\/compare\?([^#]*)/);
       if (compare) { const params = new URLSearchParams(compare[1]); return <ImageCompare before={params.get('before') || ''} after={params.get('after') || ''} beforeLabel={params.get('beforeLabel') || '之前'} afterLabel={params.get('afterLabel') || '之后'} />; }
       return <a href={href}>{children}</a>;

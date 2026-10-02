@@ -1,14 +1,16 @@
 'use client';
 
-import { gameStoreLabels, type GamePlatform } from '../../lib/game-types';
+import { gameStoreLabels, type GameManual, type GamePlatform } from '../../lib/game-types';
 
-type Props = { gameTitle: string; status?: string; platform: GamePlatform; compact?: boolean };
+type Props = { gameTitle: string; status?: string; platform: GamePlatform; manual?: GameManual; compact?: boolean };
 
-export default function GamePlatformCard({ gameTitle, status = '', platform, compact = false }: Props) {
+const availabilityLabels = { available: '可数字购买', delisted: '已下架', 'physical-only': '仅有实体版', free: '官方免费', unknown: '状态未知' } as const;
+const safeExternalUrl = (value: string) => { try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : ''; } catch { return ''; } };
+
+export default function GamePlatformCard({ gameTitle, status = '', platform, manual, compact = false }: Props) {
   const family = platform.store;
   const platformName = platform.platform || gameStoreLabels[family];
-  const igdbUrl = `https://www.igdb.com/search?type=1&q=${encodeURIComponent(gameTitle)}`;
-  const catalogUrl = /^https:\/\/(?:www\.)?igdb\.com\/games\/[a-z0-9-]+\/?$/i.test(platform.catalogUrl) ? platform.catalogUrl : igdbUrl;
+  const catalogUrl = /^\/games\/[a-z0-9-]+\/$/.test(platform.catalogUrl) ? platform.catalogUrl : '/games/';
 
   return <article className={`game-platform-card${compact ? ' is-compact' : ''}`}>
     <div className="game-platform-art">
@@ -18,7 +20,19 @@ export default function GamePlatformCard({ gameTitle, status = '', platform, com
       <div className="game-platform-heading"><strong>{gameTitle}</strong>{status && <span className="game-status-pill">{status}</span>}</div>
       <p className="game-platform-specs">{[platformName, platform.releaseDate, platform.genres.slice(0, 2).join(' / ')].filter(Boolean).join(' · ') || gameStoreLabels[family]}</p>
       {(platform.developer || platform.publisher) && <p className="game-platform-credit">{[platform.developer, platform.publisher].filter(Boolean).join(' · ')}</p>}
-      <a className={`game-platform-link game-platform-link-${family}`} href={catalogUrl} target="_blank" rel="noreferrer">在 IGDB 查看 ↗</a>
+      {platform.catalogSource && platform.catalogSource !== '手动资料' && <p className="game-platform-source">资料来源：{platform.catalogSource.split(' + ').map((source, index) => <span key={source}>{index > 0 && ' · '}{source.toLowerCase() === 'rawg' ? <a href="https://rawg.io/" target="_blank" rel="noopener noreferrer">RAWG</a> : source.toLowerCase() === 'screenscraper' ? <a href="https://www.screenscraper.fr/" target="_blank" rel="noopener noreferrer">ScreenScraper</a> : source}</span>)}</p>}
+      {manual && <>
+        <p className="game-availability">正版获取状态：{availabilityLabels[manual.availabilityStatus]}</p>
+        {manual.notes && <p className="game-platform-credit">{manual.notes}</p>}
+        {manual.officialStores.some(store => safeExternalUrl(store.url)) && <section className="game-official-stores" aria-label="正版购买渠道">
+          <strong>正版购买</strong>
+          <div>{manual.officialStores.map((store, index) => {
+            const href = safeExternalUrl(store.url);
+            return href && store.name ? <a key={`${store.name}-${index}`} href={href} target="_blank" rel="noopener noreferrer" title={[store.region, store.note].filter(Boolean).join(' · ') || store.name}>{store.name}</a> : null;
+          })}</div>
+        </section>}
+      </>}
+      <a className={`game-platform-link game-platform-link-${family}`} href={catalogUrl}>查看游戏档案 ↗</a>
     </div>
   </article>;
 }

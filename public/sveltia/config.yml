@@ -37,7 +37,7 @@ collections:
       - { name: updatedAt, label: 最近更新日期, widget: datetime, type: date, required: false }
       - { name: updateNote, label: 更新说明, widget: text, required: false }
       - { name: gameSlug, label: 关联游戏档案, widget: string, required: false, hint: "填入游戏档案文件名（不含 .md），例如 bloodrayne-terminal-cut。" }
-      - { name: body, label: 正文, widget: richtext, required: true, editor_components: [code-block, image, pframe-card, nframe-card, xframe-card, sframe-card, image-compare], hint: "图片描述优先读取 Markdown 图片引号标题。平台游戏卡片按 IGDB Game ID 加载资料；先在游戏库搜索选择 IGDB 游戏，再将其 ID 填入 pframe/nframe/xframe/sframe 卡片。截图前后对比按钮可插入两张图并拖动滑块查看差异。代码块支持一键复制。" }
+      - { name: body, label: 正文, widget: richtext, required: true, editor_components: [code-block, image, pframe-card, nframe-card, xframe-card, sframe-card, image-compare], hint: "图片描述优先读取 Markdown 图片引号标题。平台游戏卡片引用本地游戏档案 slug；先在游戏库保存资料，再填入 pframe/nframe/xframe/sframe 卡片。截图前后对比按钮可插入两张图并拖动滑块查看差异。代码块支持一键复制。" }
       - { name: audio, label: 音频文件, widget: file, required: false }
       - { name: video, label: 视频文件, widget: file, required: false }
       - { name: attachment, label: 下载附件, widget: file, required: false }
@@ -52,12 +52,13 @@ collections:
       editable: true
       pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', '只允许小写英文字母、数字和连字符']
     fields:
-      - { name: title, label: 手动名称覆盖（优先于 IGDB）, widget: string, required: false, hint: "关联始终使用下方永久保存的 IGDB Game ID；改中文名称或 IGDB 更新名称都不会改变关联。" }
+      - { name: title, label: 手动名称覆盖（最高优先级）, widget: string, required: false, hint: "显示名称覆盖，不影响本地档案 slug 或任何数据源 ID。" }
       - { name: status, label: 当前状态, widget: string, required: true, hint: "例如：正在玩、已通关、想玩、已弃坑。" }
       - { name: summary, label: 简介, widget: text, required: false }
-      - { name: igdbGame, label: IGDB 关联与资料（Game ID 为永久关联标识）, widget: igdb-game-metadata, required: true, hint: "可在此按名称搜索选择，也可从 IGDB 复制 Game ID 粘贴后按 ID 获取资料。Game ID 固定作为关联键，名称变化不会影响关联。" }
+      - { name: gameMetadata, label: 游戏资料（元数据来源）, widget: game-metadata, required: false, hint: "搜索候选后手动确认并导入。游戏记录以本地档案 slug 关联，不依赖某个数据库的 ID；手动编辑的资料字段会保留。" }
+      - { name: manual, label: 正版渠道与人工状态, widget: game-manual, required: false, hint: "正版售卖渠道、可获得状态和备注独立于资料数据源；刷新游戏资料不会覆盖。" }
       - name: platforms
-        label: 平台卡片样式（可选；游戏资料统一来自 IGDB）
+        label: 平台卡片样式（可选；游戏资料统一来自本地档案）
         widget: list
         required: false
         summary: '{{fields.platformChoice.platform}}'
