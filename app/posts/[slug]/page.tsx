@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import PostContent from '../post-content';
 import { extractHeadings, extractImages } from '../markdown-utils';
 import { getAllPosts, getPost, hasLocalAsset } from '../../../lib/posts';
+import { getGames } from '../../../lib/games';
 import GiscusComments from '../../comments/giscus-comments';
 
 export function generateStaticParams() {
@@ -22,6 +23,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
     .slice(0, 3);
   const headings = extractHeadings(post.body);
   const images = extractImages(post.body);
+  const games = getGames();
   return <main className="article-shell">
     <div className="container article">
       <Link className="back" href="/">← 返回文章列表</Link>
@@ -32,7 +34,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
         {post.updateNote && <p className="update-note">更新说明：{post.updateNote}</p>}
         {post.gameSlug && <Link className="game-reference" href={`/games/${post.gameSlug}/`}>🎮 查看游戏档案与时间线 ↗</Link>}
       </header>
-      <PostContent body={post.body} title={post.title} headings={headings} images={images} cover={hasLocalAsset(post.cover) ? { src: post.cover, alt: post.title, caption: post.title, group: '封面' } : undefined} audio={post.audio} video={post.video} attachment={post.attachment} />
+      <PostContent body={post.body} title={post.title} headings={headings} images={images} games={games} cover={hasLocalAsset(post.cover) ? { src: post.cover, alt: post.title, caption: post.title, group: '封面' } : undefined} audio={post.audio} video={post.video} attachment={post.attachment} />
       {(previous || next) && <nav className="post-neighbor-nav" aria-label="上一篇和下一篇">
         {previous ? <Link href={`/posts/${previous.slug}/`} className="neighbor-card neighbor-previous"><span>← 上一篇 · 更早</span><strong>{previous.title}</strong></Link> : <span />}
         {next ? <Link href={`/posts/${next.slug}/`} className="neighbor-card neighbor-next"><span>下一篇 · 更新 →</span><strong>{next.title}</strong></Link> : <span />}

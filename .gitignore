@@ -1,6 +1,8 @@
 node_modules/
 .next/
 out/
-.env
-.env.local
+.env*
+!.env.example
+workers/ns-counter/.dev.vars*
+!workers/ns-counter/.dev.vars.example
 *.tsbuildinfo

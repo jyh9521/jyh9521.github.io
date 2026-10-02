@@ -1,4 +1,8 @@
 export type GameStore = 'pc' | 'playstation' | 'xbox' | 'nintendo';
+export type GameSource = 'rawg' | 'screenscraper' | 'igdb';
+export type StoreLink = { name: string; url: string; region?: string; note?: string };
+export type AvailabilityStatus = 'available' | 'delisted' | 'physical-only' | 'free' | 'unknown';
+export type GameManual = { officialStores: StoreLink[]; availabilityStatus: AvailabilityStatus; notes: string };
 export type GamePlatform = {
   store: GameStore;
   platform: string;
@@ -12,8 +16,27 @@ export type GamePlatform = {
   catalogSource: string;
   catalogId: string;
 };
+export type GameMetadata = {
+  id: string;
+  title: string;
+  localizedName: string;
+  originalName: string;
+  alternativeNames: string[];
+  description: string;
+  releaseDate: string;
+  developers: string[];
+  publishers: string[];
+  platforms: string[];
+  genres: string[];
+  cover: string;
+  screenshots: string[];
+  website: string;
+  sources: Partial<Record<GameSource, { id: string; systemId?: string }>>;
+  fieldSources: Record<string, string>;
+  updatedAt: string;
+};
 export type GameEvent = { date: string; title: string; note: string };
-export type GameRecord = { slug: string; igdbId: string; title: string; status: string; summary: string; platforms: GamePlatform[]; events: GameEvent[] };
+export type GameRecord = { id: string; slug: string; title: string; status: string; summary: string; metadata: GameMetadata | null; manual: GameManual; platforms: GamePlatform[]; events: GameEvent[] };
 
 export const gameStoreLabels: Record<GameStore, string> = {
   pc: 'PC', playstation: 'PlayStation', xbox: 'Xbox', nintendo: 'Nintendo',

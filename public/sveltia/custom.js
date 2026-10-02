@@ -5,6 +5,8 @@
     const h = window.h;
     const createClass = window.createClass;
     const SelectControl = window.CMS.getFieldType('select').control;
+    const sourceLabels = { rawg: 'RAWG', screenscraper: 'ScreenScraper', igdb: 'IGDB' };
+    const labelSources = sources => Object.keys(sources || {}).map(source => sourceLabels[source] || source).join(' + ');
     const platformOptions = {
       pc: ['PC', 'Windows', 'macOS', 'Linux'],
       playstation: ['PS5 Pro', 'PS5', 'PS4 Pro', 'PS4', 'PS3', 'PS Vita', 'PSP', 'PS2', 'PS1'],
@@ -34,100 +36,140 @@
     });
     window.CMS.registerFieldType('game-platform-choice', PlatformChoice);
 
-    const IgdbGameMetadata = createClass({
-      getInitialState: function () { return { loading: false, searching: false, message: '', results: [], query: '' }; },
+    const GameManual = createClass({
+      getInitialState: function () { return { urlErrors: {} }; },
+      change: function (next) { this.props.onChange({ ...(this.props.value || {}), ...next }); },
+      updateStore: function (index, key, value) {
+        const current = this.props.value || {};
+        const officialStores = [...(current.officialStores || [])];
+        officialStores[index] = { ...(officialStores[index] || {}), [key]: value };
+        this.change({ officialStores });
+        const store = officialStores[index];
+        let valid = false;
+        try { valid = ['http:', 'https:'].includes(new URL(store.url || '').protocol); } catch { /* Incomplete URL while typing. */ }
+        const error = !store.name && !store.url ? '' : !store.url ? '请填写商店链接' : !valid ? '链接必须以 http:// 或 https:// 开头' : '';
+        this.setState({ urlErrors: { ...this.state.urlErrors, [index]: error } });
+      },
+      render: function () {
+        const value = this.props.value || {};
+        const stores = Array.isArray(value.officialStores) ? value.officialStores : [];
+        const textInput = (index, key, placeholder, label, type = 'text') => h('label', { style: { display: 'grid', gap: '4px', minWidth: 0 } },
+          h('span', null, label), h('input', { type, value: stores[index]?.[key] || '', placeholder,
+            onChange: event => this.updateStore(index, key, event.target.value),
+            style: { width: '100%', minHeight: '36px', padding: '6px 9px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }),
+          key === 'url' && this.state.urlErrors[index] && h('small', { role: 'alert', style: { color: '#b7791f' } }, this.state.urlErrors[index]));
+        return h('div', { style: { display: 'grid', gap: '12px' } },
+          h('label', { style: { display: 'grid', gap: '5px' } }, h('span', null, '正版获取状态'), h('select', {
+            value: value.availabilityStatus || 'unknown', onChange: event => this.change({ availabilityStatus: event.target.value }),
+            style: { minHeight: '38px', padding: '6px 9px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' },
+          }, [['available', '当前可数字购买'], ['delisted', '已从数字商店下架'], ['physical-only', '仅有实体版'], ['free', '官方免费'], ['unknown', '状态未知']].map(([key, label]) => h('option', { key, value: key }, label)))),
+          h('strong', null, '正版购买渠道'),
+          ...stores.map((store, index) => h('fieldset', { key: index, style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: '8px', padding: '10px', border: '1px solid #68707a', borderRadius: '6px' } },
+            textInput(index, 'name', 'Steam / GOG / 官方网站', '渠道名称'),
+            textInput(index, 'url', 'https://…', '商店 URL', 'url'),
+            textInput(index, 'region', 'Global / JP / US / CN', '地区（可选）'),
+            textInput(index, 'note', '仅日服 / 已下架…', '备注（可选）'),
+            h('button', { type: 'button', onClick: () => this.change({ officialStores: stores.filter((_, itemIndex) => itemIndex !== index) }), style: { justifySelf: 'start', alignSelf: 'end', minHeight: '34px' } }, '删除渠道'),
+          )),
+          h('button', { type: 'button', onClick: () => this.change({ officialStores: [...stores, { name: '', url: '', region: '', note: '' }] }), style: { justifySelf: 'start', minHeight: '36px', padding: '6px 12px' } }, '＋ 添加正版渠道'),
+          h('label', { style: { display: 'grid', gap: '5px' } }, h('span', null, '人工备注'), h('textarea', { rows: 3, value: value.notes || '', onChange: event => this.change({ notes: event.target.value }), style: { width: '100%', padding: '8px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } })),
+          h('small', null, '本区内容独立保存，刷新 RAWG / ScreenScraper 资料不会覆盖。'));
+      },
+    });
+    window.CMS.registerFieldType('game-manual', GameManual);
+
+    const GameMetadata = createClass({
+      getInitialState: function () { return { loading: false, searching: false, message: '', results: [], query: '', dataSource: 'auto' }; },
       update: function (key, value) {
         const current = this.props.value || {};
         const manualFields = new Set(current.manualFields || []);
+        const fieldSources = { ...(current.fieldSources || {}) };
         const isEmpty = Array.isArray(value) ? value.length === 0 : !String(value || '').trim();
-        if (isEmpty) manualFields.delete(key); else manualFields.add(key);
-        this.props.onChange({ ...current, [key]: value, manualFields: [...manualFields] });
+        if (isEmpty) { manualFields.delete(key); delete fieldSources[key]; }
+        else { manualFields.add(key); fieldSources[key] = 'manual'; }
+        this.props.onChange({ ...current, [key]: value, fieldSources, manualFields: [...manualFields] });
       },
       searchGames: async function () {
         const query = String(this.state.query || '').trim();
         if (!query) { this.setState({ message: '请输入游戏名称。' }); return; }
-        this.setState({ searching: true, message: '正在搜索 IGDB…', results: [] });
+        this.setState({ searching: true, message: '正在搜索游戏资料…', results: [] });
         try {
-          const response = await fetch(`https://blog.blfy.cc/ns/api/igdb/search?q=${encodeURIComponent(query)}`);
+          const response = await fetch(`https://blog.blfy.cc/ns/api/games/search?q=${encodeURIComponent(query)}&source=${encodeURIComponent(this.state.dataSource)}`);
           const result = await response.json();
           if (!response.ok) throw new Error(result.error || `搜索失败（${response.status}）`);
-          this.setState({ results: result.results || [], message: result.results?.length ? '请选择正确游戏；已有字段不会被覆盖。' : '没有找到结果，请尝试其他语言或关键词。' });
+          this.setState({ results: result.results || [], message: result.results?.length ? `找到 ${result.results.length} 个候选，请人工确认名称、年份和平台。${result.warnings?.length ? `（${result.warnings.join('；')}）` : ''}` : (result.warnings?.join('；') || '没有找到结果，请尝试其他语言或关键词。') });
         } catch (error) {
-          this.setState({ message: error instanceof Error ? error.message : 'IGDB 搜索失败，请稍后重试。' });
+          this.setState({ message: error instanceof Error ? error.message : '游戏数据库暂不可用，请稍后重试。' });
         } finally { this.setState({ searching: false }); }
       },
-      selectGame: async function (id) {
-        this.setState({ loading: true, message: '正在读取 IGDB 资料…' });
+      selectGame: async function (candidate, refresh = false) {
+        this.setState({ loading: true, message: refresh ? '正在刷新游戏资料…' : '正在读取游戏资料…' });
         try {
-          const response = await fetch(`https://blog.blfy.cc/ns/api/igdb/game?id=${encodeURIComponent(id)}`);
+          const response = await fetch('https://blog.blfy.cc/ns/api/games/detail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: candidate.title || this.props.value?.title || '', sources: candidate.sources || this.props.value?.sources || {}, dataSource: this.state.dataSource, refresh }) });
           const game = await response.json();
           if (!response.ok) throw new Error(game.error || `读取失败（${response.status}）`);
           const current = this.props.value || {};
-          const importedBefore = Boolean(current.igdbId || current.sourceGameId);
+          const keys = ['title', 'localizedName', 'originalName', 'alternativeNames', 'description', 'releaseDate', 'developers', 'publishers', 'platforms', 'genres', 'cover', 'screenshots', 'website'];
           const manualFields = new Set(current.manualFields || []);
-          if (!importedBefore) for (const key of ['title', 'cover', 'description', 'releaseDate', 'developer', 'platforms']) {
+          if (!current.id && !current.sources) for (const key of keys) {
             const hasValue = Array.isArray(current[key]) ? current[key].length > 0 : Boolean(String(current[key] || '').trim());
             if (hasValue) manualFields.add(key);
           }
-          const next = { ...current, igdbId: String(game.id), slug: game.slug || '', manualFields: [...manualFields] };
-          for (const key of ['title', 'cover', 'description', 'releaseDate', 'developer', 'platforms']) {
+          const next = { ...current, id: game.id, sources: game.sources || candidate.sources || {}, fieldSources: game.fieldSources || {}, updatedAt: game.updatedAt || new Date().toISOString(), manualFields: [...manualFields] };
+          for (const key of keys) {
             if (manualFields.has(key)) continue;
             const hasValue = Array.isArray(current[key]) ? current[key].length > 0 : Boolean(String(current[key] || '').trim());
-            if (importedBefore || !hasValue) next[key] = game[key] || (key === 'platforms' ? [] : '');
+            if (!hasValue || refresh || current.sources) next[key] = game[key] || (['alternativeNames', 'developers', 'publishers', 'platforms', 'genres', 'screenshots'].includes(key) ? [] : '');
           }
           this.props.onChange(next);
-          this.setState({ results: [], message: 'IGDB 资料已填入；非空字段已保留，你仍可手动编辑。' });
+          this.setState({ results: [], selected: candidate, message: `${refresh ? '游戏资料已刷新' : '游戏资料已填入'}；手动编辑的字段会保留。${game.warnings?.length ? ` 部分来源未能补充：${game.warnings.join('；')}` : ''}${game.warning ? `（上游暂不可用，当前保留缓存资料：${game.warning}）` : ''}` });
         } catch (error) {
-          this.setState({ message: error instanceof Error ? error.message : 'IGDB 资料读取失败，请稍后重试。' });
+          this.setState({ message: error instanceof Error ? error.message : '游戏资料读取失败，请稍后重试。' });
         } finally { this.setState({ loading: false }); }
       },
       render: function () {
         const value = this.props.value || {};
         const input = (key, label, type = 'text') => h('label', { key, style: { display: 'grid', gap: '5px' } }, h('span', null, label), h('input', { type, value: value[key] || '', onChange: event => this.update(key, event.target.value), style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }));
         const text = (key, label) => h('label', { key, style: { display: 'grid', gap: '5px' } }, h('span', null, label), h('textarea', { value: value[key] || '', onChange: event => this.update(key, event.target.value), rows: 3, style: { width: '100%', padding: '8px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }));
+        const stringList = (key, label) => h('label', { key, style: { display: 'grid', gap: '5px' } }, h('span', null, label), h('input', { type: 'text', value: Array.isArray(value[key]) ? value[key].join(', ') : '', onChange: event => this.update(key, event.target.value.split(/[,，]/).map(item => item.trim()).filter(Boolean)), style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }));
         return h('div', { style: { display: 'grid', gap: '10px' } },
           h('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto', gap: '8px', alignItems: 'end' } },
-            h('label', { style: { display: 'grid', gap: '5px' } }, h('span', null, '按任意语言搜索 IGDB'), h('input', { type: 'search', value: this.state.query, placeholder: '游戏名称', onChange: event => this.setState({ query: event.target.value }), onKeyDown: event => { if (event.key === 'Enter') { event.preventDefault(); this.searchGames(); } }, style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } })),
-            h('button', { id: this.props.forID, type: 'button', disabled: this.state.loading || this.state.searching, onClick: () => this.searchGames(), style: { minHeight: '38px', padding: '7px 14px', cursor: this.state.searching ? 'wait' : 'pointer' } }, this.state.searching ? '搜索中…' : '搜索 IGDB'),
+            h('label', { style: { display: 'grid', gap: '5px' } }, h('span', null, '搜索游戏资料'), h('input', { type: 'search', value: this.state.query, placeholder: '支持中文、日文、英文等游戏名称', onChange: event => this.setState({ query: event.target.value }), onKeyDown: event => { if (event.key === 'Enter') { event.preventDefault(); this.searchGames(); } }, style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } })),
+            h('button', { id: this.props.forID, type: 'button', disabled: this.state.loading || this.state.searching, onClick: () => this.searchGames(), style: { minHeight: '38px', padding: '7px 14px', cursor: this.state.searching ? 'wait' : 'pointer' } }, this.state.searching ? '搜索中…' : '搜索游戏'),
           ),
+          h('label', { style: { display: 'flex', alignItems: 'center', gap: '8px' } }, h('span', null, '数据源'), h('select', { value: this.state.dataSource, onChange: event => this.setState({ dataSource: event.target.value }), style: { minHeight: '36px', padding: '5px 9px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }, [['auto', '自动'], ['rawg', 'RAWG'], ['screenscraper', 'ScreenScraper']].map(([key, label]) => h('option', { key, value: key }, label)))),
           this.state.results.length > 0 && h('div', { style: { display: 'grid', gap: '6px' } }, this.state.results.map(item => h('button', {
-            key: item.id, type: 'button', disabled: this.state.loading, onClick: () => this.selectGame(item.id),
+            key: item.id, type: 'button', disabled: this.state.loading, onClick: () => this.selectGame(item),
             style: { display: 'grid', gridTemplateColumns: '52px minmax(0,1fr)', gap: '10px', textAlign: 'left', padding: '8px', cursor: 'pointer', color: 'inherit', background: 'transparent', border: '1px solid #68707a', borderRadius: '6px' },
-          }, item.cover && h('img', { src: item.cover, alt: '', style: { width: '52px', height: '68px', objectFit: 'cover' } }), h('span', null, h('strong', null, item.title), h('br'), `${item.year || '年份未知'} · ${(item.platforms || []).join('、') || '平台未知'} · IGDB ${item.id}`)))),
-          h('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto', gap: '8px', alignItems: 'end' } },
-            h('label', { style: { display: 'grid', gap: '5px' } }, h('span', null, '永久关联标识 · IGDB Game ID（可手动粘贴）'), h('input', { type: 'text', inputMode: 'numeric', value: value.igdbId || '', placeholder: '在 IGDB 页面复制 Game ID', onChange: event => this.props.onChange({ ...(this.props.value || {}), igdbId: event.target.value.trim() }), onKeyDown: event => { if (event.key === 'Enter') { event.preventDefault(); this.selectGame(String(value.igdbId || '').trim()); } }, style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } })),
-            h('button', { type: 'button', disabled: this.state.loading || this.state.searching || !/^\d{1,12}$/.test(String(value.igdbId || '').trim()), onClick: () => this.selectGame(String(value.igdbId || '').trim()), style: { minHeight: '38px', padding: '7px 14px', cursor: this.state.loading ? 'wait' : 'pointer' } }, this.state.loading ? '获取中…' : '按 ID 获取资料'),
-          ),
-          input('title', '游戏名称'),
-          input('cover', '封面图片 URL'),
-          h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '10px' } }, input('releaseDate', '首次发售日期', 'date'), input('developer', '开发商')),
-          h('label', { style: { display: 'grid', gap: '5px' } }, h('span', null, 'IGDB 平台（可手动编辑）'), h('input', { type: 'text', value: Array.isArray(value.platforms) ? value.platforms.join(', ') : '', onChange: event => this.update('platforms', event.target.value.split(/[,，]/).map(item => item.trim()).filter(Boolean)), style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } })),
-          text('description', '游戏简介'),
-          this.state.message && h('div', {
-            role: this.state.message.startsWith('IGDB 资料已填入') ? 'status' : 'alert',
-            'aria-live': 'polite',
-            style: { padding: '9px 12px', borderRadius: '6px', border: `1px solid ${this.state.message.startsWith('IGDB 资料已填入') ? '#2e7d32' : '#b7791f'}`, background: this.state.message.startsWith('IGDB 资料已填入') ? 'rgba(46,125,50,.12)' : 'rgba(183,121,31,.12)' },
-          }, this.state.message),
+          }, item.cover && h('img', { src: item.cover, alt: '', style: { width: '52px', height: '68px', objectFit: 'cover' } }), h('span', null, h('strong', null, item.title), h('br'), `${(item.platforms || []).join('、') || '平台未知'} · ${item.year || '年份未知'} · ${(item.developers || []).join('、') || '开发商未知'} · 来源：${labelSources(item.sources)}`)))),
+          value.sources && h('button', { type: 'button', disabled: this.state.loading || this.state.searching, onClick: () => this.selectGame({ title: value.title, sources: value.sources }, true), style: { justifySelf: 'start', minHeight: '36px', padding: '6px 12px', cursor: this.state.loading ? 'wait' : 'pointer' } }, '刷新游戏资料'),
+          input('title', '游戏名称（可手动覆盖）'), input('localizedName', '中文本地化名称'), input('originalName', '原始名称'),
+          stringList('alternativeNames', '别名 / Alternative Names'), input('cover', '封面图片 URL'),
+          h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '10px' } }, input('releaseDate', '发售日期', 'date'), input('website', '官方网站 URL')),
+          stringList('developers', '开发商（逗号分隔）'), stringList('publishers', '发行商（逗号分隔）'),
+          stringList('platforms', '平台（逗号分隔）'), stringList('genres', '类型 / Genre'), stringList('screenshots', '截图 URL（逗号分隔）'),
+          text('description', '游戏简介'), value.sources && h('small', null, `数据来源：${Object.keys(value.sources).join('、')} · 最近更新：${String(value.updatedAt || '未知').slice(0, 10)}`),
+          this.state.message && h('div', { role: this.state.message.startsWith('游戏资料已填入') || this.state.message.startsWith('游戏资料已刷新') ? 'status' : 'alert', 'aria-live': 'polite', style: { padding: '9px 12px', borderRadius: '6px', border: `1px solid ${this.state.message.startsWith('游戏资料已填入') || this.state.message.startsWith('游戏资料已刷新') ? '#2e7d32' : '#b7791f'}`, background: this.state.message.startsWith('游戏资料已填入') || this.state.message.startsWith('游戏资料已刷新') ? 'rgba(46,125,50,.12)' : 'rgba(183,121,31,.12)' } }, this.state.message),
         );
       },
     });
-    window.CMS.registerFieldType('igdb-game-metadata', IgdbGameMetadata);
+    window.CMS.registerFieldType('game-metadata', GameMetadata);
     [['p', 'PlayStation'], ['n', 'Nintendo'], ['x', 'Xbox'], ['s', 'PC']].forEach(([frame, label]) => {
       const tag = `${frame}frame`;
       window.CMS.registerEditorComponent({
-        id: `${tag}-card`, label: `${label} IGDB 卡片`, icon: 'sports_esports', trigger: 'button',
+        id: `${tag}-card`, label: `${label} 游戏`, tooltip: `管理 ${label} 游戏`, icon: 'sports_esports', trigger: 'button',
         fields: [
-          { name: 'igdbId', label: 'IGDB Game ID', widget: 'string', required: true },
+          { name: 'gameSlug', label: '本地游戏档案 slug', widget: 'string', required: true, hint: '使用游戏档案文件名，不含 .md。' },
           { name: 'title', label: '标题覆盖（可选）', widget: 'string', required: false },
           { name: 'status', label: '游玩状态（可选）', widget: 'string', required: false },
         ],
-        pattern: new RegExp(`^\\[${tag}\\]\\s*(\\d{1,12})(?:\\|([^|\\]]*))?(?:\\|([^|\\]]*))?\\s*\\[\\/${tag}\\]$`),
-        fromBlock: match => ({ igdbId: match[1], title: match[2] || '', status: match[3] || '' }),
-        toBlock: ({ igdbId = '', title = '', status = '' }) => {
-          const id = String(igdbId).trim();
-          return /^\d{1,12}$/.test(id) ? `[${tag}]${id}|${String(title).replace(/[|\]]/g, '')}|${String(status).replace(/[|\]]/g, '')}[/${tag}]` : '';
+        pattern: new RegExp(`^\\[${tag}\\]\\s*([a-z0-9]+(?:-[a-z0-9]+)*)(?:\\|([^|\\]]*))?(?:\\|([^|\\]]*))?\\s*\\[\\/${tag}\\]$`),
+        fromBlock: match => ({ gameSlug: match[1], title: match[2] || '', status: match[3] || '' }),
+        toBlock: ({ gameSlug = '', title = '', status = '' }) => {
+          const slug = String(gameSlug).trim().toLowerCase();
+          return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) ? `[${tag}]${slug}|${String(title).replace(/[|\]]/g, '')}|${String(status).replace(/[|\]]/g, '')}[/${tag}]` : '';
         },
-        toPreview: ({ igdbId = '', title = '', status = '' }) => `${label} IGDB 卡片（${String(title) || String(igdbId).replace(/[^0-9]/g, '') || '待填写'}${status ? ` · ${status}` : ''}）`,
+        toPreview: ({ gameSlug = '', title = '', status = '' }) => `${label} 游戏（${String(title) || String(gameSlug) || '待填写'}${status ? ` · ${status}` : ''}）`,
       });
     });
     window.CMS.registerEditorComponent({
