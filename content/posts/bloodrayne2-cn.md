@@ -10,6 +10,7 @@ tags:
   - 汉化补丁
   - 吸血莱恩
 pinned: false
+gameSlug: bloodrayne2-terminal-cut
 ---
 
 ## 一、项目背景
