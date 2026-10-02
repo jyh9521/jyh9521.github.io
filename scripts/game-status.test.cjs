@@ -13,19 +13,22 @@ const context = { exports: {} };
 vm.runInNewContext(code, context);
 const { gameStatuses, normalizeGameStatus } = context.exports;
 
-test('CMS and runtime use the same six single-select states', () => {
+test('CMS and runtime use the same seven single-select states', () => {
   const config = yaml.load(fs.readFileSync('public/sveltia/config.yml', 'utf8'));
   const field = config.collections.flatMap(collection => collection.fields || []).find(field => field.name === 'status');
   assert.equal(field.widget, 'select');
   assert.equal(field.default, '想玩');
   assert.deepEqual(field.options, Array.from(gameStatuses));
-  assert.equal(gameStatuses.length, 6);
+  assert.deepEqual(Array.from(gameStatuses), ['想玩', '正在玩', '已通关', '暂时搁置', 'AFK', '考虑制作补丁', '已制作补丁']);
   for (const state of gameStatuses) assert.equal(normalizeGameStatus(state), state);
 });
 
 test('legacy composite statuses normalize without inventing dated events', () => {
   assert.equal(normalizeGameStatus('已通关、已发布汉化补丁'), '已通关');
-  assert.equal(normalizeGameStatus('已弃玩'), '已弃坑');
+  assert.equal(normalizeGameStatus('已弃玩'), 'AFK');
+  assert.equal(normalizeGameStatus('已弃坑'), 'AFK');
+  assert.equal(normalizeGameStatus('afk'), 'AFK');
+  assert.equal(normalizeGameStatus('已制作补丁'), '已制作补丁');
   assert.equal(normalizeGameStatus('搁置'), '暂时搁置');
   assert.equal(normalizeGameStatus(undefined), '想玩');
 });
