@@ -15,6 +15,7 @@ export type GamePlatform = {
   genres: string[];
   catalogSource: string;
   catalogId: string;
+  catalogSourceLinks?: { source: string; url: string }[];
 };
 export type GameMetadata = {
   id: string;
@@ -32,7 +33,7 @@ export type GameMetadata = {
   cover: string;
   screenshots: string[];
   website: string;
-  sources: Partial<Record<GameSource, { id: string; systemId?: string }>>;
+  sources: Partial<Record<GameSource, { id: string; systemId?: string; slug?: string; url?: string }>>;
   fieldSources: Record<string, string>;
   updatedAt: string;
 };
