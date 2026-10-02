@@ -12,6 +12,12 @@ gameSlug: vivisector-beast-within
 
 本作国内译名《活体解剖者：人面兽心》，因其极具辨识度的“身体肢解”系统而闻名，该系统允许玩家对人型生物及动物进行精准的部位破坏，带来极具冲击力的视觉体验。 由于本作长期缺乏中文支持，国内多数玩家仅对其“名声”有所耳闻，却因语言障碍导致难以深入体验且无法理解剧情，或因兼容性问题望而却步。 为了填补这一遗憾，本项目利用GPT-5.5协助进行技术协助制作了汉化，作为个人AI汉化技术的练手项目之一。
 
+
+
+---
+
+
+
 ## **二、技术说明：**
 
 ### 完整文本汉化：
@@ -26,33 +32,51 @@ gameSlug: vivisector-beast-within
 
 内置JackFuste开发的宽屏修复补丁，支持现代16:9及16:10显示器，可以通过修改游戏根目录下的config.cfg文件中的v.sx（宽）和v.sy（高）参数来设置原生屏幕分辨率。
 
+
+
+---
+
+
+
 ## **三、截图：**
 
-![主菜单](/uploads/chinesetranslationpatch/Vivisector%20Beast%20Within/%E4%B8%BB%E8%8F%9C%E5%8D%95.webp "主菜单")
+![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/主菜单.webp)
 
-![设置选项](/uploads/chinesetranslationpatch/Vivisector%20Beast%20Within/%E8%AE%BE%E7%BD%AE%E9%80%89%E9%A1%B9.webp "设置选项")
+![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/拾取物品.webp)
 
-![难度选项](/uploads/chinesetranslationpatch/Vivisector%20Beast%20Within/%E9%9A%BE%E5%BA%A6%E9%80%89%E9%A1%B9.webp "难度选项")
+![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/设置选项.webp)
 
-![过场动画字幕1](/uploads/chinesetranslationpatch/Vivisector%20Beast%20Within/%E8%BF%87%E5%9C%BA%E5%8A%A8%E7%94%BB%E5%AD%97%E5%B9%951.webp "过场动画字幕1")
+![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/难度选项.webp)
 
-![过场动画字幕2](/uploads/chinesetranslationpatch/Vivisector%20Beast%20Within/%E8%BF%87%E5%9C%BA%E5%8A%A8%E7%94%BB%E5%AD%97%E5%B9%952.webp "过场动画字幕2")
+![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/技能升级界面.webp)
 
-![过场动画字幕3](/uploads/chinesetranslationpatch/Vivisector%20Beast%20Within/%E8%BF%87%E5%9C%BA%E5%8A%A8%E7%94%BB%E5%AD%97%E5%B9%953.webp "过场动画字幕3")
+![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/过场动画字幕1.webp)
 
-![电台字幕1](/uploads/chinesetranslationpatch/Vivisector%20Beast%20Within/%E7%94%B5%E5%8F%B0%E5%AD%97%E5%B9%951.webp "电台字幕1")
+![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/过场动画字幕2.webp)
 
-![电台字幕2](/uploads/chinesetranslationpatch/Vivisector%20Beast%20Within/%E7%94%B5%E5%8F%B0%E5%AD%97%E5%B9%952.webp "电台字幕2")
+![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/过场动画字幕3.webp)
 
-![电台字幕3](/uploads/chinesetranslationpatch/Vivisector%20Beast%20Within/%E7%94%B5%E5%8F%B0%E5%AD%97%E5%B9%953.webp "电台字幕3")
+![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/电台字幕1.webp)
 
-![拾取物品](/uploads/chinesetranslationpatch/Vivisector%20Beast%20Within/%E6%8B%BE%E5%8F%96%E7%89%A9%E5%93%81.webp "拾取物品")
+![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/电台字幕2.webp)
 
-![技能升级界面](/uploads/chinesetranslationpatch/Vivisector%20Beast%20Within/%E6%8A%80%E8%83%BD%E5%8D%87%E7%BA%A7%E7%95%8C%E9%9D%A2.webp "技能升级界面")
+![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/电台字幕3.webp)
+
+
+
+---
+
+
 
 ## **四、已知问题：**
 
 受原引擎位图字体限制，位图字库被固定为16x16，游戏没有现代字体排版，只是从NewFont.tga里按格子裁字，所以有些字会显得偏左、偏右或宽窄不一。 按钮图片依旧是英文，因为鼠标在按钮上方时会在屏幕底部显示描述，所以就没做汉化。 测试了几关，暂时没发现什么问题，发现有任何问题，请在帖子内留言，或者在[GitHub​](https://www.bilibili.com/york/link-middle-page?navhide=1&rid=1219671309359775751&r_type=0&redirect_url=https%3A%2F%2Fgithub.com%2Fjyh9521%2Fvivisector_cn_patch&spm_id_from=333.1369.0.0)提issues。
+
+
+
+---
+
+
 
 ## **五、下载地址：**
 
@@ -61,6 +85,12 @@ gameSlug: vivisector-beast-within
 [百度网盘](https://pan.baidu.com/s/1NlygizrQ0IQgeuUdRfqdQA?pwd=s8tn)
 
 [夸克网盘](https://pan.quark.cn/s/237678edc3f6) 提取码：55H4
+
+
+
+---
+
+
 
 ## **六、免责声明：**
 
