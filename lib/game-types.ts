@@ -27,6 +27,7 @@ export type GameMetadata = {
   developers: string[];
   publishers: string[];
   platforms: string[];
+  selectedPlatforms: string[];
   genres: string[];
   cover: string;
   screenshots: string[];

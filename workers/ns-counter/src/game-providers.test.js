@@ -8,12 +8,14 @@ test('RAWG records are normalized without leaking provider field shape', () => {
     description_raw: 'A survival horror game.', developers: [{ name: 'Capcom' }],
     publishers: [{ name: 'Capcom' }], platforms: [{ platform: { name: 'PlayStation' } }],
     genres: [{ name: 'Action' }], background_image: 'https://example.test/cover.jpg', website: 'https://example.test',
+    short_screenshots: [{ id: 1, image: 'https://example.test/screenshot.jpg' }],
   });
   assert.equal(game.id, 'rawg:42');
   assert.equal(game.originalName, 'Biohazard 2');
   assert.deepEqual(game.platforms, ['PlayStation']);
   assert.deepEqual(game.developers, ['Capcom']);
   assert.equal(game.cover, 'https://example.test/cover.jpg');
+  assert.deepEqual(game.screenshots, ['https://example.test/screenshot.jpg']);
   assert.equal(game.sources.rawg.id, '42');
 });
 

@@ -17,11 +17,11 @@ export default function GamePlatformCard({ gameTitle, status = '', platform, man
       {platform.cover ? <img src={platform.cover} alt={`${gameTitle} 封面`} loading="lazy" /> : <span aria-hidden="true">🎮</span>}
     </div>
     <div className="game-platform-copy">
-      <div className="game-platform-heading"><strong>{gameTitle}</strong>{status && <span className="game-status-pill">{status}</span>}</div>
+      {!compact && <div className="game-platform-heading"><strong>{gameTitle}</strong>{status && <span className="game-status-pill">{status}</span>}</div>}
       <p className="game-platform-specs">{[platformName, platform.releaseDate, platform.genres.slice(0, 2).join(' / ')].filter(Boolean).join(' · ') || gameStoreLabels[family]}</p>
-      {(platform.developer || platform.publisher) && <p className="game-platform-credit">{[platform.developer, platform.publisher].filter(Boolean).join(' · ')}</p>}
-      {platform.catalogSource && platform.catalogSource !== '手动资料' && <p className="game-platform-source">资料来源：{platform.catalogSource.split(' + ').map((source, index) => <span key={source}>{index > 0 && ' · '}{source.toLowerCase() === 'rawg' ? <a href="https://rawg.io/" target="_blank" rel="noopener noreferrer">RAWG</a> : source.toLowerCase() === 'screenscraper' ? <a href="https://www.screenscraper.fr/" target="_blank" rel="noopener noreferrer">ScreenScraper</a> : source}</span>)}</p>}
-      {manual && <>
+      {!compact && (platform.developer || platform.publisher) && <p className="game-platform-credit">{[platform.developer, platform.publisher].filter(Boolean).join(' · ')}</p>}
+      {!compact && platform.catalogSource && platform.catalogSource !== '手动资料' && <p className="game-platform-source">资料来源：{platform.catalogSource.split(' + ').map((source, index) => <span key={source}>{index > 0 && ' · '}{source.toLowerCase() === 'rawg' ? <a href="https://rawg.io/" target="_blank" rel="noopener noreferrer">RAWG</a> : source.toLowerCase() === 'screenscraper' ? <a href="https://www.screenscraper.fr/" target="_blank" rel="noopener noreferrer">ScreenScraper</a> : source}</span>)}</p>}
+      {!compact && manual && <>
         <p className="game-availability">正版获取状态：{availabilityLabels[manual.availabilityStatus]}</p>
         {manual.notes && <p className="game-platform-credit">{manual.notes}</p>}
         {manual.officialStores.some(store => safeExternalUrl(store.url)) && <section className="game-official-stores" aria-label="正版购买渠道">

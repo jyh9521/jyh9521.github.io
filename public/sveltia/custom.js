@@ -119,8 +119,9 @@
           for (const key of keys) {
             if (manualFields.has(key)) continue;
             const hasValue = Array.isArray(current[key]) ? current[key].length > 0 : Boolean(String(current[key] || '').trim());
-            if (!hasValue || refresh || current.sources) next[key] = game[key] || (['alternativeNames', 'developers', 'publishers', 'platforms', 'genres', 'screenshots'].includes(key) ? [] : '');
-          }
+              if (!hasValue || refresh || current.sources) next[key] = game[key] || (['alternativeNames', 'developers', 'publishers', 'platforms', 'genres', 'screenshots'].includes(key) ? [] : '');
+            }
+            next.selectedPlatforms = (current.selectedPlatforms || []).filter(platform => (game.platforms || []).includes(platform));
           this.props.onChange(next);
           this.setState({ results: [], selected: candidate, message: `${refresh ? '游戏资料已刷新' : '游戏资料已填入'}；手动编辑的字段会保留。${game.warnings?.length ? ` 部分来源未能补充：${game.warnings.join('；')}` : ''}${game.warning ? `（上游暂不可用，当前保留缓存资料：${game.warning}）` : ''}` });
         } catch (error) {
@@ -148,6 +149,15 @@
           h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '10px' } }, input('releaseDate', '发售日期', 'date'), input('website', '官方网站 URL')),
           stringList('developers', '开发商（逗号分隔）'), stringList('publishers', '发行商（逗号分隔）'),
           stringList('platforms', '平台（逗号分隔）'), stringList('genres', '类型 / Genre'), stringList('screenshots', '截图 URL（逗号分隔）'),
+          h('fieldset', { style: { display: 'grid', gap: '7px', padding: '10px', border: '1px solid #68707a', borderRadius: '6px' } },
+            h('legend', null, '加入游戏档案的平台（只勾选你要记录的版本）'),
+            ...(value.platforms || []).map(platform => h('label', { key: platform, style: { display: 'flex', alignItems: 'center', gap: '8px' } },
+              h('input', { type: 'checkbox', checked: (value.selectedPlatforms || []).includes(platform), onChange: event => {
+                const selected = new Set(value.selectedPlatforms || []);
+                if (event.target.checked) selected.add(platform); else selected.delete(platform);
+                this.update('selectedPlatforms', [...selected]);
+              } }), platform)),
+            h('small', null, '资料源的平台清单会完整保留；只有勾选的平台会生成前台游戏平台卡片。已有手动平台卡片时，以手动卡片为准。')),
           text('description', '游戏简介'), value.sources && h('small', null, `数据来源：${Object.keys(value.sources).join('、')} · 最近更新：${String(value.updatedAt || '未知').slice(0, 10)}`),
           this.state.message && h('div', { role: this.state.message.startsWith('游戏资料已填入') || this.state.message.startsWith('游戏资料已刷新') ? 'status' : 'alert', 'aria-live': 'polite', style: { padding: '9px 12px', borderRadius: '6px', border: `1px solid ${this.state.message.startsWith('游戏资料已填入') || this.state.message.startsWith('游戏资料已刷新') ? '#2e7d32' : '#b7791f'}`, background: this.state.message.startsWith('游戏资料已填入') || this.state.message.startsWith('游戏资料已刷新') ? 'rgba(46,125,50,.12)' : 'rgba(183,121,31,.12)' } }, this.state.message),
         );

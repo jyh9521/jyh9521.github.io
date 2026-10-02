@@ -17,7 +17,8 @@ function normalizeMetadata(value: Record<string, any>): GameMetadata {
     id: asText(value.id), title: asText(value.title), localizedName: asText(value.localizedName || value.title),
     originalName: asText(value.originalName), alternativeNames: asList(value.alternativeNames), description: asText(value.description),
     releaseDate: asDate(value.releaseDate), developers: asList(value.developers || value.developer), publishers: asList(value.publishers || value.publisher),
-    platforms: asList(value.platforms), genres: asList(value.genres), cover: asText(value.cover), screenshots: asList(value.screenshots),
+    platforms: asList(value.platforms), selectedPlatforms: asList(value.selectedPlatforms),
+    genres: asList(value.genres), cover: asText(value.cover), screenshots: asList(value.screenshots),
     website: asText(value.website), sources,
     fieldSources: value.fieldSources && typeof value.fieldSources === 'object' ? value.fieldSources : {}, updatedAt: asText(value.updatedAt),
   };
@@ -77,7 +78,10 @@ export function getGames(): GameRecord[] {
     if (!data.title && !metadata.title) return [];
     const platformRecords = Array.isArray(data.platforms) ? data.platforms : [];
     const platforms = platformRecords.map(record => parsePlatform(record, metadata, slug)).filter((item): item is GamePlatform => Boolean(item));
-    for (const name of metadata.platforms) {
+    // Explicit platform-card records are the source of truth. Otherwise only
+    // materialize platforms the editor selected, never every provider platform.
+    const selectedPlatforms = platformRecords.length ? [] : metadata.selectedPlatforms;
+    for (const name of selectedPlatforms) {
       if (platforms.some(platform => platform.platform.toLocaleLowerCase() === name.toLocaleLowerCase())) continue;
       const normalized = name.toLowerCase();
       const family: GameStore = /playstation|ps[1-5]|psp|vita/.test(normalized) ? 'playstation' : /xbox/.test(normalized) ? 'xbox' : /nintendo|switch|wii|game ?boy|3ds|ds/.test(normalized) ? 'nintendo' : 'pc';
