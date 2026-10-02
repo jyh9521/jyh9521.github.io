@@ -40,27 +40,25 @@ gameSlug: vivisector-beast-within
 
 ## **三、截图：**
 
-![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/主菜单.webp)
+![主菜单](/uploads/chinesetranslationpatch/vivisectorbeastwithin/主菜单.webp "主菜单")
 
-![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/拾取物品.webp)
+![设置选项](/uploads/chinesetranslationpatch/vivisectorbeastwithin/设置选项.webp "设置选项")
 
-![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/设置选项.webp)
+![难度选项](/uploads/chinesetranslationpatch/vivisectorbeastwithin/难度选项.webp "难度选项")
 
-![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/难度选项.webp)
+![技能升级界面](/uploads/chinesetranslationpatch/vivisectorbeastwithin/技能升级界面.webp "技能升级界面")![拾取物品](/uploads/chinesetranslationpatch/vivisectorbeastwithin/拾取物品.webp "拾取物品")
 
-![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/技能升级界面.webp)
+![过场动画字幕1](/uploads/chinesetranslationpatch/vivisectorbeastwithin/过场动画字幕1.webp "过场动画字幕1")
 
-![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/过场动画字幕1.webp)
+![过场动画字幕2](/uploads/chinesetranslationpatch/vivisectorbeastwithin/过场动画字幕2.webp "过场动画字幕2")
 
-![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/过场动画字幕2.webp)
+![过场动画字幕3](/uploads/chinesetranslationpatch/vivisectorbeastwithin/过场动画字幕3.webp "过场动画字幕3")
 
-![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/过场动画字幕3.webp)
+![电台字幕1](/uploads/chinesetranslationpatch/vivisectorbeastwithin/电台字幕1.webp "电台字幕1")
 
-![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/电台字幕1.webp)
+![电台字幕2](/uploads/chinesetranslationpatch/vivisectorbeastwithin/电台字幕2.webp "电台字幕2")
 
-![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/电台字幕2.webp)
-
-![](/uploads/chinesetranslationpatch/vivisectorbeastwithin/电台字幕3.webp)
+![电台字幕3](/uploads/chinesetranslationpatch/vivisectorbeastwithin/电台字幕3.webp "电台字幕3")
 
 
 
