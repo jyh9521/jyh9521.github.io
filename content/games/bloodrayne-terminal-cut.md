@@ -9,15 +9,16 @@ gameMetadata:
     - Terminal Reality
   fieldSources:
     cover: rawg
-    description: manual
+    description: rawg
     developers: rawg
     genres: rawg
     originalName: rawg
     platforms: rawg
     publishers: rawg
     releaseDate: rawg
-    title: manual
+    title: rawg
     website: rawg
+    selectedPlatforms: manual
   genres:
     - Action
   id: rawg:514899
@@ -25,6 +26,7 @@ gameMetadata:
   manualFields:
     - title
     - description
+    - selectedPlatforms
   originalName: 'BloodRayne: Terminal Cut'
   platforms:
     - PC
@@ -37,11 +39,13 @@ gameMetadata:
     - https://media.rawg.io/media/screenshots/1a2/1a2890fc20add5a8ff1e125d003fad28.jpg
     - https://media.rawg.io/media/screenshots/62f/62f4f1cd6cfc0a2ce1403fda09a186a9.jpg
     - https://media.rawg.io/media/screenshots/48c/48c2705c67aa195ab7ee3ba7c089d2dc.jpg
+  selectedPlatforms:
+    - PC
   sources:
     rawg:
       id: '514899'
   title: 'BloodRayne: Terminal Cut'
-  updatedAt: 2026-10-02T00:39:01.646Z
+  updatedAt: 2026-10-02T01:18:44.831Z
   website: https://www.ziggurat.games/
 manual:
   availabilityStatus: available
