@@ -2,50 +2,35 @@
 title: 吸血莱恩2：终极剪辑版
 status: 已通关、已发布汉化补丁
 gameMetadata:
-  id: rawg:514900
-  sources:
-    rawg:
-      id: '514900'
-  fieldSources:
-    title: rawg
-    originalName: rawg
-    description: rawg
-    releaseDate: rawg
-    developers: rawg
-    publishers: rawg
-    platforms: rawg
-    genres: rawg
-    cover: rawg
-    website: rawg
-  updatedAt: 2026-10-02T00:41:34.566Z
-  manualFields: []
-  title: 'BloodRayne 2: Terminal Cut'
-  localizedName: ''
-  originalName: 'BloodRayne 2: Terminal Cut'
   alternativeNames: []
-  description: |-
-    Enhanced and updated for modern systems by the game's original developers, this is the definitive edition of BloodRayne 2.
-    BloodRayne is a dhampir, born from the unnatural union of vampire and human. Blessed with the powers of a vampire but cursed with the unquenchable thirst for blood and a weakness to sunlight, Rayne is challenged with her most personal battle yet as she hunts down her siblings. They have banded together and pledged to carry on their father's legacy of creating a new era of vampire supremacy where humans are mere cattle.
-    With new acrobatic movements and rail sliding, fast-paced blade and gun combat, fatal finishing moves, more dhampir powers like time control, and an extensive combo system, BloodRayne 2 is a brutally satisfying continuation of the iconic series.
-    Features and enhancements of the Terminal Cut edition, created by the game’s original development team:
-    Support for higher display resolutions (up to 4K / 3840x2160).
-    Upscaled cinematic videos
-    Support for modern gamepads (XInput)
-    Improved rendering with up to 4x anti-aliasing
-    Improved lighting with higher resolution light maps
-    Support for higher texture resolutions, allowing for use of uncompressed original textures
-    Improvements to visual effects and reflections
-  releaseDate: 2020-11-19
+  cover: https://media.rawg.io/media/games/61e/61e3d39225c5761eb51cf035a508a91b.jpg
+  description: "Enhanced and updated for modern systems, this is the definitive edition of Rayne’s second adventure: a blood-soaked rampage of vengeance against the Cult of Kagan, a group led by Rayne's half-siblings that seek to carry out their father Kagan's legacy by creating a new era of vampire supremacy."
   developers:
     - Terminal Reality
+  fieldSources:
+    cover: rawg
+    description: manual
+    developers: rawg
+    genres: rawg
+    originalName: rawg
+    platforms: rawg
+    publishers: rawg
+    releaseDate: rawg
+    title: rawg
+    website: rawg
+  genres:
+    - Action
+  id: rawg:514900
+  localizedName: ''
+  manualFields:
+    - description
+  originalName: 'BloodRayne 2: Terminal Cut'
+  platforms:
+    - PC
   publishers:
     - Ziggurat
     - Ziggurat Interactive
-  platforms:
-    - PC
-  genres:
-    - Action
-  cover: https://media.rawg.io/media/games/61e/61e3d39225c5761eb51cf035a508a91b.jpg
+  releaseDate: 2020-11-19
   screenshots:
     - https://media.rawg.io/media/screenshots/e15/e1535410516a12fede94f268602f1a02.jpg
     - https://media.rawg.io/media/screenshots/436/436c520f6f67e36c354b50813a3f7f4e.jpg
@@ -53,6 +38,11 @@ gameMetadata:
     - https://media.rawg.io/media/screenshots/3fb/3fb8174789081004d77790fdf899cbf9.jpg
     - https://media.rawg.io/media/screenshots/a65/a6579e6e8f9a5caf7e4bb28edc278359.jpg
     - https://media.rawg.io/media/screenshots/6ed/6ed273798676ace9679613486b856714.jpg
+  sources:
+    rawg:
+      id: '514900'
+  title: 'BloodRayne 2: Terminal Cut'
+  updatedAt: 2026-10-02T00:41:34.566Z
   website: https://www.ziggurat.games/
 manual:
   officialStores:
