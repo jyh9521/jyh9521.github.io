@@ -55,15 +55,8 @@ collections:
       - { name: title, label: 手动名称覆盖（最高优先级）, widget: string, required: false, hint: "显示名称覆盖，不影响本地档案 slug 或任何数据源 ID。" }
       - { name: status, label: 当前状态, widget: string, required: true, hint: "例如：正在玩、已通关、想玩、已弃坑。" }
       - { name: summary, label: 简介, widget: text, required: false }
-      - { name: gameMetadata, label: 游戏资料（元数据来源）, widget: game-metadata, required: false, hint: "搜索候选后手动确认并导入；在资料组件中勾选要生成档案卡片的平台。资料保留完整平台清单，前台只显示勾选平台或下方手动添加的平台卡片。" }
+      - { name: gameMetadata, label: 游戏资料（元数据来源）, widget: game-metadata, required: false, hint: "搜索候选后手动确认并导入；在资料组件中勾选要生成档案卡片的平台。资料保留完整平台清单，前台仅显示勾选的平台卡片。" }
       - { name: manual, label: 正版渠道与人工状态, widget: game-manual, required: false, hint: "正版售卖渠道、可获得状态和备注独立于资料数据源；刷新游戏资料不会覆盖。" }
-      - name: platforms
-        label: 平台卡片样式（可选；游戏资料统一来自本地档案）
-        widget: list
-        required: false
-        summary: '{{fields.platformChoice.platform}}'
-        fields:
-          - { name: platformChoice, label: 平台家族与具体平台, widget: game-platform-choice, required: true }
       - name: events
         label: 时间线事件
         widget: list
