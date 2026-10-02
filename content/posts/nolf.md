@@ -1,6 +1,6 @@
 ---
 title: 《无人永生》简体中文汉化补丁
-date: 2026-07-30
+date: 2026-07-27
 description: |-
   > The Operative: No One Lives Forever Simplified Chinese Patch
   > 基于 NOLF Modernizer v1.006 Patch 4
