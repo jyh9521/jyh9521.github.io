@@ -1,6 +1,6 @@
 ---
 title: 《吸血莱恩：终极剪辑版》简体中文汉化补丁
-date: 2026-07-30T12:51:00+09:00
+date: 2026-07-30
 description: |-
   BloodRayne: Terminal Cut Simplified Chinese Patch
   《吸血莱恩：终极剪辑版》简体中文汉化补丁
@@ -90,7 +90,7 @@ STextureEntry::loadOptimized - Out of memory
 ### 1. 准备游戏
 
 需要 Steam 版：
-[sframe]bloodrayne-terminal-cut|BloodRayne: Terminal Cut|[/sframe]
+[sframe]bloodrayne-terminal-cut|吸血莱恩：终极剪辑版|[/sframe]
 建议安装补丁前先在 Steam 里验证一次游戏文件完整性，确保游戏目录是干净的。
 
 ### 2. 覆盖汉化包
