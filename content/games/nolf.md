@@ -1,7 +1,6 @@
 ---
 title: 无人永生
 status:
-  - 已通关
   - 已制作补丁
 gameMetadata:
   alternativeNames: []
