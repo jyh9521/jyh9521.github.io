@@ -66,4 +66,7 @@ manual:
       note: ''
       region: ''
       url: https://www.gog.com/en/game/the_wheel_of_time
+events:
+  - date: 2026-10-02
+    title: 开始汉化工作
 ---
