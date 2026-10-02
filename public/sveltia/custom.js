@@ -215,6 +215,15 @@
         toPreview: ({ gameSlug = '', title = '', status = '' }) => `游戏档案（${String(title) || String(gameSlug) || '请选择游戏'}${status ? ` · ${status}` : ''}）`,
       });
     window.CMS.registerEditorComponent({
+      id: 'horizontal-rule', label: '插入分隔线', tooltip: '插入分隔线', icon: 'horizontal_rule', trigger: 'button',
+      fields: [], collapsed: true,
+      pattern: /^---$/m,
+      fromBlock: () => ({}),
+      // Blank lines prevent the previous paragraph becoming a Setext heading.
+      toBlock: () => '\n\n---\n\n',
+      toPreview: () => '<hr />',
+    });
+    window.CMS.registerEditorComponent({
       id: 'image-compare', label: '截图前后对比', icon: 'compare', trigger: 'button',
       fields: [
         { name: 'before', label: '之前的图片', widget: 'image', required: true },
