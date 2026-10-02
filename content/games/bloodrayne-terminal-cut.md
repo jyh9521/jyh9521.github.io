@@ -1,6 +1,6 @@
 ---
 title: 吸血莱恩：终极剪辑版
-status: 已通关
+status: 已通关、已发布汉化补丁
 gameMetadata:
   alternativeNames: []
   cover: https://media.rawg.io/media/games/7bc/7bc71a03ca2351d7872ad37d29613718.jpg
@@ -8,17 +8,16 @@ gameMetadata:
   developers:
     - Terminal Reality
   fieldSources:
-    cover: rawg
-    description: rawg
-    developers: rawg
-    genres: rawg
-    originalName: rawg
-    platforms: rawg
-    publishers: rawg
-    releaseDate: rawg
     title: rawg
+    originalName: rawg
+    description: rawg
+    releaseDate: rawg
+    developers: rawg
+    publishers: rawg
+    platforms: rawg
+    genres: rawg
+    cover: rawg
     website: rawg
-    selectedPlatforms: manual
   genres:
     - Action
   id: rawg:514899
@@ -45,7 +44,7 @@ gameMetadata:
     rawg:
       id: '514899'
   title: 'BloodRayne: Terminal Cut'
-  updatedAt: 2026-10-02T01:18:44.831Z
+  updatedAt: 2026-10-02T01:22:36.263Z
   website: https://www.ziggurat.games/
 manual:
   availabilityStatus: available
