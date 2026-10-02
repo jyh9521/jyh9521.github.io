@@ -1,6 +1,8 @@
 ---
 title: 吸血莱恩：终极剪辑版
-status: [已通关]
+status:
+  - 已通关
+  - 已制作补丁
 gameMetadata:
   alternativeNames: []
   cover: https://media.rawg.io/media/games/7bc/7bc71a03ca2351d7872ad37d29613718.jpg
