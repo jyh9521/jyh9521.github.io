@@ -1,6 +1,8 @@
 ---
 title: 红色派系
-status: [已通关]
+status:
+  - 已通关
+  - 已制作补丁
 gameMetadata:
   alternativeNames:
     - Red Faction :สงครามแดงเดือด
