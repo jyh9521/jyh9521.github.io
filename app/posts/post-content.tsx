@@ -82,7 +82,7 @@ export default function PostContent({ body, title, headings, images, games, cove
   return <>
     <ReadingProgress />
     {cover && <button type="button" className="article-cover-button" onClick={() => setActiveImage(0)} aria-label={`放大封面图片：${cover.caption}`}>
-      <img ref={coverRef} className="cover cover-parallax" src={cover.src} alt={cover.alt} /><span className="article-image-caption">{cover.caption}</span>
+      <span className="article-cover-viewport"><img ref={coverRef} className="cover cover-parallax" src={cover.src} alt={cover.alt} /></span><span className="article-image-caption">{cover.caption}</span>
     </button>}
     <div className="article-content">
       <div className="article-actions"><span>阅读文章</span><ShareButton title={title} /></div>
