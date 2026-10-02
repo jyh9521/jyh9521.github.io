@@ -1,6 +1,6 @@
 ---
 title: 无人永生
-status: 已弃坑
+status: 已制作补丁
 gameMetadata:
   alternativeNames: []
   cover: https://media.rawg.io/media/games/a0c/a0c5990e25bae51c320403d155281d75.jpg
