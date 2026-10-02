@@ -8,6 +8,7 @@ cover: /uploads/chinesetranslationpatch/bloodrayne/cover.avif
 tags:
   - 游戏
   - 汉化补丁
+  - 吸血莱恩
 pinned: false
 gameSlug: bloodrayne-terminal-cut
 ---
