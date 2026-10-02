@@ -107,7 +107,7 @@ W32ART.POD、W32ENSND.POD、视频文件、存档等都不会被修改。
 
 需要 Steam 版：
 
-[sframe]140690|吸血莱恩2：终极剪辑版|已通关[/sframe]
+[sframe]bloodrayne2-terminal-cut|吸血莱恩2：终极剪辑版|[/sframe]
 
 建议第一次安装汉化以前，先保证游戏本体可以正常运行。
 
