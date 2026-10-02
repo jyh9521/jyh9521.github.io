@@ -17,6 +17,7 @@ gameMetadata:
     publishers: rawg
     releaseDate: rawg
     title: rawg
+    selectedPlatforms: manual
   genres:
     - Action
     - Adventure
@@ -25,6 +26,7 @@ gameMetadata:
   localizedName: ''
   manualFields:
     - description
+    - selectedPlatforms
   originalName: 'Onimusha: Way Of The Sword'
   platforms:
     - Xbox Series S/X
@@ -44,6 +46,8 @@ gameMetadata:
   title: 'Onimusha: Way Of The Sword'
   updatedAt: 2026-10-02T00:40:15.916Z
   website: ''
+  selectedPlatforms:
+    - PlayStation 5
 manual:
   availabilityStatus: available
   officialStores:
