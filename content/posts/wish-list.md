@@ -10,12 +10,9 @@ pinned: true
 
 [Red Faction II](https://store.steampowered.com/app/20550/)
 
-[Red Faction Guerrilla Re-Mars-tered](https://store.steampowered.com/app/667720/)
-
 [Vampire: The Masquerade - Redemption](https://store.steampowered.com/app/559680/)
 
-[POSTAL: Brain Damaged](https://store.steampowered.com/app/1359980)[
-](https://store.steampowered.com/app/1359980/)
+[POSTAL: Brain Damaged](https://store.steampowered.com/app/1359980)
 
 [Clive Barker's Undying](https://www.gog.com/en/game/clive_barkers_undying)
 
