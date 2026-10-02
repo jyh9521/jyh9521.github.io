@@ -110,12 +110,16 @@ button:not(.toc-toggle),.hero-button,.read-more,.site-header nav a{transition-pr
 .game-platform-tabs button.is-selected-playstation{border-color:#0068b5;background:#0068b5;color:#fff}
 .game-platform-tabs button.is-selected-xbox{border-color:#107c10;background:#107c10;color:#fff}
 .game-platform-tabs button.is-selected-nintendo{border-color:#e60012;background:#e60012;color:#fff}
-.home-games .game-shelf-home{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
-.game-shelf-home-item{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,34%);gap:24px;align-items:center;overflow:hidden;padding:18px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:0 5px 18px #15202c0c}
-.game-shelf-home-copy{min-width:0}.game-shelf-home-copy>p{display:-webkit-box;margin:10px 0 4px;color:var(--muted);font-size:14px;line-height:1.65;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
-.game-shelf-home-copy .game-shelf-platforms{margin:10px 0 12px}
-.game-shelf-home-copy .game-platform-link{margin-top:2px}
-.game-shelf-home-art{display:grid;place-items:center;min-width:0;min-height:190px;max-height:245px;aspect-ratio:16/9;overflow:hidden;border-radius:14px;background:#1b2838}
-.game-shelf-home-art img{display:block;width:100%;height:100%;max-height:245px;object-fit:contain}
-:root[data-theme="dark"] .game-shelf-home-item{background:#1c2027;color:var(--ink);border-color:var(--line)}
-@media(max-width:700px){.game-shelf-home-item{grid-template-columns:1fr;gap:13px;padding:13px}.game-shelf-home-art{order:-1;min-height:0;max-height:none}.game-shelf-home-art img{max-height:none}.game-shelf-home-copy .game-shelf-title{align-items:flex-start}.game-shelf-home-copy .game-shelf-title>a{font-size:16px}}
+.game-shelf{grid-template-columns:minmax(0,1fr);gap:18px;margin-top:24px}
+.game-shelf-item{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,40%);gap:28px;align-items:stretch;min-height:250px;padding:22px;border-radius:22px}
+.game-shelf-copy{display:flex;min-width:0;flex-direction:column;align-items:flex-start;justify-content:center}
+.game-shelf-title{width:100%;margin-bottom:12px}
+.game-shelf-title>a{font-size:clamp(20px,2.2vw,28px)}
+.game-shelf-item> .game-shelf-copy>p{display:-webkit-box;margin:0 0 12px;color:var(--muted);font-size:15px;line-height:1.7;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.game-shelf-platforms{margin:0 0 14px;gap:7px}
+.game-shelf-platforms span{padding:5px 10px;font-size:12px}
+.game-platform-link{margin-top:0;padding:11px 17px}
+.game-shelf-art{display:grid;place-items:center;min-width:0;min-height:205px;overflow:hidden;border-radius:15px;background:linear-gradient(135deg,#e9eef5,#dbe5f0);color:var(--muted);font-size:42px;text-decoration:none}
+.game-shelf-art img{display:block;width:100%;height:100%;min-height:205px;object-fit:cover}
+:root[data-theme="dark"] .game-shelf-item{background:#1c2027;color:var(--ink);border-color:var(--line)}
+@media(max-width:700px){.game-shelf-item{grid-template-columns:1fr;gap:16px;min-height:0;padding:14px}.game-shelf-art{grid-row:1;min-height:0;aspect-ratio:16/9}.game-shelf-art img{min-height:0}.game-shelf-title{align-items:flex-start}.game-shelf-title>a{font-size:19px}.game-shelf-item> .game-shelf-copy>p{-webkit-line-clamp:3}}
