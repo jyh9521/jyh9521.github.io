@@ -117,11 +117,11 @@ button:not(.toc-toggle),.hero-button,.read-more,.site-header nav a{transition-pr
 .game-filter-count{grid-column:1/-1;margin:0;color:var(--muted);font-size:12px;text-align:right}
 .game-filter-empty{margin-top:16px;padding:18px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--muted)}
 :root[data-theme="dark"] .game-filters,:root[data-theme="dark"] .game-filter-empty{background:#1c2027;color:var(--ink);border-color:var(--line)}
-.game-shelf-item{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,40%);gap:28px;align-items:stretch;height:340px;min-height:0;padding:22px;border-radius:22px}
+.game-shelf-item{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,40%);gap:28px;align-items:stretch;height:240px;min-height:0;padding:18px;border-radius:22px}
 .game-shelf-copy{display:flex;min-width:0;min-height:0;overflow:auto;flex-direction:column;align-items:flex-start;justify-content:center}
 .game-shelf-title{width:100%;margin-bottom:12px}
-.game-shelf-title>a{font-size:clamp(20px,2.2vw,28px)}
-.game-shelf-item> .game-shelf-copy>p{display:-webkit-box;margin:0 0 12px;color:var(--muted);font-size:15px;line-height:1.7;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.game-shelf-title>a{font-size:clamp(20px,2.2vw,24px)}
+.game-shelf-item> .game-shelf-copy>p{display:-webkit-box;margin:0 0 12px;color:var(--muted);font-size:14px;line-height:1.6;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .game-shelf-platforms{margin:0 0 14px;gap:7px}
 .game-shelf-platforms span{padding:5px 10px;font-size:12px}
 .game-platform-link{margin-top:0;padding:11px 17px}
@@ -129,14 +129,25 @@ button:not(.toc-toggle),.hero-button,.read-more,.site-header nav a{transition-pr
 .game-shelf-art img{position:absolute;inset:0;display:block;width:100%;height:100%;min-height:0;object-fit:fill}
 :root[data-theme="dark"] .game-shelf-item{background:#1c2027;color:var(--ink);border-color:var(--line)}
 @media(max-width:850px){.game-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.game-filter-search{grid-column:1/-1}.game-filter-count{grid-column:1/-1}}
-@media(max-width:700px){.game-shelf-item{grid-template-columns:1fr;grid-template-rows:200px minmax(0,1fr);gap:16px;height:520px;min-height:0;padding:14px}.game-shelf-art{grid-row:1;min-height:0;height:200px}.game-shelf-art img{min-height:0}.game-shelf-title{align-items:flex-start}.game-shelf-title>a{font-size:19px}.game-shelf-item> .game-shelf-copy>p{-webkit-line-clamp:3}}
+@media(max-width:700px){.game-shelf-item{grid-template-columns:1fr;grid-template-rows:160px minmax(0,1fr);gap:12px;height:420px;min-height:0;padding:14px}.game-shelf-art{grid-row:1;min-height:0;height:160px}.game-shelf-art img{min-height:0}.game-shelf-title{align-items:flex-start}.game-shelf-title>a{font-size:19px}.game-shelf-item> .game-shelf-copy>p{-webkit-line-clamp:3}}
 @media(max-width:420px){.game-filters{gap:9px;padding:12px}.game-filter-field input,.game-filter-field select{font-size:13px}}
 
 /* Embedded dossier cards: keep media and metadata inside equal-sized rows. */
-.body .game-platform-card:not(.is-compact){height:360px;min-height:0;grid-template-columns:minmax(0,32%) minmax(0,1fr);align-items:stretch}
+.body .game-platform-card:not(.is-compact){height:220px;min-height:0;grid-template-columns:minmax(0,32%) minmax(0,1fr);align-items:stretch}
 .body .game-platform-card:not(.is-compact) .game-platform-art{position:relative;min-height:0;height:100%;max-height:none}
 .body .game-platform-card:not(.is-compact) .game-platform-art img{position:absolute;inset:0;width:100%;height:100%;min-height:0;max-height:none;margin:0;object-fit:fill}
 .body .game-platform-card:not(.is-compact) .game-platform-copy{min-height:0;align-self:stretch;overflow:auto;line-height:1.5;display:flex;flex-direction:column;justify-content:safe center;align-items:flex-start}
-.body .game-platform-card:not(.is-compact) .game-platform-copy>p{flex-shrink:0;margin:6px 0}
+.body .game-platform-card:not(.is-compact) .game-platform-copy>p{flex-shrink:0;margin:3px 0;line-height:1.4}
 .body .game-platform-card:not(.is-compact) .game-platform-link{flex-shrink:0}
-@media(max-width:600px){.body .game-platform-card:not(.is-compact){height:560px;grid-template-columns:minmax(0,1fr);grid-template-rows:200px minmax(0,1fr);gap:14px}.body .game-platform-card:not(.is-compact) .game-platform-art{height:200px}}
+@media(max-width:600px){.body .game-platform-card:not(.is-compact){height:460px;grid-template-columns:minmax(0,1fr);grid-template-rows:160px minmax(0,1fr);gap:12px}.body .game-platform-card:not(.is-compact) .game-platform-art{height:160px}}
+
+/* Short horizontal cards: retain actions while trimming prose-style spacing. */
+.body .game-platform-card:not(.is-compact){padding:14px;gap:18px}
+.body .game-platform-card:not(.is-compact) .game-platform-heading{font-size:18px;line-height:1.3;gap:7px}
+.body .game-platform-card:not(.is-compact) .game-status-pill{font-size:10px;padding:4px 8px}
+.body .game-platform-card:not(.is-compact) .game-platform-credit,.body .game-platform-card:not(.is-compact) .game-platform-specs{font-size:12px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.body .game-platform-card:not(.is-compact) .game-platform-credit{cursor:help}
+.body .game-platform-card:not(.is-compact) .game-official-stores{margin:4px 0;gap:0}
+.body .game-platform-card:not(.is-compact) .game-official-stores>strong{display:none}
+.body .game-platform-card:not(.is-compact) .game-official-stores a{padding:4px 8px;font-size:11px}
+.body .game-platform-card:not(.is-compact) .game-platform-link{padding:7px 12px;font-size:12px;line-height:1.4;margin-top:4px}

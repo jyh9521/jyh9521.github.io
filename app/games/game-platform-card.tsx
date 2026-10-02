@@ -19,7 +19,7 @@ export default function GamePlatformCard({ gameTitle, status = '', platform, man
     <div className="game-platform-copy">
       {!compact && <div className="game-platform-heading"><strong>{gameTitle}</strong>{status && <span className="game-status-pill">{status}</span>}</div>}
       <p className="game-platform-specs">{[platformName, platform.releaseDate, platform.genres.slice(0, 2).join(' / ')].filter(Boolean).join(' · ') || gameStoreLabels[family]}</p>
-      {!compact && (platform.developer || platform.publisher) && <p className="game-platform-credit">{[platform.developer, platform.publisher].filter(Boolean).join(' · ')}</p>}
+      {!compact && (platform.developer || platform.publisher) && <p className="game-platform-credit" title={[platform.developer, platform.publisher].filter(Boolean).join(' · ')}>{[platform.developer, platform.publisher].filter(Boolean).join(' · ')}</p>}
       {!compact && platform.catalogSource && platform.catalogSource !== '手动资料' && <p className="game-platform-source">资料来源：{platform.catalogSource.split(' + ').map((source, index) => {
         const directLink = platform.catalogSourceLinks?.find(item => item.source.toLowerCase() === source.toLowerCase())?.url;
         const label = source.toLowerCase() === 'rawg' ? 'RAWG' : source.toLowerCase() === 'screenscraper' ? 'ScreenScraper' : source;
