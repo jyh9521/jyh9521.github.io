@@ -37,7 +37,8 @@ export function normalizeRawgGame(game) {
     description: clean(game.description_raw || game.description), releaseDate: clean(game.released),
     developers, publishers, platforms, genres: list(game.genres),
     cover: clean(game.background_image || game.background_image_additional),
-    screenshots: list(game.short_screenshots).map(item => clean(item?.image ?? item)).filter(Boolean),
+    screenshots: (Array.isArray(game.short_screenshots) ? game.short_screenshots : [])
+      .map(item => clean(item?.image)).filter(Boolean),
     website: clean(game.website), sources: { rawg: { id: String(game.id) } },
     fieldSources: {}, updatedAt: new Date().toISOString(),
   };
