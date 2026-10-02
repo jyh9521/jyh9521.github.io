@@ -4,6 +4,7 @@ date: 2026-07-14
 tags:
   - 游戏
   - 汉化补丁
+  - 无人永生
 pinned: false
 gameSlug: no-one-lives-forever-2
 ---
