@@ -1,6 +1,7 @@
 ---
 title: 活体解剖者：人面兽心
-status: [已制作补丁]
+status:
+  - 已制作补丁
 gameMetadata:
   alternativeNames: []
   cover: https://media.rawg.io/media/screenshots/90d/90d23bb6dcb323e707ba0e7423f1d1c0.jpg
@@ -18,6 +19,7 @@ gameMetadata:
     releaseDate: rawg
     title: rawg
     website: rawg
+    selectedPlatforms: manual
   genres:
     - Action
     - Shooter
@@ -25,6 +27,7 @@ gameMetadata:
   localizedName: ''
   manualFields:
     - description
+    - selectedPlatforms
   originalName: 'Vivisector: Beast Within'
   platforms:
     - PC
@@ -38,7 +41,8 @@ gameMetadata:
     - https://media.rawg.io/media/screenshots/ea1/ea1d2d1947602cea631f26b612bd8e59.jpg
     - https://media.rawg.io/media/screenshots/421/42154cfba037af8557512fee4d7ea5e4.jpg
     - https://media.rawg.io/media/screenshots/887/887872fbbb8e3d4f102558e6411b22d2.jpg
-  selectedPlatforms: []
+  selectedPlatforms:
+    - PC
   sources:
     rawg:
       id: '35525'
