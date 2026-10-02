@@ -51,18 +51,6 @@ manual:
       note: ''
       region: ''
       url: https://www.playstation.com/zh-hans-hk/games/onimusha-way-of-the-sword/
-platforms:
-  - platformChoice:
-      family: playstation
-      platform: PS5 Pro
-    metadata:
-      cover: /uploads/gamefile/onimusha-way-of-the-sword.avif
-      developer: Capcom
-      genres:
-        - 动作
-        - ARPG
-      publisher: Capcom
-      releaseDate: 2026-09-04
 events:
   - date: 2026-09-05
     title: 开始游戏
