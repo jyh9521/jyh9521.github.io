@@ -12,12 +12,12 @@ const matches: Record<GameStore, RegExp> = {
 };
 
 export default function GameFrameCard({ frame, game, title = '', status = '' }: { frame: string; game?: GameRecord; title?: string; status?: string }) {
-  const family = families[frame] || 'pc';
+  const family = frame === 'g' ? game?.platforms[0]?.store || 'pc' : families[frame] || 'pc';
   if (!game) return <span className="game-frame-placeholder is-error"><span className="game-frame-placeholder-copy"><strong>本地游戏档案未找到</strong><small>请在 CMS 游戏档案中保存资料，并在文章卡片中引用档案 slug。</small></span><a className={`game-frame-cta game-platform-link-${family}`} href="/games/">查看游戏档案 ↗</a></span>;
 
   const metadata = game.metadata as GameMetadata | null;
   const platform = game.platforms.find(item => item.store === family) || {
-    store: family, platform: metadata?.platforms.find(name => matches[family].test(name)) || metadata?.platforms[0] || family,
+    store: family, platform: frame === 'g' ? '未选择平台' : metadata?.platforms.find(name => matches[family].test(name)) || metadata?.platforms[0] || family,
     catalogUrl: `/games/${game.slug}/`, cover: metadata?.cover || '', description: metadata?.description || '',
     developer: metadata?.developers.join(', ') || '', publisher: metadata?.publishers.join(', ') || '',
     releaseDate: metadata?.releaseDate || '', genres: metadata?.genres || [],

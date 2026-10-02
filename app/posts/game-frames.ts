@@ -7,7 +7,7 @@ export const remarkGameFrames: Plugin = () => (tree: any) => {
     const next: any[] = [];
     for (const child of node.children) {
       if (child.type === 'text') {
-        const pattern = /\[(p|n|x|s)frame\]\s*([a-z0-9]+(?:-[a-z0-9]+)*)(?:\|([^|\]]*))?(?:\|([^|\]]*))?\s*\[\/\1frame\]/gi;
+        const pattern = /\[(g|p|n|x|s)frame\]\s*([a-z0-9]+(?:-[a-z0-9]+)*)(?:\|([^|\]]*))?(?:\|([^|\]]*))?\s*\[\/\1frame\]/gi;
         let last = 0;
         for (const match of child.value.matchAll(pattern)) {
           const index = match.index ?? 0;

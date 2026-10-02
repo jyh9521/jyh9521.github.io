@@ -71,7 +71,7 @@ export default function PostContent({ body, title, headings, images, games, cove
     },
     h1: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => <h1 {...props}>{children}</h1>,
     a: ({ href = '', children }: { href?: string; children?: React.ReactNode }) => {
-      const game = href.match(/game-frame\.invalid\/(p|n|x|s)\?([^#]*)/);
+      const game = href.match(/game-frame\.invalid\/(g|p|n|x|s)\?([^#]*)/);
       if (game) { const params = new URLSearchParams(game[2]); const slug = params.get('slug') || ''; return <GameFrameCard frame={game[1]} game={games.find(item => item.slug === slug)} title={params.get('title') || ''} status={params.get('status') || ''} />; }
       const compare = href.match(/image-compare\.invalid\/compare\?([^#]*)/);
       if (compare) { const params = new URLSearchParams(compare[1]); return <ImageCompare before={params.get('before') || ''} after={params.get('after') || ''} beforeLabel={params.get('beforeLabel') || '之前'} afterLabel={params.get('afterLabel') || '之后'} />; }

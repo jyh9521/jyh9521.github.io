@@ -135,24 +135,27 @@
       },
     });
     window.CMS.registerFieldType('game-metadata', GameMetadata);
-    [['p', 'PlayStation'], ['n', 'Nintendo'], ['x', 'Xbox'], ['s', 'PC']].forEach(([frame, label]) => {
-      const tag = `${frame}frame`;
-      window.CMS.registerEditorComponent({
-        id: `${tag}-card`, label: `${label} 游戏`, tooltip: `管理 ${label} 游戏`, icon: 'sports_esports', trigger: 'button',
+    window.CMS.registerEditorComponent({
+        id: 'game-card', label: '添加游戏', tooltip: '添加游戏', icon: 'sports_esports', trigger: 'button',
         fields: [
-          { name: 'gameSlug', label: '本地游戏档案 slug', widget: 'string', required: true, hint: '使用游戏档案文件名，不含 .md。' },
-          { name: 'title', label: '标题覆盖（可选）', widget: 'string', required: false },
-          { name: 'status', label: '游玩状态（可选）', widget: 'string', required: false },
+          { name: 'gameSlug', label: '选择游戏档案', widget: 'relation', collection: 'games', required: true, multiple: false,
+            value_field: '{{slug}}', display_fields: ['title'],
+            search_fields: ['title', 'gameMetadata.title', 'gameMetadata.localizedName', 'gameMetadata.originalName', '{{slug}}'],
+            dropdown_threshold: 0, hint: '输入名称筛选已保存的档案；显示手动覆盖名称，选中后自动引用档案资料。' },
+          // Keep legacy frame identity when editing an existing article card.
+          { name: 'frame', widget: 'hidden', default: 'g' },
+          { name: 'title', label: '本文标题覆盖（可选）', widget: 'string', required: false, hint: '留空时使用档案中的手动名称覆盖，随档案更新。' },
+          { name: 'status', label: '本文状态覆盖（可选）', widget: 'string', required: false, hint: '留空时使用档案当前状态。' },
         ],
-        pattern: new RegExp(`^\\[${tag}\\]\\s*([a-z0-9]+(?:-[a-z0-9]+)*)(?:\\|([^|\\]]*))?(?:\\|([^|\\]]*))?\\s*\\[\\/${tag}\\]$`),
-        fromBlock: match => ({ gameSlug: match[1], title: match[2] || '', status: match[3] || '' }),
-        toBlock: ({ gameSlug = '', title = '', status = '' }) => {
+        pattern: /^\[(g|p|n|x|s)frame\]\s*([a-z0-9]+(?:-[a-z0-9]+)*)(?:\|([^|\]]*))?(?:\|([^|\]]*))?\s*\[\/\1frame\]$/,
+        fromBlock: match => ({ frame: match[1], gameSlug: match[2], title: match[3] || '', status: match[4] || '' }),
+        toBlock: ({ gameSlug = '', frame = 'g', title = '', status = '' }) => {
           const slug = String(gameSlug).trim().toLowerCase();
+          const tag = `${['g', 'p', 'n', 'x', 's'].includes(frame) ? frame : 'g'}frame`;
           return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) ? `[${tag}]${slug}|${String(title).replace(/[|\]]/g, '')}|${String(status).replace(/[|\]]/g, '')}[/${tag}]` : '';
         },
-        toPreview: ({ gameSlug = '', title = '', status = '' }) => `${label} 游戏（${String(title) || String(gameSlug) || '待填写'}${status ? ` · ${status}` : ''}）`,
+        toPreview: ({ gameSlug = '', title = '', status = '' }) => `游戏档案（${String(title) || String(gameSlug) || '请选择游戏'}${status ? ` · ${status}` : ''}）`,
       });
-    });
     window.CMS.registerEditorComponent({
       id: 'image-compare', label: '截图前后对比', icon: 'compare', trigger: 'button',
       fields: [

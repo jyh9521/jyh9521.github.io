@@ -37,7 +37,7 @@ collections:
       - { name: updatedAt, label: 最近更新日期, widget: datetime, type: date, required: false }
       - { name: updateNote, label: 更新说明, widget: text, required: false }
       - { name: gameSlug, label: 关联游戏档案, widget: string, required: false, hint: "填入游戏档案文件名（不含 .md），例如 bloodrayne-terminal-cut。" }
-      - { name: body, label: 正文, widget: richtext, required: true, editor_components: [code-block, image, pframe-card, nframe-card, xframe-card, sframe-card, image-compare], hint: "图片描述优先读取 Markdown 图片引号标题。平台游戏卡片引用本地游戏档案 slug；先在游戏库保存资料，再填入 pframe/nframe/xframe/sframe 卡片。截图前后对比按钮可插入两张图并拖动滑块查看差异。代码块支持一键复制。" }
+      - { name: body, label: 正文, widget: richtext, required: true, editor_components: [code-block, image, game-card, image-compare], hint: "图片描述优先读取 Markdown 图片引号标题。点击添加游戏，在可搜索下拉框中选择已保存的游戏档案；默认显示档案的手动覆盖名称。已有平台游戏卡片继续兼容。截图前后对比按钮可插入两张图并拖动滑块查看差异。代码块支持一键复制。" }
       - { name: audio, label: 音频文件, widget: file, required: false }
       - { name: video, label: 视频文件, widget: file, required: false }
       - { name: attachment, label: 下载附件, widget: file, required: false }

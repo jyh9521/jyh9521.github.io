@@ -47,7 +47,9 @@ npx wrangler deploy
 
 后台操作：进入「游戏档案」，在「游戏资料」中选择自动、RAWG 或 ScreenScraper 并搜索；结果展示封面、标题、年份、平台、开发商和明确的数据来源。手动选中正确条目后导入资料，编辑过的字段会保留。之后可点「刷新游戏资料」更新元数据；「正版渠道与人工状态」中的商店、状态和备注独立保存，不会被刷新覆盖。没有外部来源时仍可以手工填写资料和保存。
 
-文章编辑器的平台入口显示为「PlayStation 游戏」「Nintendo 游戏」「Xbox 游戏」「PC 游戏」，对应的卡片只引用本地游戏档案，不表示元数据来源。RAWG / ScreenScraper / 未来 IGDB 是资料来源；Steam、GOG、Nintendo eShop、PlayStation Store 等是手动维护的正版渠道，两者保存在不同字段。游戏资料搜索导入后，可在 `selectedPlatforms` 中只勾选自己要记录的版本；RAWG 返回的完整平台列表仍保存在资料元数据中，但不会自动展开成一堆前台卡片。存在手动 `platforms` 卡片时，手动记录优先，不再从元数据重复生成卡片。
+文章编辑器统一使用「添加游戏」入口。点击后，在可搜索下拉框中选择已有游戏档案，选项优先显示顶层 `title`（手动名称覆盖），支持按该名称、资料库名称、原名或 slug 搜索。保存的是档案 slug，而非名称快照；本文标题/状态覆盖留空时，前台始终使用档案最新名称和状态。新卡片格式为 `[gframe]档案slug||[/gframe]`，平台与按钮颜色取自该档案首个已选平台；旧的 `pframe/nframe/xframe/sframe` 卡片继续正常显示和编辑，保留原平台。
+
+RAWG / ScreenScraper / 未来 IGDB 是资料来源；Steam、GOG、Nintendo eShop、PlayStation Store 等是手动维护的正版渠道，两者保存在不同字段。游戏资料搜索导入后，可在 `selectedPlatforms` 中只勾选自己要记录的版本；RAWG 返回的完整平台列表仍保存在资料元数据中，但不会自动展开成一堆前台卡片。存在手动 `platforms` 卡片时，手动记录优先，不再从元数据重复生成卡片。
 
 ## 本地预览
 
