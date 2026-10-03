@@ -1,4 +1,6 @@
 ---
+aliases:
+  - /posts/red-faction/
 title: 《红色派系》简体中文汉化补丁
 date: 2026-08-07
 description: |-
