@@ -187,7 +187,7 @@ BloodRayne 2 Terminal Cut/
 
 ## 七、下载地址
 
-[GitHub](https://github.com/jyh9521/BloodRayne2_CN)
+[GitHub](https://github.com/jyh9521/BloodRayne2-CN/releases)
 
 [GooGle Drive](https://drive.google.com/drive/folders/1K1DVjhdM37coTkqQg9a1lF43n6wYSrln?usp=sharing)
 
