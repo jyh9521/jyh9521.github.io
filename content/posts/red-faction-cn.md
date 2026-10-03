@@ -13,6 +13,28 @@ tags:
   - 红色派系
 pinned: false
 gameSlug: red-faction
+patch:
+  enabled: false
+  version: v1.0
+  releaseDate: 2026-08-07
+  gameVersions: Steam版
+  compatibility: 限定Alpine Faction为1.3.0
+  issues: |-
+    1. Alpine Faction的选项里，「网格光照」的选项字不全
+    引擎那处的字符串缓冲区只有 8 字节。「逐像素」的 UTF-8 编码要 9 字节，最后一个字被截断，落单的字节被当成别的字符渲染了出来。
+    功能本身完全正常，选项该干什么还干什么，只是显示不全。
+    改的话得动引擎里的缓冲区大小。为了一个纯显示问题去动内存布局，性价比太低，所以保留了。
+
+    2. 文字太小
+    打开游戏选项 - 高级 - 界面：大号 HUD
+    上方游戏自带字幕框的文本，可以使用键盘的 M 键来打开日志查看。
+  downloads:
+    - label: GitHub
+      url: https://github.com/jyh9521/Red-Faction-CN/releases
+    - label: Google Drive
+      url: https://drive.google.com/drive/folders/1JDfhMGhs5HTHCkhHoeR22HzveU327Glu
+    - label: 百度网盘
+      url: https://pan.baidu.com/s/1SzdjlZazSV4AnQyTkLxeFQ?pwd=1658
 ---
 
 ## **一、项目背景**
