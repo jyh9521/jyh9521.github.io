@@ -110,6 +110,8 @@ NOLF2 使用的 LithTech (Jupiter) 是一款 2002 年的老引擎，给汉化带
 
 ## 七、下载地址
 
+[GitHub](https://github.com/jyh9521/NOLF2-CN/releases)
+
 [Google Drive](https://drive.google.com/drive/folders/1WXY_nV-FT0csk1GyojV6-Cd7s92meL3P?usp=drive_link)
 
 [百度网盘](https://pan.baidu.com/s/1dOxeSwqax80fcbF3lzGTTA?pwd=1jqp) 提取码: 1jqp
