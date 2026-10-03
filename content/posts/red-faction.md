@@ -205,6 +205,8 @@ https://www.factionfiles.com/ff.php?action=file&id=7630
 
 ## **七、下载地址**
 
+[GitHub](https://github.com/jyh9521/Red-Faction-CN/releases)
+
 [Google Drive](https://drive.google.com/drive/folders/1JDfhMGhs5HTHCkhHoeR22HzveU327Glu)
 
 [百度网盘](https://pan.baidu.com/s/1SzdjlZazSV4AnQyTkLxeFQ?pwd=1658) 提取码:1658
