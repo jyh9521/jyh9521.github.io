@@ -1,6 +1,7 @@
 node_modules/
 .next/
 out/
+reports/
 .env*
 !.env.example
 workers/ns-counter/.dev.vars*

@@ -51,7 +51,7 @@
     window.CMS.registerFieldType('game-manual', GameManual);
 
     const GameMetadata = createClass({
-      getInitialState: function () { return { loading: false, searching: false, message: '', results: [], query: '', dataSource: 'auto' }; },
+      getInitialState: function () { return { loading: false, searching: false, message: '', results: [], query: '', dataSource: 'auto', pendingRefresh: null }; },
       update: function (key, value) {
         if (key === 'platforms' || key === 'selectedPlatforms') value = normalizePlatforms(value);
         const current = this.props.value || {};
@@ -96,18 +96,64 @@
             }
           next.platforms = normalizePlatforms(next.platforms);
           next.selectedPlatforms = normalizePlatforms(current.selectedPlatforms).filter(platform => next.platforms.includes(platform));
+          if (refresh) {
+            const labels = { title: '游戏名称', localizedName: '本地化名称', originalName: '原名', alternativeNames: '别名', description: '简介', releaseDate: '发售日期', developers: '开发商', publishers: '发行商', platforms: '平台', genres: '类型', cover: '封面', screenshots: '截图', website: '官网' };
+            const changes = keys.flatMap(key => {
+              const before = current[key] || (Array.isArray(game[key]) ? [] : '');
+              const after = key === 'platforms' ? normalizePlatforms(game[key]) : game[key] || (Array.isArray(before) ? [] : '');
+              return JSON.stringify(before) === JSON.stringify(after) ? [] : [{ key, label: labels[key], before, after, locked: manualFields.has(key), selected: !manualFields.has(key) }];
+            });
+            if (!changes.length) this.setState({ pendingRefresh: null, message: '资料没有变化，当前档案未修改。' });
+            else this.setState({ pendingRefresh: { game, changes }, message: '请比较新旧资料，勾选要采用的字段，再确认更新。手动字段保持不变。' });
+            return;
+          }
           this.props.onChange(next);
           this.setState({ results: [], selected: candidate, message: `${refresh ? '游戏资料已刷新' : '游戏资料已填入'}；手动编辑的字段会保留。${game.warnings?.length ? ` 部分来源未能补充：${game.warnings.join('；')}` : ''}${game.warning ? `（上游暂不可用，当前保留缓存资料：${game.warning}）` : ''}` });
         } catch (error) {
           this.setState({ message: error instanceof Error ? error.message : '游戏资料读取失败，请稍后重试。' });
         } finally { this.setState({ loading: false }); }
       },
+      applyRefresh: function () {
+        const pending = this.state.pendingRefresh;
+        if (!pending) return;
+        const current = this.props.value || {};
+        const next = { ...current, fieldSources: { ...(current.fieldSources || {}) } };
+        const applied = [];
+        for (const change of pending.changes) {
+          if (!change.selected || change.locked || (current.manualFields || []).includes(change.key)) continue;
+          // Do not replace edits made while the comparison was open.
+          const before = current[change.key] || (Array.isArray(change.before) ? [] : '');
+          if (JSON.stringify(before) !== JSON.stringify(change.before)) continue;
+          next[change.key] = change.after;
+          next.fieldSources[change.key] = pending.game.fieldSources?.[change.key] || Object.keys(pending.game.sources || {})[0] || 'manual';
+          applied.push(change.key);
+        }
+        if (applied.length) {
+          next.id = pending.game.id || current.id;
+          next.sources = { ...(current.sources || {}), ...(pending.game.sources || {}) };
+          next.updatedAt = pending.game.updatedAt || new Date().toISOString();
+          // Keep selected versions, even if the refreshed catalog omitted them.
+          next.selectedPlatforms = normalizePlatforms(current.selectedPlatforms);
+          next.platforms = normalizePlatforms(next.platforms);
+          this.props.onChange(next);
+        }
+        this.setState({ pendingRefresh: null, message: applied.length ? `已采用 ${applied.length} 个字段的变更，请保存档案。` : '未采用任何变更，当前档案保持不变。' });
+      },
       render: function () {
         const value = this.props.value || {};
         const input = (key, label, type = 'text') => h('label', { key, style: { display: 'grid', gap: '5px' } }, h('span', null, label), h('input', { type, value: value[key] || '', onChange: event => this.update(key, event.target.value), style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }));
         const text = (key, label) => h('label', { key, style: { display: 'grid', gap: '5px' } }, h('span', null, label), h('textarea', { value: value[key] || '', onChange: event => this.update(key, event.target.value), rows: 3, style: { width: '100%', padding: '8px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }));
         const stringList = (key, label) => h('label', { key, style: { display: 'grid', gap: '5px' } }, h('span', null, label), h('input', { type: 'text', value: Array.isArray(value[key]) ? value[key].join(', ') : '', onChange: event => this.update(key, event.target.value.split(/[,，]/).map(item => item.trim()).filter(Boolean)), style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } }));
+        const pending = this.state.pendingRefresh;
+        const showValue = value => Array.isArray(value) ? value.join('、') || '（空）' : String(value || '（空）');
         return h('div', { style: { display: 'grid', gap: '10px' } },
+          pending && h('section', { 'aria-label': '游戏资料变更预览', style: { display: 'grid', gap: '10px', border: '2px solid #68707a', borderRadius: '8px', padding: '12px' } },
+            h('strong', null, '资料更新对比（确认前不会修改档案）'),
+            ...pending.changes.map(change => h('div', { key: change.key, style: { borderBottom: '1px solid #68707a', paddingBottom: '10px', minWidth: 0 } },
+              h('label', null, h('input', { type: 'checkbox', checked: change.selected, disabled: change.locked, onChange: event => this.setState({ pendingRefresh: { ...pending, changes: pending.changes.map(item => item.key === change.key ? { ...item, selected: event.target.checked } : item) } }) }), ` ${change.label}${change.locked ? '（手动字段，不覆盖）' : ''}`),
+              h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(220px,100%),1fr))', gap: '10px', overflowWrap: 'anywhere', whiteSpace: 'pre-wrap', maxHeight: '260px', overflowY: 'auto' } },
+                h('div', null, h('small', null, '当前值'), h('p', null, showValue(change.before))), h('div', null, h('small', null, '数据源新值'), h('p', null, showValue(change.after)))))),
+            h('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap' } }, h('button', { type: 'button', onClick: () => this.applyRefresh() }, '确认采用勾选变更'), h('button', { type: 'button', onClick: () => this.setState({ pendingRefresh: null, message: '已取消刷新，当前档案未修改。' }) }, '取消，保留原资料'))),
           h('div', { style: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto', gap: '8px', alignItems: 'end' } },
             h('label', { style: { display: 'grid', gap: '5px' } }, h('span', null, '搜索游戏资料'), h('input', { type: 'search', value: this.state.query, placeholder: '支持中文、日文、英文等游戏名称', onChange: event => this.setState({ query: event.target.value }), onKeyDown: event => { if (event.key === 'Enter') { event.preventDefault(); this.searchGames(); } }, style: { width: '100%', minHeight: '38px', padding: '7px 10px', border: '1px solid #68707a', borderRadius: '6px', background: 'transparent', color: 'inherit' } })),
             h('button', { id: this.props.forID, type: 'button', disabled: this.state.loading || this.state.searching, onClick: () => this.searchGames(), style: { minHeight: '38px', padding: '7px 14px', cursor: this.state.searching ? 'wait' : 'pointer' } }, this.state.searching ? '搜索中…' : '搜索游戏'),
@@ -125,7 +171,7 @@
           stringList('platforms', '平台（逗号分隔）'), stringList('genres', '类型 / Genre'), stringList('screenshots', '截图 URL（逗号分隔）'),
           h('fieldset', { style: { display: 'grid', gap: '7px', padding: '10px', border: '1px solid #68707a', borderRadius: '6px' } },
             h('legend', null, '加入游戏档案的平台（只勾选你要记录的版本）'),
-            ...normalizePlatforms(value.platforms).map(platform => h('label', { key: platform, style: { display: 'flex', alignItems: 'center', gap: '8px' } },
+            ...normalizePlatforms([...(value.platforms || []), ...(value.selectedPlatforms || [])]).map(platform => h('label', { key: platform, style: { display: 'flex', alignItems: 'center', gap: '8px' } },
               h('input', { type: 'checkbox', checked: normalizePlatforms(value.selectedPlatforms).includes(platform), onChange: event => {
                 const selected = new Set(normalizePlatforms(value.selectedPlatforms));
                 if (event.target.checked) selected.add(platform); else selected.delete(platform);

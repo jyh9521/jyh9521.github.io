@@ -54,6 +54,8 @@ test('CMS refresh preserves a legacy platform selection when a provider returns 
   const field = fields['game-metadata'];
   const instance = { ...field, state: field.getInitialState(), props: { value: { id: 'old', platforms: ['PC Windows'], selectedPlatforms: ['PC Windows'], sources: {} }, onChange: x => { changed = x; } }, setState(x) { Object.assign(this.state, x); } };
   await instance.selectGame({ title: 'Example' }, true);
+  assert.equal(changed, undefined);
+  instance.applyRefresh();
   assert.deepEqual([...changed.platforms], ['PC']);
   assert.deepEqual([...changed.selectedPlatforms], ['PC']);
 });

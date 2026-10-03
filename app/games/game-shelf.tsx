@@ -1,17 +1,35 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { GameRecord } from '../../lib/game-types';
 import { gameStoreLabels } from '../../lib/game-types';
 import { gameStatuses, matchesGameStatus } from '../../lib/game-status';
+import { readShelfState, writeShelfState, shelfDefaults, shelfKeys, shelfSorts, sortShelfGames, type ShelfState } from '../../lib/game-shelf-state';
 
 export default function GameShelf({ games }: { games: GameRecord[] }) {
-  const [query, setQuery] = useState('');
-  const [platformFilter, setPlatformFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [yearFilter, setYearFilter] = useState('all');
-  const [genreFilter, setGenreFilter] = useState('all');
+  const [filters, setFilters] = useState({ ...shelfDefaults });
+  const [ready, setReady] = useState(false);
+  const { q: query, platform: platformFilter, status: statusFilter, year: yearFilter, genre: genreFilter } = filters;
+  const update = (key: keyof ShelfState, value: string) => setFilters(current => ({ ...current, [key]: value }));
+  useEffect(() => {
+    const restore = () => {
+      let params = new URLSearchParams(location.search);
+      if (!shelfKeys.some(key => params.has(key))) {
+        try { params = new URLSearchParams(sessionStorage.getItem('game-shelf-filters') || ''); } catch { /* Storage is optional. */ }
+      }
+      setFilters(readShelfState(params)); setReady(true);
+    };
+    restore(); addEventListener('popstate', restore);
+    return () => removeEventListener('popstate', restore);
+  }, []);
+  useEffect(() => {
+    if (!ready) return;
+    const url = new URL(location.href);
+    writeShelfState(filters, url.searchParams);
+    history.replaceState(history.state, '', `${url.pathname}${url.search}${url.hash}`);
+    try { sessionStorage.setItem('game-shelf-filters', writeShelfState(filters).toString()); } catch { /* Storage is optional. */ }
+  }, [filters, ready]);
   const platformOptions = useMemo(() => [...new Set(games.flatMap(game => game.platforms.map(platform => `${gameStoreLabels[platform.store]} · ${platform.platform}`)))].sort((a, b) => a.localeCompare(b, 'zh-CN')), [games]);
   const statusOptions = [...gameStatuses];
   const yearOf = (game: GameRecord) => (game.metadata?.releaseDate || game.platforms.find(platform => platform.releaseDate)?.releaseDate || '').slice(0, 4);
@@ -20,7 +38,7 @@ export default function GameShelf({ games }: { games: GameRecord[] }) {
   const genreOptions = useMemo(() => [...new Set(games.flatMap(genresOf))].sort((a, b) => a.localeCompare(b, 'zh-CN')), [games]);
   const filteredGames = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase();
-    return games.filter(game => {
+    return sortShelfGames(games.filter(game => {
       const searchText = [game.title, game.metadata?.localizedName, game.metadata?.originalName, ...(game.metadata?.alternativeNames || [])].filter(Boolean).join(' ').toLocaleLowerCase();
       const platforms = game.platforms.map(platform => `${gameStoreLabels[platform.store]} · ${platform.platform}`);
       return (!normalizedQuery || searchText.includes(normalizedQuery))
@@ -28,18 +46,20 @@ export default function GameShelf({ games }: { games: GameRecord[] }) {
         && matchesGameStatus(game.status, statusFilter)
         && (yearFilter === 'all' || yearOf(game) === yearFilter)
         && (genreFilter === 'all' || genresOf(game).includes(genreFilter));
-    });
-  }, [games, query, platformFilter, statusFilter, yearFilter, genreFilter]);
+    }), filters.sort);
+  }, [games, query, platformFilter, statusFilter, yearFilter, genreFilter, filters.sort]);
 
   if (!games.length) return <p className="empty-posts">还没有游戏档案，之后可在 Sveltia 后台添加。</p>;
   const select = (label: string, value: string, options: string[], onChange: (value: string) => void) => <label className="game-filter-field"><span>{label}</span><select value={value} onChange={event => onChange(event.target.value)}><option value="all">全部</option>{options.map(option => <option key={option} value={option}>{option}</option>)}</select></label>;
   return <>
     <div className="game-filters" aria-label="筛选游戏档案">
-      <label className="game-filter-field game-filter-search"><span>搜索游戏</span><input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="按游戏名称或别名搜索" /></label>
-      {select('平台', platformFilter, platformOptions, setPlatformFilter)}
-      {select('游玩状态', statusFilter, statusOptions, setStatusFilter)}
-      {select('发售年份', yearFilter, yearOptions, setYearFilter)}
-      {select('类型', genreFilter, genreOptions, setGenreFilter)}
+      <label className="game-filter-field game-filter-search"><span>搜索游戏</span><input type="search" value={query} onChange={event => update('q', event.target.value)} placeholder="按游戏名称或别名搜索" /></label>
+      {select('平台', platformFilter, platformOptions, value => update('platform', value))}
+      {select('游玩状态', statusFilter, statusOptions, value => update('status', value))}
+      {select('发售年份', yearFilter, yearOptions, value => update('year', value))}
+      {select('类型', genreFilter, genreOptions, value => update('genre', value))}
+      <label className="game-filter-field"><span>排序</span><select value={filters.sort} onChange={event => update('sort', event.target.value)}>{Object.entries(shelfSorts).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+      <button className="game-filter-reset" type="button" onClick={() => setFilters({ ...shelfDefaults })}>重置筛选与排序</button>
       <p className="game-filter-count" aria-live="polite">显示 {filteredGames.length} / {games.length} 款</p>
     </div>
     {filteredGames.length ? <div className="game-shelf">{filteredGames.map(game => {

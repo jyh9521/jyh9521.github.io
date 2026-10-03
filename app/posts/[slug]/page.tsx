@@ -5,6 +5,7 @@ import { extractHeadings, extractImages } from '../markdown-utils';
 import { getAllPosts, getPost, hasLocalAsset } from '../../../lib/posts';
 import { getGames } from '../../../lib/games';
 import GiscusComments from '../../comments/giscus-comments';
+import PatchInformation from '../patch-info';
 
 export function generateStaticParams() {
   return getAllPosts().map(post => ({ slug: post.slug }));
@@ -34,6 +35,7 @@ export default async function Post({ params }: { params: Promise<{ slug: string 
         {post.updateNote && <p className="update-note">更新说明：{post.updateNote}</p>}
         {post.gameSlug && <Link className="game-reference" href={`/games/${post.gameSlug}/`}>🎮 查看游戏档案与时间线 ↗</Link>}
       </header>
+      <PatchInformation patch={post.patch} />
       <PostContent body={post.body} title={post.title} headings={headings} images={images} games={games} cover={hasLocalAsset(post.cover) ? { src: post.cover, alt: post.title, caption: post.title, group: '封面' } : undefined} audio={post.audio} video={post.video} attachment={post.attachment} />
       {(previous || next) && <nav className="post-neighbor-nav" aria-label="上一篇和下一篇">
         {previous ? <Link href={`/posts/${previous.slug}/`} className="neighbor-card neighbor-previous"><span>← 上一篇 · 更早</span><strong>{previous.title}</strong></Link> : <span />}

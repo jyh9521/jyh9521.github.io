@@ -8,7 +8,7 @@ tags:
   - 汉化补丁
   - 无人永生
 pinned: false
-gameSlug: no-one-lives-forever-2
+gameSlug: nolf2
 ---
 
 ## 一、项目背景
