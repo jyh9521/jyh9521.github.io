@@ -1,3 +1,4 @@
+import gamePlatforms from '../../../public/sveltia/game-platforms.js';
 const clean = value => String(value ?? '').trim();
 const list = value => (Array.isArray(value) ? value : value ? [value] : []).map(item => clean(item?.name ?? item)).filter(Boolean);
 const yearOf = value => {
@@ -29,7 +30,7 @@ export function normalizeRawgGame(game) {
   const aliases = list(game.alternative_names);
   const originalName = clean(game.name_original) || clean(game.name);
   const title = preferredTitle({ defaultName: game.name, originalName, aliases });
-  const platforms = (game.platforms || []).map(item => clean(item.platform?.name || item.name)).filter(Boolean);
+  const platforms = gamePlatforms.normalizePlatformList((game.platforms || []).map(item => clean(item.platform?.name || item.name)));
   const developers = list(game.developers);
   const publishers = list(game.publishers);
   const normalized = {
@@ -111,7 +112,7 @@ export function normalizeScreenScraperGame(game, system = {}) {
     id: `screenscraper:${clean(game.id)}`, title, localizedName: localizedNames.zhHans || localizedNames.zhHant,
     originalName, alternativeNames: aliases, description: synopsisText, releaseDate: dateValues.sort()[0] || '',
     developers: list(game.developpeur?.text || game.developpeur), publishers: list(game.editeur?.text || game.editeur),
-    platforms: [clean(game.systeme?.text || game.systeme?.nom || system.text || system.name)].filter(Boolean), genres: [...new Set(genreValues)],
+    platforms: gamePlatforms.normalizePlatformList([clean(game.systeme?.text || game.systeme?.nom || system.text || system.name)]), genres: [...new Set(genreValues)],
     cover, screenshots: [...new Set(screenshots)], website: '',
     sources: { screenscraper: {
       id: clean(game.id), systemId,
@@ -132,6 +133,7 @@ export function mergeMetadata(primary, secondary) {
   for (const key of ['alternativeNames', 'developers', 'publishers', 'platforms', 'genres', 'screenshots']) {
     merged[key] = [...new Set([...(primary[key] || []), ...(secondary[key] || [])])];
   }
+  merged.platforms = gamePlatforms.normalizePlatformList(merged.platforms);
   merged.title = primary.localizedName || secondary.localizedName || primary.title || secondary.title;
   merged.updatedAt = new Date().toISOString();
   return merged;

@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { normalizeGameStatus } from './game-status';
+import gamePlatforms from '../public/sveltia/game-platforms.js';
 import type { AvailabilityStatus, GameEvent, GameManual, GameMetadata, GamePlatform, GameRecord, GameStore, StoreLink } from './game-types';
 
 const gamesDir = path.join(process.cwd(), 'content/games');
@@ -18,7 +19,7 @@ function normalizeMetadata(value: Record<string, any>): GameMetadata {
     id: asText(value.id), title: asText(value.title), localizedName: asText(value.localizedName || value.title),
     originalName: asText(value.originalName), alternativeNames: asList(value.alternativeNames), description: asText(value.description),
     releaseDate: asDate(value.releaseDate), developers: asList(value.developers || value.developer), publishers: asList(value.publishers || value.publisher),
-    platforms: asList(value.platforms), selectedPlatforms: asList(value.selectedPlatforms),
+    platforms: gamePlatforms.normalizePlatformList(value.platforms), selectedPlatforms: gamePlatforms.normalizePlatformList(value.selectedPlatforms),
     genres: asList(value.genres), cover: asText(value.cover), screenshots: asList(value.screenshots),
     website: asText(value.website), sources,
     fieldSources: value.fieldSources && typeof value.fieldSources === 'object' ? value.fieldSources : {}, updatedAt: asText(value.updatedAt),
@@ -52,7 +53,7 @@ function parsePlatform(record: any, metadata: GameMetadata, slug: string): GameP
   if (!stores.has(store)) return null;
   const overrides = { ...(record?.metadata || {}), ...record };
   const selectedPlatform = asText(choice.platform || record.platform);
-  const platform = /^steam$/i.test(selectedPlatform) ? 'PC' : selectedPlatform;
+  const platform = gamePlatforms.normalizePlatform(selectedPlatform);
   const sources = Object.keys(metadata.sources || {});
   const catalogSource = sources.length ? sources.join(' + ') : '手动资料';
   const catalogSourceLinks = Object.entries(metadata.sources || {}).flatMap(([source, details]) => {
@@ -87,14 +88,15 @@ export function getGames(): GameRecord[] {
     const manual = normalizeManual(data.manual);
     if (!data.title && !metadata.title) return [];
     const platformRecords = Array.isArray(data.platforms) ? data.platforms : [];
-    const platforms = platformRecords.map(record => parsePlatform(record, metadata, slug)).filter((item): item is GamePlatform => Boolean(item));
+    const platforms = platformRecords.map(record => parsePlatform(record, metadata, slug)).filter((item): item is GamePlatform => Boolean(item))
+      .filter((platform, index, entries) => entries.findIndex(item => item.store === platform.store && item.platform === platform.platform) === index);
     // Explicit platform-card records are the source of truth. Otherwise only
     // materialize platforms the editor selected, never every provider platform.
     const selectedPlatforms = platformRecords.length ? [] : metadata.selectedPlatforms;
     for (const name of selectedPlatforms) {
       if (platforms.some(platform => platform.platform.toLocaleLowerCase() === name.toLocaleLowerCase())) continue;
       const normalized = name.toLowerCase();
-      const family: GameStore = /playstation|ps[1-5]|psp|vita/.test(normalized) ? 'playstation' : /xbox/.test(normalized) ? 'xbox' : /nintendo|switch|wii|game ?boy|3ds|ds/.test(normalized) ? 'nintendo' : 'pc';
+      const family: GameStore = (gamePlatforms.platformFamily(name) || (/playstation|ps[1-5]|psp|vita/.test(normalized) ? 'playstation' : /xbox/.test(normalized) ? 'xbox' : /nintendo|switch|wii|game ?boy|3ds|ds/.test(normalized) ? 'nintendo' : 'pc')) as GameStore;
       platforms.push(parsePlatform({ platformChoice: { family, platform: name } }, metadata, slug)!);
     }
     const events = Array.isArray(data.events) ? data.events.filter((event: any) => event?.title).map((event: any) => ({

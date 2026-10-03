@@ -50,7 +50,7 @@ export default {
       if (query.length < 2) return jsonError("请输入至少两个字符。", 400);
       const source = (url.searchParams.get("source") || "auto").toLowerCase();
       if (!['auto', 'rawg', 'screenscraper'].includes(source)) return jsonError("数据源选项无效。", 400);
-      const cacheKey = `game-search:v3:${source}:${query.toLocaleLowerCase()}`;
+      const cacheKey = `game-search:v4:${source}:${query.toLocaleLowerCase()}`;
       const cached = await readMetadataCache(env, cacheKey);
       if (cached) {
         const cacheTtl = cached.value.results?.length ? CACHE_SEARCH_MS : CACHE_EMPTY_SEARCH_MS;
@@ -91,7 +91,7 @@ export default {
       if (!rawgId && !ssId && !title) return jsonError("请先选择候选游戏。", 400);
       const cacheIdentity = `${source}:` + ([rawgId && `rawg:${rawgId}`, ssId && `screenscraper:${systemId}:${ssId}`].filter(Boolean).sort().join("|") || `title:${title.toLocaleLowerCase()}`);
       try {
-        const outcome = await cachedMetadata(env, `game-detail:v2:${cacheIdentity}`, CACHE_DETAIL_MS, async () => {
+        const outcome = await cachedMetadata(env, `game-detail:v3:${cacheIdentity}`, CACHE_DETAIL_MS, async () => {
           const errors = [];
           let result = null;
           if (rawgId) {

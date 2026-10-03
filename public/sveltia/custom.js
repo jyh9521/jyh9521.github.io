@@ -5,6 +5,7 @@
     const h = window.h;
     const createClass = window.createClass;
     const SelectControl = window.CMS.getFieldType('select').control;
+    const normalizePlatforms = window.GamePlatforms?.normalizePlatformList || (values => [...new Set(values || [])]);
     const sourceLabels = { rawg: 'RAWG', screenscraper: 'ScreenScraper', igdb: 'IGDB' };
     const labelSources = sources => Object.keys(sources || {}).map(source => sourceLabels[source] || source).join(' + ');
     const GameManual = createClass({
@@ -52,6 +53,7 @@
     const GameMetadata = createClass({
       getInitialState: function () { return { loading: false, searching: false, message: '', results: [], query: '', dataSource: 'auto' }; },
       update: function (key, value) {
+        if (key === 'platforms' || key === 'selectedPlatforms') value = normalizePlatforms(value);
         const current = this.props.value || {};
         const manualFields = new Set(current.manualFields || []);
         const fieldSources = { ...(current.fieldSources || {}) };
@@ -92,7 +94,8 @@
             const hasValue = Array.isArray(current[key]) ? current[key].length > 0 : Boolean(String(current[key] || '').trim());
               if (!hasValue || refresh || current.sources) next[key] = game[key] || (['alternativeNames', 'developers', 'publishers', 'platforms', 'genres', 'screenshots'].includes(key) ? [] : '');
             }
-            next.selectedPlatforms = (current.selectedPlatforms || []).filter(platform => (game.platforms || []).includes(platform));
+          next.platforms = normalizePlatforms(next.platforms);
+          next.selectedPlatforms = normalizePlatforms(current.selectedPlatforms).filter(platform => next.platforms.includes(platform));
           this.props.onChange(next);
           this.setState({ results: [], selected: candidate, message: `${refresh ? '游戏资料已刷新' : '游戏资料已填入'}；手动编辑的字段会保留。${game.warnings?.length ? ` 部分来源未能补充：${game.warnings.join('；')}` : ''}${game.warning ? `（上游暂不可用，当前保留缓存资料：${game.warning}）` : ''}` });
         } catch (error) {
@@ -122,9 +125,9 @@
           stringList('platforms', '平台（逗号分隔）'), stringList('genres', '类型 / Genre'), stringList('screenshots', '截图 URL（逗号分隔）'),
           h('fieldset', { style: { display: 'grid', gap: '7px', padding: '10px', border: '1px solid #68707a', borderRadius: '6px' } },
             h('legend', null, '加入游戏档案的平台（只勾选你要记录的版本）'),
-            ...(value.platforms || []).map(platform => h('label', { key: platform, style: { display: 'flex', alignItems: 'center', gap: '8px' } },
-              h('input', { type: 'checkbox', checked: (value.selectedPlatforms || []).includes(platform), onChange: event => {
-                const selected = new Set(value.selectedPlatforms || []);
+            ...normalizePlatforms(value.platforms).map(platform => h('label', { key: platform, style: { display: 'flex', alignItems: 'center', gap: '8px' } },
+              h('input', { type: 'checkbox', checked: normalizePlatforms(value.selectedPlatforms).includes(platform), onChange: event => {
+                const selected = new Set(normalizePlatforms(value.selectedPlatforms));
                 if (event.target.checked) selected.add(platform); else selected.delete(platform);
                 this.update('selectedPlatforms', [...selected]);
               } }), platform)),

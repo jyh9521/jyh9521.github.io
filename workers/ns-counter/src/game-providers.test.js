@@ -79,6 +79,17 @@ test('ScreenScraper search accepts its wrapped JSON list response', async () => 
   } finally { globalThis.fetch = originalFetch; }
 });
 
+test('RAWG and ScreenScraper use canonical platform names before matching and merging', () => {
+  const rawg = normalizeRawgGame({ id: 1, name: 'Example', platforms: [{ platform: { name: 'PC' } }] });
+  const ss = normalizeScreenScraperGame({ id: '2', nom: 'Example', systeme: { id: '135', text: 'PC Windows' } });
+  assert.deepEqual(rawg.platforms, ['PC']);
+  assert.deepEqual(ss.platforms, ['PC']);
+  const candidates = combineCandidates([rawg], [ss]);
+  assert.equal(candidates.length, 1);
+  assert.deepEqual(candidates[0].platforms, ['PC']);
+  assert.equal(candidates[0].sources.screenscraper.systemId, '135');
+});
+
 test('ScreenScraper platform variants keep their own detail IDs', () => {
   const a = normalizeScreenScraperGame({ id: '1', nom: 'Example', systeme: { id: '4', text: 'Super Nintendo' } });
   const b = normalizeScreenScraperGame({ id: '2', nom: 'Example', systeme: { id: '210', text: 'Super Nintendo MSU-1' } });
