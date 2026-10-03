@@ -1,4 +1,6 @@
 ---
+aliases:
+  - /posts/bloodrayne2-cn/
 title: 《吸血莱恩 2：终极剪辑版》简体中文汉化补丁
 date: 2026-10-01
 description: |-
