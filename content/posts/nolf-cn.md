@@ -1,4 +1,6 @@
 ---
+aliases:
+  - /posts/nolf/
 title: 《无人永生》简体中文汉化补丁
 date: 2026-07-27
 description: |-
