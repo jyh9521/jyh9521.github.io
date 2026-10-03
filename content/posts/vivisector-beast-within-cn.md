@@ -1,4 +1,6 @@
 ---
+aliases:
+  - /posts/vivisector-beast-within/
 title: 《活体解剖者：人面兽心》简体中文汉化补丁
 date: 2026-06-30
 tags:
