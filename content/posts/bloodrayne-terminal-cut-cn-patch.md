@@ -238,6 +238,8 @@ STextureEntry::loadOptimized - Out of memory
 
 ## 七、下载地址
 
+[GitHub](https://github.com/jyh9521/BloodRayne-CN/releases)
+
 [Google Drive](https://drive.google.com/drive/folders/1FpmyZvV-k7htEoqOBngdFk05sHvxpyRA?usp=sharing)
+
 [百度网盘](https://pan.baidu.com/s/1y_qW8251118PmGrfHLCmZw?pwd=vncg) 提取码: vncg
-[GitHub](https://github.com/jyh9521/BloodRayne_CN/releases/)
