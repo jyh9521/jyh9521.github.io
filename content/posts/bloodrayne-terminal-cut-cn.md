@@ -1,4 +1,6 @@
 ---
+aliases:
+  - /posts/bloodrayne-terminal-cut-cn-patch/
 title: 《吸血莱恩：终极剪辑版》简体中文汉化补丁
 date: 2026-07-30
 description: |-
