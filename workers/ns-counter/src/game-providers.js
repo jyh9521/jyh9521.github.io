@@ -50,18 +50,35 @@ export function normalizeRawgGame(game) {
   return normalized;
 }
 
+// ScreenScraper embeds developer credentials in media URLs. Return only our
+// credential-free proxy URL; never persist an upstream authenticated URL.
+function publicScreenMedia(value) {
+  try {
+    const url = new URL(clean(value));
+    if (!['http:', 'https:'].includes(url.protocol)) return '';
+    if (url.hostname === 'screenscraper.fr' || url.hostname.endsWith('.screenscraper.fr')) {
+      if (!url.pathname.endsWith('/mediaJeu.php')) return '';
+      const params = new URLSearchParams();
+      for (const key of ['systemeid', 'jeuid', 'media']) params.set(key, url.searchParams.get(key) || '');
+      return `https://blog.blfy.cc/ns/api/games/media?${params}`;
+    }
+    for (const key of [...url.searchParams.keys()]) if (/password|devid|ssid/i.test(key)) url.searchParams.delete(key);
+    return url.href;
+  } catch { return ''; }
+}
+
 function screenNames(game) {
   const namesValue = game.noms || game.names || {};
   const names = Array.isArray(namesValue)
     ? Object.fromEntries(namesValue.map(item => [clean(item?.region || item?.lang || item?.id), item?.text || item?.nom || item?.name || '']))
     : namesValue;
   const localizedNames = {
-    zhHans: clean(names.nom_cn || names.nom_zh_cn || names.nom_zh),
-    zhHant: clean(names.nom_tw || names.nom_hk || names.nom_zh_tw),
+    zhHans: clean(names.cn || names.zh || names.nom_cn || names.nom_zh_cn || names.nom_zh),
+    zhHant: clean(names.tw || names.hk || names.nom_tw || names.nom_hk || names.nom_zh_tw),
   };
-  const aliases = [...new Set(Object.entries(names).filter(([key]) => /^nom_/.test(key) || /^(cn|zh|tw|hk|jp|ja|en|us|eu|fr|de)$/i.test(key)).map(([, value]) => clean(value?.text || value?.nom || value?.name || value)).filter(Boolean))];
-  const originalName = clean(game.nom || game.nom_ss || game.name || game.nom_jp);
-  const defaultName = clean(game.nom || game.nom_ss || game.name);
+  const aliases = [...new Set(Object.values(names).map(value => clean(value?.text || value?.nom || value?.name || value)).filter(Boolean))];
+  const originalName = clean(game.nom || game.nom_ss || game.name || game.nom_jp || names.ss || names.wor || names.us || names.eu || names.jp || aliases[0]);
+  const defaultName = originalName;
   return { localizedNames, aliases, originalName, title: preferredTitle({ defaultName, originalName, aliases, localizedNames }) };
 }
 
@@ -73,27 +90,28 @@ export function normalizeScreenScraperGame(game, system = {}) {
   const synopsisObject = Array.isArray(synopsis)
     ? Object.fromEntries(synopsis.map(item => [clean(item?.langue || item?.lang || item?.id), item?.text || item?.synopsis || '']))
     : synopsis;
-  const localizedSynopsis = Object.entries(synopsisObject).find(([key, value]) => /synopsis_(?:zh|cn)/i.test(key) && clean(value));
-  const englishSynopsis = Object.entries(synopsisObject).find(([key, value]) => /synopsis_(?:en|us)/i.test(key) && clean(value));
+  const localizedSynopsis = Object.entries(synopsisObject).find(([key, value]) => /^(?:synopsis_)?(?:zh|cn)/i.test(key) && clean(value));
+  const englishSynopsis = Object.entries(synopsisObject).find(([key, value]) => /^(?:synopsis_)?(?:en|us)$/i.test(key) && clean(value));
   const synopsisText = clean(localizedSynopsis?.[1] || englishSynopsis?.[1] || game.synopsis_en || (typeof synopsis === 'string' ? synopsis : ''));
   const genres = game.genres || {};
   const genreValues = Object.values(genres).flatMap(value => Array.isArray(value) ? value : [value])
-    .map(item => clean(item?.text || item?.nom || item?.genre || item)).filter(Boolean);
+    .flatMap(item => item?.noms ? (item.noms.filter(name => name.langue === 'en').length ? item.noms.filter(name => name.langue === 'en') : item.noms.slice(0, 1)) : [item])
+    .map(item => clean(item?.text || item?.nom || item?.genre || (typeof item === 'string' ? item : ''))).filter(Boolean);
   const media = game.medias || {};
   const mediaEntries = Array.isArray(media) ? media.map(item => [clean(item?.type || item?.typeMedia || item?.id), item]) : Object.entries(media);
-  const screenshots = mediaEntries.filter(([key]) => /screenshot|screen/i.test(key)).flatMap(([, value]) => {
+  const screenshots = mediaEntries.filter(([key]) => /^(ss|sstitle)$|screenshot|screen/i.test(key)).flatMap(([, value]) => {
     const entries = Array.isArray(value) ? value : [value];
-    return entries.map(item => clean(item?.url || item?.text || item)).filter(value => /^https?:\/\//i.test(value));
+    return entries.map(item => publicScreenMedia(item?.url || item?.text || item)).filter(Boolean);
   });
   const cover = mediaEntries.filter(([key]) => /boitier.*2d|box.*2d|media.*wheel|media.*marquee|mix.?vignette/i.test(key))
-    .flatMap(([, value]) => (Array.isArray(value) ? value : [value]).map(item => clean(item?.url || item?.text || item)))
-    .find(value => /^https?:\/\//i.test(value)) || '';
+    .flatMap(([, value]) => (Array.isArray(value) ? value : [value]).map(item => publicScreenMedia(item?.url || item?.text || item)))
+    .find(Boolean) || '';
   const systemId = clean(game.systeme?.id || system.id);
   const normalized = {
     id: `screenscraper:${clean(game.id)}`, title, localizedName: localizedNames.zhHans || localizedNames.zhHant,
     originalName, alternativeNames: aliases, description: synopsisText, releaseDate: dateValues.sort()[0] || '',
     developers: list(game.developpeur?.text || game.developpeur), publishers: list(game.editeur?.text || game.editeur),
-    platforms: [clean(game.systeme?.nom || system.name)].filter(Boolean), genres: [...new Set(genreValues)],
+    platforms: [clean(game.systeme?.text || game.systeme?.nom || system.text || system.name)].filter(Boolean), genres: [...new Set(genreValues)],
     cover, screenshots: [...new Set(screenshots)], website: '',
     sources: { screenscraper: {
       id: clean(game.id), systemId,
@@ -138,7 +156,9 @@ export function areSameGame(a, b) {
 export function combineCandidates(rawg, screenscraper) {
   const results = rawg.map(game => ({ ...game, sources: { ...game.sources } }));
   for (const secondary of screenscraper) {
-    const match = results.find(candidate => areSameGame(candidate, secondary));
+    // A ScreenScraper ID identifies a specific system/version. Do not replace
+    // an already-selected system's ID when a second same-title version appears.
+    const match = results.find(candidate => candidate.sources?.rawg && !candidate.sources?.screenscraper && areSameGame(candidate, secondary));
     if (match) Object.assign(match, mergeMetadata(match, secondary));
     else results.push(secondary);
   }
@@ -190,9 +210,14 @@ export class ScreenScraperProvider extends GameMetadataProvider {
       ...params,
     };
     for (const [key, value] of Object.entries(values)) if (value !== undefined && value !== '') url.searchParams.set(key, String(value));
-    const response = await fetch(url, { signal: AbortSignal.timeout(12000) });
-    if (!response.ok) throw new Error(`ScreenScraper 请求失败（${response.status}）`);
-    return response.json();
+    try {
+      const response = await fetch(url, { signal: AbortSignal.timeout(75000) });
+      if (!response.ok) throw new Error('upstream');
+      return await response.json();
+    } catch {
+      // Upstream may return plaintext (including its authenticated URL).
+      throw new Error('ScreenScraper 暂未返回有效资料，请稍后重试（最多等待 75 秒）。');
+    }
   }
   async search(query) {
     const data = await this.request('jeuRecherche', { recherche: query });
@@ -211,6 +236,32 @@ export class ScreenScraperProvider extends GameMetadataProvider {
     if (!game?.id) throw new Error('ScreenScraper 没有找到该游戏');
     return normalizeScreenScraperGame(game, game.systeme || { id: systemId });
   }
+}
+
+export async function screenScraperMedia(request, env) {
+  if (request.method !== 'GET') return new Response('Method not allowed', { status: 405 });
+  const params = new URL(request.url).searchParams;
+  const system = params.get('systemeid') || '', game = params.get('jeuid') || '', media = params.get('media') || '';
+  if (!/^\d{1,16}$/.test(system) || !/^\d{1,16}$/.test(game)
+    || !/^(?:ss|sstitle|box-2D(?:-side|-back)?|wheel(?:-hd)?|screenmarquee|screenmarqueesmall|mixrbv[12])(?:\([a-z]{2,4}\))?$/.test(media)) {
+    return new Response('Invalid media', { status: 400 });
+  }
+  if (!env.SCREENSCRAPER_DEV_ID || !env.SCREENSCRAPER_DEV_PASSWORD) return new Response('Media unavailable', { status: 503 });
+  const upstream = new URL('https://api.screenscraper.fr/api2/mediaJeu.php');
+  const values = { systemeid: system, jeuid: game, media, devid: env.SCREENSCRAPER_DEV_ID,
+    devpassword: env.SCREENSCRAPER_DEV_PASSWORD, softname: env.SCREENSCRAPER_SOFTNAME || 'blfy-blog',
+    ...(env.SCREENSCRAPER_USER_ID ? { ssid: env.SCREENSCRAPER_USER_ID } : {}),
+    ...(env.SCREENSCRAPER_USER_PASSWORD ? { sspassword: env.SCREENSCRAPER_USER_PASSWORD } : {}) };
+  Object.entries(values).forEach(([key, value]) => upstream.searchParams.set(key, value));
+  try {
+    const result = await fetch(upstream, { signal: AbortSignal.timeout(75000) });
+    const type = result.headers.get('Content-Type') || '';
+    if (!result.ok || !/^image\/(?:png|jpeg|jpg|webp|gif|avif|bmp)(?:;|$)/i.test(type)) {
+      await result.body?.cancel();
+      return new Response('Media unavailable', { status: 502 });
+    }
+    return new Response(result.body, { headers: { 'Content-Type': type, 'Cache-Control': 'public, max-age=86400', 'X-Content-Type-Options': 'nosniff' } });
+  } catch { return new Response('Media unavailable', { status: 502 }); }
 }
 
 // Reserved provider contract. Add IGDB here when credentials become available;

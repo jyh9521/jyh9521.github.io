@@ -55,6 +55,20 @@ RAWG / ScreenScraper / 未来 IGDB 是资料来源；Steam、GOG、Nintendo eSho
 
 ## 本地预览
 
+### 修改文章网址名
+
+文章的 `/posts/wish-list/` 中，`wish-list` 是 Markdown 文件名（slug），与文章标题独立。
+打开后台文章编辑器，在右侧 **Slug** 面板点击铅笔，输入新的小写英文、数字或连字符名称，再保存。
+后台会重命名文章文件，部署完成后新网址生效。此入口也适用于已经发布的文章；旧网址不会自动跳转。
+
+### ScreenScraper 接入与导入
+
+在游戏档案编辑器的「游戏资料」选择 **ScreenScraper**，输入名称并点击「搜索游戏」。
+上游检索可能较慢，单次最多等待 75 秒；候选会显示名称及具体平台，需选中正确版本后再导入。
+导入后勾选要展示的平台、填写手动覆盖名称，再保存档案；部署后本地游戏选择器和前台读取已保存的档案。
+封面和截图经本站 `/ns/api/games/media` 图片代理读取，开发者密码仅在 Worker 中使用，不写入文章、档案或浏览器响应。
+开发者密码用于 `SCREENSCRAPER_DEV_PASSWORD`；Debug Password 不作为成员账号密码使用。
+
 需要 Node.js 22。运行 `npm ci` 和 `npm run dev`；发布前可运行 `npm run check` 与 `npm run build`。静态网站输出在 `out/`。
 
 ## 原 TinaCloud 连接清理

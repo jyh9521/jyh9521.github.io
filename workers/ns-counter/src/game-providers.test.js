@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { areSameGame, combineCandidates, mergeMetadata, normalizeRawgGame, normalizeScreenScraperGame, ScreenScraperProvider } from './game-providers.js';
+import { areSameGame, combineCandidates, mergeMetadata, normalizeRawgGame, normalizeScreenScraperGame, ScreenScraperProvider, screenScraperMedia } from './game-providers.js';
 
 test('RAWG records are normalized without leaking provider field shape', () => {
   const game = normalizeRawgGame({
@@ -76,5 +76,71 @@ test('ScreenScraper search accepts its wrapped JSON list response', async () => 
     assert.equal(results.length, 1);
     assert.equal(results[0].sources.screenscraper.id, '7');
     assert.equal(results[0].platforms[0], 'PC-98');
+  } finally { globalThis.fetch = originalFetch; }
+});
+
+test('ScreenScraper platform variants keep their own detail IDs', () => {
+  const a = normalizeScreenScraperGame({ id: '1', nom: 'Example', systeme: { id: '4', text: 'Super Nintendo' } });
+  const b = normalizeScreenScraperGame({ id: '2', nom: 'Example', systeme: { id: '210', text: 'Super Nintendo MSU-1' } });
+  const results = combineCandidates([], [a, b]);
+  assert.equal(results.length, 2);
+  assert.deepEqual(results.map(game => game.sources.screenscraper.systemId), ['4', '210']);
+});
+
+test('ScreenScraper live array fields yield names, platform, synopsis and private-media proxies', () => {
+  const game = normalizeScreenScraperGame({ id: '422436',
+    noms: [{ region: 'ss', text: 'Chrono Trigger' }, { region: 'cn', text: '时空之轮' }],
+    systeme: { id: '3', text: 'NES' }, synopsis: [{ langue: 'de', text: 'Deutsch' }, { langue: 'en', text: 'English' }],
+    dates: [{ region: 'us', text: '1995-08-11' }],
+    genres: [{ noms: [{ langue: 'fr', text: 'Jeu de rôle' }, { langue: 'en', text: 'RPG' }] }],
+    medias: [{ type: 'box-2D', url: 'https://neoclone.screenscraper.fr/api2/mediaJeu.php?devid=fixture&devpassword=PRIVATE&systemeid=3&jeuid=422436&media=box-2D(ss)' },
+      { type: 'ss', url: 'https://neoclone.screenscraper.fr/api2/mediaJeu.php?devpassword=PRIVATE&systemeid=3&jeuid=422436&media=ss(wor)' }],
+  });
+  assert.equal(game.title, '时空之轮');
+  assert.equal(game.originalName, 'Chrono Trigger');
+  assert.equal(game.description, 'English');
+  assert.deepEqual(game.platforms, ['NES']);
+  assert.deepEqual(game.genres, ['RPG']);
+  assert.equal(game.releaseDate, '1995-08-11');
+  assert.equal(game.screenshots.length, 1);
+  assert.ok(game.cover.startsWith('https://blog.blfy.cc/ns/api/games/media?'));
+  assert.ok(!JSON.stringify(game).includes('PRIVATE'));
+  assert.ok(!JSON.stringify(game).includes('devpassword'));
+});
+
+test('ScreenScraper request uses server credentials, longer timeout and sanitized errors', async () => {
+  const originalFetch = globalThis.fetch, originalTimeout = AbortSignal.timeout;
+  const provider = new ScreenScraperProvider({ SCREENSCRAPER_DEV_ID: 'fixture', SCREENSCRAPER_DEV_PASSWORD: 'PRIVATE' });
+  try {
+    AbortSignal.timeout = ms => { assert.equal(ms, 75000); return new AbortController().signal; };
+    globalThis.fetch = async url => {
+      assert.equal(url.searchParams.get('devid'), 'fixture');
+      assert.equal(url.searchParams.get('devpassword'), 'PRIVATE');
+      return Response.json({ response: { jeux: [] } });
+    };
+    assert.deepEqual(await provider.search('Example'), []);
+    globalThis.fetch = async () => new Response('PRIVATE invalid developer', { status: 200 });
+    await assert.rejects(provider.search('Example'), error => !error.message.includes('PRIVATE') && error.message.includes('ScreenScraper'));
+  } finally { globalThis.fetch = originalFetch; AbortSignal.timeout = originalTimeout; }
+});
+
+test('media proxy accepts only bounded image identifiers and never forwards upstream errors', async () => {
+  const originalFetch = globalThis.fetch;
+  const env = { SCREENSCRAPER_DEV_ID: 'fixture', SCREENSCRAPER_DEV_PASSWORD: 'PRIVATE' };
+  const request = new Request('https://blog.blfy.cc/ns/api/games/media?systemeid=3&jeuid=422436&media=box-2D(ss)');
+  try {
+    globalThis.fetch = async url => {
+      assert.equal(url.hostname, 'api.screenscraper.fr');
+      assert.equal(url.searchParams.get('devpassword'), 'PRIVATE');
+      return new Response('image-fixture', { headers: { 'Content-Type': 'image/png' } });
+    };
+    const image = await screenScraperMedia(request, env);
+    assert.equal(image.status, 200);
+    assert.equal(await image.text(), 'image-fixture');
+    assert.equal((await screenScraperMedia(new Request('https://blog.blfy.cc/ns/api/games/media?systemeid=3&jeuid=1&media=https://evil.test'), env)).status, 400);
+    globalThis.fetch = async () => new Response('PRIVATE', { headers: { 'Content-Type': 'text/plain' } });
+    const failed = await screenScraperMedia(request, env);
+    assert.equal(failed.status, 502);
+    assert.equal(await failed.text(), 'Media unavailable');
   } finally { globalThis.fetch = originalFetch; }
 });

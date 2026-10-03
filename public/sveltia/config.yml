@@ -20,7 +20,7 @@ collections:
     preview_path: /posts/{{filename}}/
     slug:
       editable: true
-      hint: 请填写英文网址名，例如 bloodrayne-guide
+      hint: 文章网址名（/posts/ 后的部分）；在右侧 Slug 面板点击铅笔修改，例如 wish-list。保存并部署后生效，旧网址随之改变。
       pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', '只允许小写英文字母、数字和连字符']
     fields:
       - { name: title, label: 标题, widget: string, required: true }
